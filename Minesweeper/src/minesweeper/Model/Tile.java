@@ -49,5 +49,5 @@ public class Tile {
 
 enum TileType
 {
-    BOMB, FLAG, NUMBER
+    BOMB, FLAG, NUMBER, EMPTY
 }
