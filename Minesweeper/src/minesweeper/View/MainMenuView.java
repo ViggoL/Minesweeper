@@ -72,7 +72,7 @@ public class MainMenuView {
         root.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(title, buttonPane);
         
-        Scene scene = new Scene(root, 300, 240);
+        Scene scene = new Scene(root, 200, 200);
 
         primaryStage.setTitle("Minesweeper");
         primaryStage.setScene(scene);
