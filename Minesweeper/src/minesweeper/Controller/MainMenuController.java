@@ -5,8 +5,13 @@
  */
 package minesweeper.Controller;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import minesweeper.View.MainMenuView;
 
 /**
@@ -14,12 +19,33 @@ import minesweeper.View.MainMenuView;
  * @author Viggo
  */
 public class MainMenuController {
-    MainMenuView view;
+    private MainMenuView view;
     public MainMenuController(MainMenuView view)
     {
         this.view = view;
+        
+        view.playButton.setOnMouseClicked(new EventHandler()
+        {
+            @Override
+            public void handle(Event event) {
+                MouseEvent in;
+                if (event instanceof MouseEvent) {
+                    in = (MouseEvent)event;
+                    if (in.getButton() == MouseButton.SECONDARY) playButtonClickedRight();
+                }
+                
+                
+              
+            }
+        });
+        view.settingsButton.setOnMouseClicked(new EventHandler(){
+           @Override
+           public void handle(Event event) {
+               settingsButtonClicked();
+           }
+        });
     }
-    public void playButtonClicked()
+    public void playButtonClickedRight()
     {
         view.playButton.setText("Don't play!");
     }

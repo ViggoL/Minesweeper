@@ -27,19 +27,6 @@ public class Minesweeper extends Application {
         MainMenuView view = new MainMenuView();
         MainMenuController controller = new MainMenuController(view);
         
-        view.playButton.setOnMouseClicked(new EventHandler()
-        {
-            @Override
-            public void handle(Event event) {
-                controller.playButtonClicked();
-            }
-        });
-        view.settingsButton.setOnMouseClicked(new EventHandler(){
-           @Override
-           public void handle(Event event) {
-               controller.settingsButtonClicked();
-           }
-        });
         view.update(primaryStage);
     }
 

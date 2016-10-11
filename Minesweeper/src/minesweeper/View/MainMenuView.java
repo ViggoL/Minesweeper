@@ -54,7 +54,7 @@ public class MainMenuView {
         
         Scene scene = new Scene(root, 300, 250);
 
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Minesweeper");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
