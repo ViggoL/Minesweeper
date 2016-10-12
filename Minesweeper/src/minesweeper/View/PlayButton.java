@@ -15,7 +15,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package minesweeper.Model;
+package minesweeper.View;
 
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;

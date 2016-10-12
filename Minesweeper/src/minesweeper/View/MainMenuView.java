@@ -15,7 +15,6 @@ import javafx.scene.*;
 import javafx.*;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
-import minesweeper.Model.PlayButton;
 
 /**
  *
