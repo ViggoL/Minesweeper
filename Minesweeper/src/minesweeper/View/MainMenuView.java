@@ -34,21 +34,19 @@ public class MainMenuView {
     public Button settingsButton;
     public Button rulesButton;
     public VBox buttonPane;
-    public Pane emptyPane1, emptyPane2;
-    
+    double buttonWidth;
+
     public MainMenuView()
     {
         playButton = new Button();
         settingsButton = new Button();
         rulesButton = new Button();
         buttonPane = new VBox();
-        emptyPane1 = new Pane();
-        emptyPane2 = new Pane();
+        buttonWidth = Double.MAX_VALUE;
     }
     
     public void update(Stage primaryStage)
     {
-        Insets buttonInsets = new Insets(5);
         
         Label title = new Label("Minesweeper");
         title.setFont(new Font("Helvetica", 30));
@@ -58,15 +56,16 @@ public class MainMenuView {
         playButton.setAlignment(Pos.CENTER);
         
         settingsButton.setText("Settings");
-        
         rulesButton.setText("Rules");
         
-        emptyPane1.setPadding(buttonInsets);
-        emptyPane2.setPadding(buttonInsets);
+        playButton.setMaxWidth(buttonWidth);
+        settingsButton.setMaxWidth(buttonWidth);
+        rulesButton.setMaxWidth(buttonWidth);
         
-        buttonPane.getChildren().addAll(playButton, emptyPane1, settingsButton, emptyPane2 , rulesButton);
+        buttonPane.setSpacing(10);
+        buttonPane.setMaxWidth(70);
         buttonPane.setAlignment(Pos.CENTER);
-        buttonPane.setPadding(buttonInsets);
+        buttonPane.getChildren().addAll(playButton, settingsButton, rulesButton);
         
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
