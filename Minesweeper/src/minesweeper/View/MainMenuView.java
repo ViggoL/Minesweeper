@@ -5,24 +5,17 @@
  */
 package minesweeper.View;
 
-import javafx.application.Application;
-import javafx.beans.property.ObjectProperty;
-import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.*;
 import javafx.*;
 import javafx.geometry.Insets;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
-import minesweeper.Controller.MainMenuController;
+import minesweeper.Model.PlayButton;
 
 /**
  *
@@ -35,6 +28,7 @@ public class MainMenuView {
     public Button rulesButton;
     public VBox buttonPane;
     double buttonWidth;
+    double spacing;
 
     public MainMenuView()
     {
@@ -43,6 +37,7 @@ public class MainMenuView {
         rulesButton = new Button();
         buttonPane = new VBox();
         buttonWidth = Double.MAX_VALUE;
+        spacing = 10.0;
     }
     
     public void update(Stage primaryStage)
@@ -52,9 +47,8 @@ public class MainMenuView {
         title.setFont(new Font("Helvetica", 30));
         title.setPadding(new Insets(5,5,20,5));
         
-        playButton.setText("Play");
         playButton.setAlignment(Pos.CENTER);
-        
+        playButton.setText("Play");
         settingsButton.setText("Settings");
         rulesButton.setText("Rules");
         
@@ -62,16 +56,16 @@ public class MainMenuView {
         settingsButton.setMaxWidth(buttonWidth);
         rulesButton.setMaxWidth(buttonWidth);
         
-        buttonPane.setSpacing(10);
+        buttonPane.setSpacing(spacing);
         buttonPane.setMaxWidth(70);
         buttonPane.setAlignment(Pos.CENTER);
-        buttonPane.getChildren().addAll(playButton, settingsButton, rulesButton);
+        buttonPane.getChildren().addAll(new PlayButton().setButton(70),playButton,settingsButton,rulesButton);
         
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(title, buttonPane);
         
-        Scene scene = new Scene(root, 200, 200);
+        Scene scene = new Scene(root, 200, 260);
 
         primaryStage.setTitle("Minesweeper");
         primaryStage.setScene(scene);
