@@ -5,6 +5,9 @@
  */
 package minesweeper.Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Viggo
@@ -50,6 +53,32 @@ public class Tile {
     public void setCovered(boolean covered)
     {
         this.covered = covered;
+    }
+
+    public void setSurroundingTiles(Board board)
+    {
+        if (type != TileType.BOMB) return;
+        List<List<Tile>> tiles = board.getTiles();
+        
+    }
+
+    public List<Tile> getSurroundingTiles(Board board)
+    {
+        Tile tiles[] = new Tile[8];
+        List<Tile> tileList = new ArrayList<Tile>();
+        tiles[0] = board.getTile(new Point(point.x - 1, point.y));
+        tiles[1] = board.getTile(new Point(point.x - 1, point.y - 1));
+        tiles[2] = board.getTile(new Point(point.x, point.y - 1));
+        tiles[3] = board.getTile(new Point(point.x + 1, point.y - 1));
+        tiles[4] = board.getTile(new Point(point.x + 1, point.y));
+        tiles[5] = board.getTile(new Point(point.x + 1, point.y + 1));
+        tiles[6] = board.getTile(new Point(point.x, point.y + 1));
+        tiles[7] = board.getTile(new Point(point.x - 1, point.y + 1));
+        for (Tile t : tiles)
+        {
+            tileList.add(t);
+        }
+        return tileList;
     }
 }
 

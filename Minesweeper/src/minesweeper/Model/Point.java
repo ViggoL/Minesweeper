@@ -21,4 +21,9 @@ public class Point {
     {
         return "[" + x + ", " + y + "]";
     }
+    
+    public boolean equals(Point other)
+    {
+        return (this.x == other.x && this.y == other.y);
+    }
 }

@@ -35,3 +35,8 @@ public class MinesweeperTheGame extends Observable {
     }
     
 }
+
+enum Difficulty
+{
+    EASY, MEDIUM, HARD
+}

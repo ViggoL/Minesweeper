@@ -17,16 +17,30 @@
  */
 package minesweeper.Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
 public class Board {
+    private List<List<Tile>> tiles;
     private final int [][] dimensions; 
     private boolean win;
     
     Board(){
         dimensions = new int [10][10];
         win = false;
+        tiles = new ArrayList<>();
+    }
+    
+    public List<List<Tile>> getTiles()
+    {
+        return this.tiles;
+    }
+    public Tile getTile(Point point)
+    {
+        
     }
 }
