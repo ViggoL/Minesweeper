@@ -39,8 +39,17 @@ public class Board {
     {
         return this.tiles;
     }
+    
+    /**
+     * Returns the tile at the given point at the board.
+     * @param point
+     * @return null if the tile can't be found
+     */
     public Tile getTile(Point point)
     {
-        
+        for (List<Tile> tl : tiles)
+            for (Tile t : tl)
+                if (t.getPoint().equals(point)) return t;
+        return null;
     }
 }
