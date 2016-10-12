@@ -37,6 +37,12 @@ public class Tile {
         this.type = TileType.NUMBER;
         this.number = number;
     }
+    
+    public int getNumber()
+    {
+        return this.number;
+    }
+    
     public boolean isCovered()
     {
         return covered;
