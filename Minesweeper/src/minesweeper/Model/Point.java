@@ -24,6 +24,11 @@ public class Point {
     
     public boolean equals(Point other)
     {
-        return (this.x == other.x && this.y == other.y);
+        try {
+            return (this.x == other.x && this.y == other.y);
+        } catch (NullPointerException e) {
+            System.out.println("Point was null!");
+            return false;
+        }
     }
 }
