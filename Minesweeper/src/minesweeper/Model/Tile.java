@@ -62,6 +62,18 @@ public class Tile {
         
     }
 
+    
+    public int getAdjacentMines(Board board)
+    {
+        List<Tile> surroundingTiles = getSurroundingTiles(board);
+        int count = 0;
+        for (Tile t : surroundingTiles)
+        {
+            if (t.getType() == TileType.BOMB) count++;
+        }
+        return count;
+    }
+    
     public List<Tile> getSurroundingTiles(Board board)
     {
         Tile tiles[] = new Tile[8];
