@@ -6,6 +6,7 @@
 package minesweeper.Model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,7 +41,10 @@ public class Tile {
         this.type = TileType.NUMBER;
         this.number = number;
     }
-    
+    public void setNumber(Board board)
+    {
+        setNumber(getAdjacentMines(board));
+    }
     public int getNumber()
     {
         return this.number;
@@ -54,30 +58,19 @@ public class Tile {
     {
         this.covered = covered;
     }
-
-    public void setSurroundingTiles(Board board)
-    {
-        if (type != TileType.BOMB) return;
-        List<List<Tile>> tiles = board.getTiles();
-        
-    }
-
     
     public int getAdjacentMines(Board board)
     {
         List<Tile> surroundingTiles = getSurroundingTiles(board);
         int count = 0;
         for (Tile t : surroundingTiles)
-        {
             if (t.getType() == TileType.BOMB) count++;
-        }
         return count;
     }
     
     public List<Tile> getSurroundingTiles(Board board)
     {
         Tile tiles[] = new Tile[8];
-        List<Tile> tileList = new ArrayList<Tile>();
         tiles[0] = board.getTile(new Point(point.x - 1, point.y));
         tiles[1] = board.getTile(new Point(point.x - 1, point.y - 1));
         tiles[2] = board.getTile(new Point(point.x, point.y - 1));
@@ -86,11 +79,7 @@ public class Tile {
         tiles[5] = board.getTile(new Point(point.x + 1, point.y + 1));
         tiles[6] = board.getTile(new Point(point.x, point.y + 1));
         tiles[7] = board.getTile(new Point(point.x - 1, point.y + 1));
-        for (Tile t : tiles)
-        {
-            tileList.add(t);
-        }
-        return tileList;
+        return Arrays.asList(tiles);
     }
 }
 
