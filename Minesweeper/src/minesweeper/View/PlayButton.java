@@ -27,26 +27,21 @@ import javafx.scene.shape.Polygon;
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class PlayButton {
+public class PlayButton extends GameButton{
     
     private final Button playButton;
     private final Polygon triangle;
-    private DropShadow shadow;
+
     
     public PlayButton(){
+        super();
         playButton = new Button();
         triangle = new Polygon();
-        shadow = new DropShadow();
     }
     
     public Button setButton(double diameter){
         double x1 = diameter/Math.PI + Math.exp(Math.E);
         double y2 = diameter*2/(Math.PI*Math.PI);
-        double offset = 3.0;
-        
-        shadow.setOffsetX(offset);
-        shadow.setOffsetY(offset);
-        shadow.setColor(Color.GREY);
         
         triangle.getPoints().addAll(new Double[]{x1, y2,diameter,diameter/2,x1,diameter-y2});
         triangle.setFill(Color.GREEN);
