@@ -15,12 +15,21 @@
  */
 package minesweeper.View;
 
+import java.util.Arrays;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -30,28 +39,66 @@ public class GameButton {
     
     private final Button button;
     private DropShadow shadow;
+    private double shadowOffset;
+    private double sideLength;
 
     public GameButton(double diameter, ButtonEnum type) {
         button = new Button();
         shadow = new DropShadow();
-        double offset = 3.0;
+        shadowOffset = 3.0;
+        sideLength = Math.sqrt(Math.pow(diameter, 2)*2);
         
-        shadow.setOffsetX(offset);
-        shadow.setOffsetY(offset);
+        //shadow.setOffsetX(shadowOffset);
+        shadow.setOffsetY(shadowOffset);
         shadow.setColor(Color.GREY);
         
+        
         button.setShape(new Circle(diameter));
-        button.setMinSize(diameter,diameter);
         
-        double x1 = diameter/Math.PI + Math.exp(Math.E);
-        double y2 = diameter*2/(Math.PI*Math.PI);
+        button.setMinSize(sideLength, sideLength);
+        button.setAlignment(Pos.CENTER);
         
-        if(type == ButtonEnum.PLAY){
-            Polygon shape = new Polygon();
-            shape.getPoints().addAll(new Double[]{x1, y2,diameter + Math.E*5,diameter/2,x1,diameter-y2});
-            shape.setFill(Color.GREEN);
-            shape.setEffect(shadow);
-            button.setGraphic(shape); 
+        double hypotenuse = Math.sqrt(Math.pow(diameter, 2.0)*2);
+        double x1 = (hypotenuse - diameter)/Math.PI;
+        double y1 = (hypotenuse - diameter)/(Math.PI*Math.E);
+        
+        switch(type){
+            case PLAY:
+                Polygon triangle = new Polygon();
+                triangle.getPoints().addAll(new Double[]{x1, y1,diameter,diameter/2,x1,diameter-y1});
+                triangle.setFill(Color.GREEN);
+                triangle.setEffect(shadow);
+                button.setGraphic(triangle);
+                break;
+            case PAUSE:
+                Group root = new Group();
+                Line  line1, line2;
+                double strokeWidth = Math.pow(Math.PI,Math.E);
+                double x2 = Math.PI*diameter/3;
+                
+                line1 = new Line(diameter/2,0.0,diameter/2,diameter/2);
+                line2 = new Line(x2,0.0,x2,diameter/2);
+                
+                root.getChildren().addAll(line1, line2);
+                System.out.println("Lines: " + Arrays.toString(root.getChildren().toArray()));
+                for(Object l: root.getChildren().toArray()) {
+                    Line line = (Line) l;
+                    line.setStroke(Color.BLUE);
+                    line.setStrokeLineCap(StrokeLineCap.ROUND);
+                    line.setStrokeWidth(strokeWidth);
+                    line.setEffect(shadow);
+                    l = line;
+                }
+                button.setGraphic(root);
+                break;
+            case HELP:
+                Text text = new Text("?");
+                Font myFont = new Font("Garamond",70);
+                text.setFont(myFont);
+                button.setGraphic(text);
+                break;
+            default: break;
+                     
         }
             
     }

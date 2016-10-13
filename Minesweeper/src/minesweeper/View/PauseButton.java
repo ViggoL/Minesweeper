@@ -13,12 +13,12 @@ import javafx.scene.control.Button;
  */
 public class PauseButton extends GameButton {
 
-    public PauseButton(){
-        super();
+    public PauseButton(double diameter, GameButton.ButtonEnum type){
+        super(diameter, type);
     }
     
     @Override
-    public Button setButton(double diameter) {
+    public Button getButton() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
