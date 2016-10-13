@@ -15,6 +15,7 @@ import javafx.scene.*;
 import javafx.*;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
+import minesweeper.View.GameButton.ButtonEnum;
 
 /**
  *
@@ -58,7 +59,7 @@ public class MainMenuView {
         buttonPane.setSpacing(spacing);
         buttonPane.setMaxWidth(70);
         buttonPane.setAlignment(Pos.CENTER);
-        buttonPane.getChildren().addAll(new PlayButton().setButton(70),playButton,settingsButton,rulesButton);
+        buttonPane.getChildren().addAll(new GameButton(70, ButtonEnum.PLAY).getButton(),playButton,settingsButton,rulesButton);
         
         VBox root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
