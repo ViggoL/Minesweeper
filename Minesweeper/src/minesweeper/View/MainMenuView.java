@@ -26,9 +26,9 @@ public class MainMenuView {
     public Button playButton;
     public Button settingsButton;
     public Button rulesButton;
-    public VBox buttonPane;
+    private final VBox buttonPane;
     double buttonWidth;
-    double spacing;
+    double buttonSpacing;
 
     public MainMenuView()
     {
@@ -37,7 +37,7 @@ public class MainMenuView {
         rulesButton = new Button();
         buttonPane = new VBox();
         buttonWidth = Double.MAX_VALUE;
-        spacing = 10.0;
+        buttonSpacing = 10.0;
     }
     
     public void update(Stage primaryStage)
@@ -56,7 +56,7 @@ public class MainMenuView {
         settingsButton.setMaxWidth(buttonWidth);
         rulesButton.setMaxWidth(buttonWidth);
         
-        buttonPane.setSpacing(spacing);
+        buttonPane.setSpacing(buttonSpacing);
         buttonPane.setMaxWidth(70);
         buttonPane.setAlignment(Pos.CENTER);
         buttonPane.getChildren().addAll(new GameButton(70, ButtonEnum.HELP).getButton(),playButton,settingsButton,rulesButton);

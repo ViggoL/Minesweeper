@@ -5,11 +5,13 @@
  */
 package minesweeper.Controller;
 
+import minesweeper.View.GameView;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import minesweeper.View.MainMenuView;
@@ -38,11 +40,25 @@ public class MainMenuController {
               
             }
         });
+        
         view.settingsButton.setOnMouseClicked(new EventHandler(){
            @Override
            public void handle(Event event) {
                settingsButtonClicked();
            }
+        });
+        
+        view.rulesButton.setOnMouseClicked(new EventHandler()
+        {
+            @Override
+            public void handle(Event event) {
+                MouseEvent mouse;
+                KeyEvent enter;
+                if (event instanceof MouseEvent){
+                    
+                }
+                    
+            }
         });
     }
     public void playButtonClickedRight()
