@@ -23,20 +23,15 @@ import java.util.Observable;
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class MinesweeperTheGame extends Observable {
+public class MinesweeperTheGame {
     
-    private boolean paused;
-    private Board board;
+
     
     MinesweeperTheGame(){
         super();
-        paused = false;
-        board = new Board();
+
     }
     
 }
 
-enum Difficulty
-{
-    EASY, MEDIUM, HARD
-}
+

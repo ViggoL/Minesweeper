@@ -23,9 +23,14 @@ import minesweeper.View.MainMenuView;
  * @author Viggo
  */
 public class Minesweeper extends Application {
+    private boolean paused;
+    private Board board;
     
     @Override
     public void start(Stage primaryStage) {
+        paused = false;
+        board = new Board();
+        
         MainMenuView view = new MainMenuView();
         MainMenuController controller = new MainMenuController(view, primaryStage);
         
@@ -39,4 +44,9 @@ public class Minesweeper extends Application {
         launch(args);
     }
     
+}
+
+enum Difficulty
+{
+    EASY, MEDIUM, HARD
 }
