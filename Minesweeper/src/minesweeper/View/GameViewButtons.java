@@ -1,9 +1,9 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * [Project] license
+ * Minesweeper license
  * 
- * Copyright © 2016 Johan Lipecki
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,30 +19,30 @@ package minesweeper.View;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class GameView extends GameViewButtons{
+public abstract class GameViewButtons {
     
-    public Button pauseButton;
-    public BorderPane gameFrame;
-    
-    GameView(){
-        super();
-        buttonPaneWidth = 35.0;
-        playButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PLAY).getButton();
-        pauseButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PAUSE).getButton();
-        rulesButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.HELP).getButton();
-    }
-    public void update(Stage primaryStage) {
-        playButton.setAlignment(Pos.CENTER);
-        playButton.setMaxWidth(buttonWidth);
-        settingsButton.setMaxWidth(buttonWidth);
-        rulesButton.setMaxWidth(buttonWidth);
+    public Button playButton;
+    public Button settingsButton;
+    public Button rulesButton;
+    protected VBox buttonPane;
+    double buttonSpacing;
+    double buttonWidth;
+    double buttonPaneWidth;
+
+    public GameViewButtons() {
+        buttonPane = new VBox();
+        buttonSpacing = 10.0;
+        buttonWidth = Double.MAX_VALUE;
+        
+        buttonPane.setSpacing(buttonSpacing);
+        buttonPane.setAlignment(Pos.CENTER);
     }
     
 }

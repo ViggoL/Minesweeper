@@ -21,23 +21,17 @@ import minesweeper.View.GameButton.ButtonEnum;
  *
  * @author Viggo
  */
-public class MainMenuView {
+public class MainMenuView extends GameViewButtons {
 
-    public Button playButton;
-    public Button settingsButton;
-    public Button rulesButton;
-    private final VBox buttonPane;
     double buttonWidth;
-    double buttonSpacing;
 
     public MainMenuView()
     {
+        super();
         playButton = new Button();
         settingsButton = new Button();
         rulesButton = new Button();
-        buttonPane = new VBox();
-        buttonWidth = Double.MAX_VALUE;
-        buttonSpacing = 10.0;
+        buttonPaneWidth = 200.0;
     }
     
     public void update(Stage primaryStage)
@@ -56,13 +50,11 @@ public class MainMenuView {
         settingsButton.setMaxWidth(buttonWidth);
         rulesButton.setMaxWidth(buttonWidth);
         
-        buttonPane.setSpacing(buttonSpacing);
-        buttonPane.setMaxWidth(70);
-        buttonPane.setAlignment(Pos.CENTER);
-        buttonPane.getChildren().addAll(new GameButton(70, ButtonEnum.HELP).getButton(),playButton,settingsButton,rulesButton);
+        buttonPane.setMaxWidth(Double.MAX_VALUE);
+        buttonPane.getChildren().addAll(playButton,settingsButton,rulesButton);
         
         VBox root = new VBox();
-        root.setAlignment(Pos.CENTER);
+        root.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(title, buttonPane);
         
         Scene scene = new Scene(root, 200, 260);
