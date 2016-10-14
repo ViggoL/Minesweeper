@@ -1,6 +1,6 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template menu1, choose Tools | Templates
  * [Project] license
  * 
  * Copyright © 2016 Johan Lipecki
@@ -21,7 +21,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -33,6 +36,10 @@ public class GameView extends GameViewSuper{
     
     public Button pauseButton;
     public BorderPane gameFrame;
+    public GridPane grid;
+    public MenuBar menuBar;
+    public final Menu menu1, menu2, menu3;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
+    
     private Stage stage;
     public GameView(){
         super();
@@ -42,8 +49,18 @@ public class GameView extends GameViewSuper{
         pauseButton = new GameButton(20, GameButton.ButtonEnum.PAUSE).getButton();
         rulesButton = new GameButton(20, GameButton.ButtonEnum.HELP).getButton();
         resumeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PLAY).getButton();
-        buttonPane = new VBox();
+        
+        
+        menu1 = new Menu("File");
+        menu2 = new Menu("Settings");
+        menu3 = new Menu("Help");
+        menuBar = new MenuBar();
+        menuBar.getMenus().addAll(menu1, menu2, menu3);
+        
         gameFrame = new BorderPane();
+        grid = new GridPane();
+        buttonPane = new VBox();
+        
         stage = new Stage();
         
     }
@@ -52,9 +69,11 @@ public class GameView extends GameViewSuper{
     public void update(Stage primaryStage) {
         buttonPane.setPadding(new Insets(5));
         buttonPane.setAlignment(Pos.BASELINE_LEFT);
-        buttonPane.getChildren().add(pauseButton);
-        buttonPane.getChildren().add(playButton);
+        buttonPane.getChildren().addAll(pauseButton,playButton);
+        
         gameFrame.setLeft(buttonPane);
+        gameFrame.setTop(menuBar);
+        gameFrame.setCenter(grid);
         Scene scene = new Scene(gameFrame, 300, 200);
         stage.setTitle("Minesweeper");
         stage.setScene(scene);

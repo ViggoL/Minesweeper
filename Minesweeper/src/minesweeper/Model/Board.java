@@ -25,17 +25,27 @@ import java.util.List;
  * @author Johan Lipecki <lipecki@kth.se>
  */
 public class Board {
-    private List<List<Tile>> tiles;
-    private final int [][] dimensions; 
+    private List<Tile> tiles;
     private boolean win;
     
-    Board(){
-        dimensions = new int [10][10];
+    Board(Difficulty diff){
         win = false;
         tiles = new ArrayList<>();
+        int x = 0;
+        int y = 0;
+        
+        switch(diff){
+            case EASY: while(tiles.size() < 100) {
+                while(tiles.size()/10 <= 9){
+                    x = tiles.size()/100;
+                    y = tiles.size()/10;
+                    tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
+                }
+            }
+        }
     }
     
-    public List<List<Tile>> getTiles()
+    public List<Tile> getTiles()
     {
         return this.tiles;
     }
@@ -47,8 +57,7 @@ public class Board {
      */
     public Tile getTile(Point point)
     {
-        for (List<Tile> tl : tiles)
-            for (Tile t : tl)
+        for (Tile t : tiles)
                 if (t.getPoint().equals(point)) return t;
         return null;
     }
