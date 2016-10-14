@@ -45,7 +45,7 @@ public class GameButton {
     public GameButton(double diameter, ButtonEnum type) {
         button = new Button();
         shadow = new DropShadow();
-        shadowOffset = 3.0;
+        shadowOffset = diameter / 22;
         sideLength = Math.sqrt(Math.pow(diameter, 2)*2);
         
         //shadow.setOffsetX(shadowOffset);
@@ -56,6 +56,7 @@ public class GameButton {
         button.setShape(new Circle(diameter));
         
         button.setMinSize(sideLength, sideLength);
+        button.setMaxSize(sideLength, Double.MAX_VALUE);
         button.setAlignment(Pos.CENTER);
         
         double hypotenuse = Math.sqrt(Math.pow(diameter, 2.0)*2);
@@ -73,7 +74,7 @@ public class GameButton {
             case PAUSE:
                 Group root = new Group();
                 Line  line1, line2;
-                double strokeWidth = Math.pow(Math.PI,Math.E);
+                double strokeWidth = diameter / 5;//Math.pow(Math.PI,Math.E);
                 double x2 = Math.PI*diameter/3;
                 
                 line1 = new Line(diameter/2,0.0,diameter/2,diameter/2);

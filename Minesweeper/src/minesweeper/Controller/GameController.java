@@ -25,7 +25,7 @@ public class GameController {
     }
     public void ResumeButtonClicked(Event event)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
     public void PauseButtonClicked(Event event)
     {

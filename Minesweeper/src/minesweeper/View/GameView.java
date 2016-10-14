@@ -17,34 +17,52 @@
  */
 package minesweeper.View;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
  *
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
  */
 public class GameView extends GameViewSuper{
     
     public Button pauseButton;
     public BorderPane gameFrame;
-    
+    private Stage stage;
     public GameView(){
         super();
-        buttonPaneWidth = 35.0;
-        playButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PLAY).getButton();
-        pauseButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PAUSE).getButton();
-        rulesButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.HELP).getButton();
-        resumeButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PLAY).getButton();
+        buttonPaneWidth = 10.0;
+        buttonWidth = 5;
+        playButton = new GameButton(20, GameButton.ButtonEnum.PLAY).getButton();
+        pauseButton = new GameButton(20, GameButton.ButtonEnum.PAUSE).getButton();
+        rulesButton = new GameButton(20, GameButton.ButtonEnum.HELP).getButton();
+        resumeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PLAY).getButton();
+        buttonPane = new VBox();
+        gameFrame = new BorderPane();
+        stage = new Stage();
+        
     }
 
 
     public void update(Stage primaryStage) {
-        playButton.setAlignment(Pos.CENTER);
-        playButton.setMaxWidth(buttonWidth);
-        rulesButton.setMaxWidth(buttonWidth);
+        buttonPane.setPadding(new Insets(5));
+        buttonPane.setAlignment(Pos.BASELINE_LEFT);
+        buttonPane.getChildren().add(pauseButton);
+        buttonPane.getChildren().add(playButton);
+        gameFrame.setLeft(buttonPane);
+        Scene scene = new Scene(gameFrame, 300, 200);
+        stage.setTitle("Minesweeper");
+        stage.setScene(scene);
+        //stage.setResizable(false);
+        
+        
+        stage.show();
+        stage.centerOnScreen();
     }
     
 }

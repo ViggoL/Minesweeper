@@ -29,51 +29,33 @@ public class MainMenuController {
     {
         this.view = view;
         this.stage = stage;
-        view.playButton.setOnMouseClicked(new EventHandler()
-        {
-            @Override
-            public void handle(Event event) {
-                MouseEvent in;
-                if (event instanceof MouseEvent) {
-                    in = (MouseEvent)event;
-                    if (in.getButton() == MouseButton.PRIMARY) playButtonSelected();
-                    else if (in.getButton() == MouseButton.SECONDARY) playButtonClickedRight();
-                }
-                
-                
-              
+        view.playButton.setOnMouseClicked((Event event) -> {
+            MouseEvent in;
+            if (event instanceof MouseEvent) {
+                in = (MouseEvent)event;
+                if (in.getButton() == MouseButton.PRIMARY) playButtonSelected();
+                else if (in.getButton() == MouseButton.SECONDARY) playButtonClickedRight();
             }
         });
-        view.playButton.setOnKeyPressed(new EventHandler(){
-             @Override
-             public void handle(Event event){
-                 KeyEvent key;
-                 if (event instanceof KeyEvent){
-                    key = (KeyEvent) event;
-                    if (key.getCode().equals(KeyCode.ENTER))
-                        playButtonSelected();
-                }
-             }
-         });
-        
-        view.settingsButton.setOnMouseClicked(new EventHandler(){
-           @Override
-           public void handle(Event event) {
-               settingsButtonClicked();
-           }
+        view.playButton.setOnKeyPressed((Event event) -> {
+            KeyEvent key;
+            if (event instanceof KeyEvent){
+                key = (KeyEvent) event;
+                if (key.getCode().equals(KeyCode.ENTER))
+                    playButtonSelected();
+            }
         });
         
-        view.rulesButton.setOnMouseClicked(new EventHandler()
-        {
-            @Override
-            public void handle(Event event) {
-                MouseEvent mouse;
-                if (event instanceof MouseEvent){
-                    mouse = (MouseEvent) event;
-                    if(mouse.getButton() == MouseButton.PRIMARY)
-                        rulesButtonClicked();
-                }
-                    
+        view.settingsButton.setOnMouseClicked((Event event) -> {
+            settingsButtonClicked();
+        });
+        
+        view.rulesButton.setOnMouseClicked((Event event) -> {
+            MouseEvent mouse;
+            if (event instanceof MouseEvent){
+                mouse = (MouseEvent) event;
+                if(mouse.getButton() == MouseButton.PRIMARY)
+                    rulesButtonClicked();
             }
         });
     }
@@ -83,6 +65,7 @@ public class MainMenuController {
         GameView gameView = new GameView();
         GameController gameController = new GameController(gameView);
         gameView.update(stage);
+        stage.close();
     }
     public void playButtonClickedRight()
     {
