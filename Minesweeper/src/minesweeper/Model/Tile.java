@@ -21,7 +21,7 @@ public class Tile extends Observable{
     private boolean covered;
     public Tile(Point point, TileType type)
     {
-        this.covered = false;
+        this.covered = true;
         this.type = type;
         this.point = point;
     }
@@ -36,15 +36,27 @@ public class Tile extends Observable{
     public void setType(TileType type)
     {
         this.type = type;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
     public void setNumber(int number)
     {
         this.type = TileType.NUMBER;
         this.number = number;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
     public void setNumber(Board board)
     {
         setNumber(getAdjacentMines(board));
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
     public int getNumber()
     {
@@ -55,9 +67,13 @@ public class Tile extends Observable{
     {
         return covered;
     }
-    public void setCovered(boolean covered)
+    public void uncover()
     {
-        this.covered = covered;
+        this.covered = false;
+        
+    // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
     
     public int getAdjacentMines(Board board)
