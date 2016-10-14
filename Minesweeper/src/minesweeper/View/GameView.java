@@ -37,6 +37,7 @@ public class GameView extends GameViewSuper{
         playButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PLAY).getButton();
         pauseButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PAUSE).getButton();
         rulesButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.HELP).getButton();
+        resumeButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PLAY).getButton();
     }
 
 

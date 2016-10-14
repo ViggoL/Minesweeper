@@ -19,29 +19,11 @@ public class GameController {
     {
         this.gameView = gameView;
         
-        gameView.playButton.setOnMouseClicked(new EventHandler(){
-            @Override
-            public void handle(Event event) {
-                PlayButtonClicked(event);
-            } 
-        });
-        gameView.pauseButton.setOnMouseClicked(new EventHandler() {
-            @Override
-            public void handle(Event event) {
-                PauseButtonClicked(event);
-            }
-            
-        });
-        gameView.rulesButton.setOnMouseClicked(new EventHandler() {
-            @Override
-            public void handle(Event event) {
-                RulesButtonClicked(event)
-            }
-            
-        }
-        );
+        gameView.resumeButton.setOnMouseClicked(this::ResumeButtonClicked);
+        gameView.pauseButton.setOnMouseClicked(this::PauseButtonClicked);
+        gameView.rulesButton.setOnMouseClicked(this::RulesButtonClicked);
     }
-    public void PlayButtonClicked(Event event)
+    public void ResumeButtonClicked(Event event)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
