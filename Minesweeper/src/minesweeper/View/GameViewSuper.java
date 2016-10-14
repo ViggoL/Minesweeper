@@ -26,23 +26,23 @@ import javafx.stage.Stage;
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public abstract class GameViewButtons {
+public abstract class GameViewSuper {
     
     public Button playButton;
     public Button settingsButton;
     public Button rulesButton;
     protected VBox buttonPane;
-    double buttonSpacing;
-    double buttonWidth;
-    double buttonPaneWidth;
+    protected double buttonSpacing;
+    protected double buttonWidth;
+    protected double buttonPaneWidth;
 
-    public GameViewButtons() {
+    public GameViewSuper() {
         buttonPane = new VBox();
         buttonSpacing = 10.0;
         buttonWidth = Double.MAX_VALUE;
         
         buttonPane.setSpacing(buttonSpacing);
-        buttonPane.setAlignment(Pos.CENTER);
+        buttonPane.setAlignment(Pos.TOP_CENTER);
     }
     
 }

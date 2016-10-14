@@ -26,18 +26,20 @@ import javafx.stage.Stage;
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class GameView extends GameViewButtons{
+public class GameView extends GameViewSuper{
     
     public Button pauseButton;
     public BorderPane gameFrame;
     
-    GameView(){
+    public GameView(){
         super();
         buttonPaneWidth = 35.0;
         playButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PLAY).getButton();
         pauseButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.PAUSE).getButton();
         rulesButton = new GameButton(buttonPaneWidth, GameButton.ButtonEnum.HELP).getButton();
     }
+
+
     public void update(Stage primaryStage) {
         playButton.setAlignment(Pos.CENTER);
         playButton.setMaxWidth(buttonWidth);

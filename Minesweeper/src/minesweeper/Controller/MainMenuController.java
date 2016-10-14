@@ -34,7 +34,7 @@ public class MainMenuController {
                 MouseEvent in;
                 if (event instanceof MouseEvent) {
                     in = (MouseEvent)event;
-                    if (in.getButton() == MouseButton.PRIMARY) playButtonClicked();
+                    if (in.getButton() == MouseButton.PRIMARY) playButtonSelected();
                     else if (in.getButton() == MouseButton.SECONDARY) playButtonClickedRight();
                 }
                 
@@ -49,7 +49,7 @@ public class MainMenuController {
                  if (event instanceof KeyEvent){
                     key = (KeyEvent) event;
                     if (key.getCode().equals(KeyCode.ENTER))
-                        playButtonClicked();
+                        playButtonSelected();
                 }
              }
          });
@@ -76,7 +76,7 @@ public class MainMenuController {
         });
     }
     
-    public void playButtonClicked(){
+    public void playButtonSelected(){
         Alert dialog = new Alert(AlertType.INFORMATION);
         dialog.setTitle("GameDialogue");
         dialog.setContentText("Grid view will show here");
