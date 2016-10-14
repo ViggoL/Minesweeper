@@ -8,12 +8,13 @@ package minesweeper.Model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
 
 /**
  *
  * @author Viggo
  */
-public class Tile {
+public class Tile extends Observable{
     private Point point;
     private TileType type;
     private int number;

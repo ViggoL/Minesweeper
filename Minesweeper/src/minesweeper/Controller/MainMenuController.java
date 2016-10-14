@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -33,13 +34,25 @@ public class MainMenuController {
                 MouseEvent in;
                 if (event instanceof MouseEvent) {
                     in = (MouseEvent)event;
-                    if (in.getButton() == MouseButton.SECONDARY) playButtonClickedRight();
+                    if (in.getButton() == MouseButton.PRIMARY) playButtonClicked();
+                    else if (in.getButton() == MouseButton.SECONDARY) playButtonClickedRight();
                 }
                 
                 
               
             }
         });
+        view.playButton.setOnKeyPressed(new EventHandler(){
+             @Override
+             public void handle(Event event){
+                 KeyEvent key;
+                 if (event instanceof KeyEvent){
+                    key = (KeyEvent) event;
+                    if (key.getCode().equals(KeyCode.ENTER))
+                        playButtonClicked();
+                }
+             }
+         });
         
         view.settingsButton.setOnMouseClicked(new EventHandler(){
            @Override
@@ -53,13 +66,21 @@ public class MainMenuController {
             @Override
             public void handle(Event event) {
                 MouseEvent mouse;
-                KeyEvent enter;
                 if (event instanceof MouseEvent){
-                    
+                    mouse = (MouseEvent) event;
+                    if(mouse.getButton() == MouseButton.PRIMARY)
+                        rulesButtonClicked();
                 }
                     
             }
         });
+    }
+    
+    public void playButtonClicked(){
+        Alert dialog = new Alert(AlertType.INFORMATION);
+        dialog.setTitle("GameDialogue");
+        dialog.setContentText("Grid view will show here");
+        dialog.showAndWait();
     }
     public void playButtonClickedRight()
     {
@@ -73,7 +94,10 @@ public class MainMenuController {
     }
     public void rulesButtonClicked()
     {
-        
+        Alert dialog = new Alert(AlertType.INFORMATION);
+        dialog.setTitle("Rules dialogue");
+        dialog.setContentText("Rules will show in a non-alert window");
+        dialog.showAndWait();
     }
     
 }
