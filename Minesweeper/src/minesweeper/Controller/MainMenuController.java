@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import minesweeper.View.MainMenuView;
 
 /**
@@ -23,10 +24,11 @@ import minesweeper.View.MainMenuView;
  */
 public class MainMenuController {
     private MainMenuView view;
-    public MainMenuController(MainMenuView view)
+    private Stage stage;
+    public MainMenuController(MainMenuView view, Stage stage)
     {
         this.view = view;
-        
+        this.stage = stage;
         view.playButton.setOnMouseClicked(new EventHandler()
         {
             @Override
@@ -77,10 +79,10 @@ public class MainMenuController {
     }
     
     public void playButtonSelected(){
-        Alert dialog = new Alert(AlertType.INFORMATION);
-        dialog.setTitle("GameDialogue");
-        dialog.setContentText("Grid view will show here");
-        dialog.showAndWait();
+        view.root.setVisible(false);
+        GameView gameView = new GameView();
+        GameController gameController = new GameController(gameView);
+        gameView.update(stage);
     }
     public void playButtonClickedRight()
     {

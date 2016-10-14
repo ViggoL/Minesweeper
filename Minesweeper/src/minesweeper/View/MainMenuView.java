@@ -22,7 +22,7 @@ import minesweeper.View.GameButton.ButtonEnum;
  * @author Viggo
  */
 public class MainMenuView extends GameViewSuper {
-
+    public VBox root;
     public MainMenuView()
     {
         super();
@@ -51,7 +51,7 @@ public class MainMenuView extends GameViewSuper {
         buttonPane.setMaxWidth(buttonPaneWidth);
         buttonPane.getChildren().addAll(playButton,settingsButton,rulesButton);
         
-        VBox root = new VBox();
+        root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(title, buttonPane);
         
@@ -63,5 +63,5 @@ public class MainMenuView extends GameViewSuper {
         primaryStage.show();
     }
     
-
+    
 }

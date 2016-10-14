@@ -44,7 +44,6 @@ public class GameView extends GameViewSuper{
     public void update(Stage primaryStage) {
         playButton.setAlignment(Pos.CENTER);
         playButton.setMaxWidth(buttonWidth);
-        settingsButton.setMaxWidth(buttonWidth);
         rulesButton.setMaxWidth(buttonWidth);
     }
     

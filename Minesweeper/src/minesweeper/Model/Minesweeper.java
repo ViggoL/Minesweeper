@@ -27,7 +27,7 @@ public class Minesweeper extends Application {
     @Override
     public void start(Stage primaryStage) {
         MainMenuView view = new MainMenuView();
-        MainMenuController controller = new MainMenuController(view);
+        MainMenuController controller = new MainMenuController(view, primaryStage);
         
         view.update(primaryStage);
     }

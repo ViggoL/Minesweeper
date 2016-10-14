@@ -32,7 +32,7 @@ public abstract class GameViewSuper {
     public Button settingsButton;
     public Button rulesButton;
     public Button resumeButton;
-    protected VBox buttonPane;
+    public VBox buttonPane;
     protected double buttonSpacing;
     protected double buttonWidth;
     protected double buttonPaneWidth;
