@@ -23,6 +23,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
@@ -35,8 +36,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
 import minesweeper.Model.Minesweeper;
 import minesweeper.Model.Tile;
+
+import minesweeper.Model.GameTimer;
+
 
 /**
  *
@@ -50,19 +55,22 @@ public class GameView extends GameViewSuper implements Observer{
     public BorderPane gameFrame;
     public GridPane grid;
     public MenuBar menuBar;
+    public Label timeLabel;
     public final Menu menu1, menu2, menu3;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
     
     private Stage stage;
-    public GameView(){
+    public GameView() {
         super();
-        gridTileSize = 5.0;
+
+        
         buttonPaneWidth = 20.0;
         buttonWidth = 20;
-        //resumebutton = new GameButton(20, GameButton.ButtonEnum.PLAY).getButton();
-        pauseButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PAUSE).getButton();
-        rulesButton = new GameButton(buttonWidth, GameButton.ButtonEnum.HELP).getButton();
-        resumeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PLAY).getButton();
-        
+        gridTileSize = buttonWidth * 1.75;
+
+        pauseButton = new GameButton(20, GameButton.ButtonEnum.PAUSE).getButton();
+        rulesButton = new GameButton(20, GameButton.ButtonEnum.HELP).getButton();
+        resumeButton = new GameButton(20, GameButton.ButtonEnum.PLAY).getButton();
+        timeLabel = new Label();
         
         menu1 = new Menu("File");
         menu2 = new Menu("Settings");
@@ -81,8 +89,8 @@ public class GameView extends GameViewSuper implements Observer{
         
         buttonPane.setPadding(new Insets(5));
         buttonPane.setAlignment(Pos.BASELINE_LEFT);
-        buttonPane.getChildren().addAll(pauseButton, rulesButton);
-        
+
+        buttonPane.getChildren().addAll(pauseButton, rulesButton, timeLabel);
         gameFrame.setLeft(buttonPane);
         gameFrame.setTop(menuBar);
         gameFrame.setCenter(grid);
@@ -108,7 +116,7 @@ public class GameView extends GameViewSuper implements Observer{
         
         for(Tile t: game.getBoardTiles()) {
             Button b = new Button(Integer.toString(game.getBoardTiles().indexOf(t)));
-            b.setMinSize(buttonWidth*1.75, buttonWidth*1.75);
+            b.setMinSize(gridTileSize, gridTileSize);
             grid.add(b, t.getX(), t.getY());
         }
         
