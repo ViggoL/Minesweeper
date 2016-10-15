@@ -17,21 +17,12 @@
  */
 package minesweeper.Model;
 
-import java.util.Observable;
-
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class MinesweeperTheGame {
-    
+public enum Difficulty {
 
-    
-    MinesweeperTheGame(){
-        super();
-
-    }
+EASY,MEDIUM,HARD;
     
 }
-
-
