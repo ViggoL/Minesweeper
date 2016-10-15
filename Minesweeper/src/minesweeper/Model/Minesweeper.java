@@ -7,46 +7,53 @@ package minesweeper.Model;
  */
 
 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import minesweeper.Controller.MainMenuController;
-import minesweeper.View.MainMenuView;
+import java.util.List;
+import java.util.Observable;
+
 
 /**
  *
  * @author Viggo
  */
-public class Minesweeper extends Application {
+public class Minesweeper extends Observable{
     private boolean paused;
-    private Board board;
+    public Board board;
+    private GameTimer timer;
+    private Settings settings;
     
-    @Override
-    public void start(Stage primaryStage) {
-        paused = false;
+    public Minesweeper() {
+        super();
+        this.paused = false;
         board = new Board();
+        settings = new Settings();
+        timer = new GameTimer(); 
         
-        MainMenuView view = new MainMenuView();
-        MainMenuController controller = new MainMenuController(view, primaryStage);
-        
-        view.update(primaryStage);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
+    public List<Tile> getBoardTiles(){
+        return board.getTiles();
     }
     
-}
+    public void pause(){
+        timer.stopTimer();
+        this.paused = true;
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    public void resume(){
+        timer.startTimer();
+        this.paused = false;
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    public int getTime(){
+        return timer.getSeconds();
+    }
+    
+    public void startNewGame(){
 
-enum Difficulty
-{
-    EASY, MEDIUM, HARD
+        board = new Board(settings.getDifficulty());
+    }
 }

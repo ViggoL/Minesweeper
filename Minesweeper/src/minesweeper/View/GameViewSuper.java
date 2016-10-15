@@ -28,7 +28,6 @@ import javafx.stage.Stage;
  */
 public abstract class GameViewSuper {
     
-    public Button playButton;
     public Button settingsButton;
     public Button rulesButton;
     public Button resumeButton;

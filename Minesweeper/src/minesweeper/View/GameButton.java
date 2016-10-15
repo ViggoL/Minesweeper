@@ -93,9 +93,12 @@ public class GameButton {
                 button.setGraphic(root);
                 break;
             case HELP:
+                Font myFont = new Font("Garamond",diameter);
+                
                 Text text = new Text("?");
-                Font myFont = new Font("Garamond",70);
+                text.setEffect(shadow);
                 text.setFont(myFont);
+                
                 button.setGraphic(text);
                 break;
             default: break;

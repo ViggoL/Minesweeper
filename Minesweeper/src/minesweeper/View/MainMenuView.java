@@ -13,9 +13,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.*;
 import javafx.*;
+import static javafx.application.Application.launch;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
 import minesweeper.View.GameButton.ButtonEnum;
+import static javafx.application.Application.launch;
 
 /**
  *
@@ -26,7 +28,7 @@ public class MainMenuView extends GameViewSuper {
     public MainMenuView()
     {
         super();
-        playButton = new Button();
+        resumeButton = new Button();
         settingsButton = new Button();
         rulesButton = new Button();
         this.buttonPaneWidth = 70.0;
@@ -39,17 +41,17 @@ public class MainMenuView extends GameViewSuper {
         title.setFont(new Font("Helvetica", 30));
         title.setPadding(new Insets(5,5,20,5));
         
-        playButton.setAlignment(Pos.CENTER);
-        playButton.setText("Play");
+        resumeButton.setAlignment(Pos.CENTER);
+        resumeButton.setText("Play");
         settingsButton.setText("Settings");
         rulesButton.setText("Rules");
         
-        playButton.setMaxWidth(buttonWidth);
+        resumeButton.setMaxWidth(buttonWidth);
         settingsButton.setMaxWidth(buttonWidth);
         rulesButton.setMaxWidth(buttonWidth);
         
         buttonPane.setMaxWidth(buttonPaneWidth);
-        buttonPane.getChildren().addAll(playButton,settingsButton,rulesButton);
+        buttonPane.getChildren().addAll(resumeButton,settingsButton,rulesButton);
         
         root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
@@ -62,6 +64,5 @@ public class MainMenuView extends GameViewSuper {
         primaryStage.setResizable(false);
         primaryStage.show();
     }
-    
-    
+
 }

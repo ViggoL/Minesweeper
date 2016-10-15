@@ -17,23 +17,35 @@
  */
 package minesweeper.View;
 
+import java.util.Observable;
+import java.util.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Box;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import minesweeper.Model.Minesweeper;
+import minesweeper.Model.Tile;
 
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
  */
-public class GameView extends GameViewSuper{
+public class GameView extends GameViewSuper implements Observer{
     
+    public Minesweeper game;
+    private double gridTileSize;
     public Button pauseButton;
     public BorderPane gameFrame;
     public GridPane grid;
@@ -43,11 +55,12 @@ public class GameView extends GameViewSuper{
     private Stage stage;
     public GameView(){
         super();
-        buttonPaneWidth = 10.0;
-        buttonWidth = 5;
-        playButton = new GameButton(20, GameButton.ButtonEnum.PLAY).getButton();
-        pauseButton = new GameButton(20, GameButton.ButtonEnum.PAUSE).getButton();
-        rulesButton = new GameButton(20, GameButton.ButtonEnum.HELP).getButton();
+        gridTileSize = 5.0;
+        buttonPaneWidth = 20.0;
+        buttonWidth = 20;
+        //resumebutton = new GameButton(20, GameButton.ButtonEnum.PLAY).getButton();
+        pauseButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PAUSE).getButton();
+        rulesButton = new GameButton(buttonWidth, GameButton.ButtonEnum.HELP).getButton();
         resumeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PLAY).getButton();
         
         
@@ -61,24 +74,48 @@ public class GameView extends GameViewSuper{
         grid = new GridPane();
         buttonPane = new VBox();
         
-        stage = new Stage();
+        grid.setAlignment(Pos.CENTER_LEFT);
+        grid.setGridLinesVisible(false);
+        //BorderStroke[] BorderStroke = null;
+        //grid.setBorder(new Border(BorderStroke));
         
-    }
-
-
-    public void update(Stage primaryStage) {
         buttonPane.setPadding(new Insets(5));
         buttonPane.setAlignment(Pos.BASELINE_LEFT);
-        buttonPane.getChildren().addAll(pauseButton,playButton);
+        buttonPane.getChildren().addAll(pauseButton, rulesButton);
         
         gameFrame.setLeft(buttonPane);
         gameFrame.setTop(menuBar);
         gameFrame.setCenter(grid);
-        Scene scene = new Scene(gameFrame, 300, 200);
+        
+        Box tempV = new Box();
+        tempV.setWidth(buttonPaneWidth);
+        gameFrame.setRight(tempV);
+        
+        tempV = new Box();
+        tempV.setHeight(buttonPaneWidth);
+        gameFrame.setBottom(tempV);
+        
+        stage = new Stage();
+        
+    }
+
+    @Override
+    public void update(Observable o,Object primaryStage) {
+        this.game = (Minesweeper) o;
+        
+        // http://www.java2s.com/Code/Java/JavaFX/UsingImageViewtodisplayimage.htm
+
+        
+        for(Tile t: game.getBoardTiles()) {
+            Button b = new Button(Integer.toString(game.getBoardTiles().indexOf(t)));
+            b.setMinSize(buttonWidth*1.75, buttonWidth*1.75);
+            grid.add(b, t.getX(), t.getY());
+        }
+        
+        Scene scene = new Scene(gameFrame);
         stage.setTitle("Minesweeper");
         stage.setScene(scene);
-        //stage.setResizable(false);
-        
+        stage.setResizable(false);
         
         stage.show();
         stage.centerOnScreen();

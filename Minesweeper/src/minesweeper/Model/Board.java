@@ -45,12 +45,33 @@ public class Board extends Observable{
                     tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
                 }
             }
+            break;
+            case MEDIUM: while(tiles.size() < 200) {
+                while(tiles.size()/20 <= 19){
+                    x = tiles.size()%20;
+                    y = tiles.size()/20;
+                    tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
+                }
+            }
+            break;
+            case HARD: while(tiles.size() < 400) {
+                while(tiles.size()/40 <= 39){
+                    x = tiles.size()%40;
+                    y = tiles.size()/40;
+                    tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
+                }
+            }
+            break;
         }
+    }
+
+    public Board() {
+        this(Difficulty.EASY);
     }
     
     public List<Tile> getTiles()
     {
-        return this.tiles;
+        return tiles;
     }
     
     /**

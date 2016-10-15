@@ -16,6 +16,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import minesweeper.Model.Board;
+import minesweeper.Model.Minesweeper;
 import minesweeper.View.MainMenuView;
 
 /**
@@ -29,7 +31,7 @@ public class MainMenuController {
     {
         this.view = view;
         this.stage = stage;
-        view.playButton.setOnMouseClicked((Event event) -> {
+        view.resumeButton.setOnMouseClicked((Event event) -> {
             MouseEvent in;
             if (event instanceof MouseEvent) {
                 in = (MouseEvent)event;
@@ -37,7 +39,7 @@ public class MainMenuController {
                 else if (in.getButton() == MouseButton.SECONDARY) playButtonClickedRight();
             }
         });
-        view.playButton.setOnKeyPressed((Event event) -> {
+        view.resumeButton.setOnKeyPressed((Event event) -> {
             KeyEvent key;
             if (event instanceof KeyEvent){
                 key = (KeyEvent) event;
@@ -64,12 +66,13 @@ public class MainMenuController {
         view.root.setVisible(false);
         GameView gameView = new GameView();
         GameController gameController = new GameController(gameView);
-        gameView.update(stage);
+        Minesweeper game = new Minesweeper();
+        gameView.update(game, stage);
         stage.close();
     }
     public void playButtonClickedRight()
     {
-        view.playButton.setText("Don't play!");
+        view.resumeButton.setText("Don't play!");
     }
     public void settingsButtonClicked(){
         Alert dialog = new Alert(AlertType.INFORMATION);
