@@ -65,11 +65,13 @@ public class Board extends Observable{
         return null;
     }
     
-    private ArrayList<Object[]> getInfo(){
-        ArrayList<TileType> typeList = new ArrayList();
+    /**
+     * Get information on Tile Point(x and y coordinates) and TileType
+     * @return ArrayList<Object[]> where Object[0] is Point and Object[1] is TileType
+     */
+    public ArrayList<Object[]> getTileInfo(){
         ArrayList<Object[]> infoList = new ArrayList();
         for(Tile t: (ArrayList<Tile>) tiles){
-            typeList.add(t.getType()); 
             Object [] o = {t.getPoint(),t.getType()}; 
             infoList.add(o);
         }
@@ -80,8 +82,7 @@ public class Board extends Observable{
     @Override
     public String toString(){
         StringBuilder string = new StringBuilder();
-        for(Object[] ss: getInfo()){
-            //for(String s: Arrays.toString(ss))
+        for(Object[] ss: getTileInfo()){
                 string.append(Arrays.toString(ss));
             string.append("\n");
         }
