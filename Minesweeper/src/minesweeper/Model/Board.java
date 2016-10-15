@@ -18,17 +18,19 @@
 package minesweeper.Model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class Board {
+public class Board extends Observable{
     private List<Tile> tiles;
     private boolean win;
     
-    Board(Difficulty diff){
+    public Board(Difficulty diff){
         win = false;
         tiles = new ArrayList<>();
         int x = 0;
@@ -37,7 +39,7 @@ public class Board {
         switch(diff){
             case EASY: while(tiles.size() < 100) {
                 while(tiles.size()/10 <= 9){
-                    x = tiles.size()/100;
+                    x = tiles.size()%10;
                     y = tiles.size()/10;
                     tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
                 }
@@ -60,5 +62,27 @@ public class Board {
         for (Tile t : tiles)
                 if (t.getPoint().equals(point)) return t;
         return null;
+    }
+    
+    private ArrayList<String[]> getInfo(){
+        ArrayList<TileType> typeList = new ArrayList();
+        ArrayList<String[]> infoList = new ArrayList();
+        for(Tile t: (ArrayList<Tile>) tiles){
+            typeList.add(t.getType());
+            String [] s = {Integer.toString(t.getX()),Integer.toString(t.getY()),t.getType().toString()}; 
+            infoList.add(s);
+        }
+        return infoList;
+    }
+    
+    @Override
+    public String toString(){
+        StringBuilder string = new StringBuilder();
+        for(String[] ss: getInfo()){
+            for(String s: ss)
+                string.append(s);
+            string.append("\n");
+        }
+        return string.toString();
     }
 }
