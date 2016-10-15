@@ -17,39 +17,47 @@
  */
 package minesweeper.View;
 
+import java.util.Observable;
+import java.util.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import minesweeper.Model.GameTimer;
 
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
  */
-public class GameView extends GameViewSuper{
+public class GameView extends GameViewSuper implements Observer{
     
     public Button pauseButton;
     public BorderPane gameFrame;
     public GridPane grid;
     public MenuBar menuBar;
+    public Label timeLabel;
+    public GameTimer gameTimer;
     public final Menu menu1, menu2, menu3;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
     
     private Stage stage;
-    public GameView(){
+    public GameView() {
         super();
+        gameTimer = new GameTimer();
+        gameTimer.startTimer();
         buttonPaneWidth = 10.0;
         buttonWidth = 5;
         playButton = new GameButton(20, GameButton.ButtonEnum.PLAY).getButton();
         pauseButton = new GameButton(20, GameButton.ButtonEnum.PAUSE).getButton();
         rulesButton = new GameButton(20, GameButton.ButtonEnum.HELP).getButton();
         resumeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PLAY).getButton();
-        
+        timeLabel = new Label();
         
         menu1 = new Menu("File");
         menu2 = new Menu("Settings");
@@ -69,7 +77,7 @@ public class GameView extends GameViewSuper{
     public void update(Stage primaryStage) {
         buttonPane.setPadding(new Insets(5));
         buttonPane.setAlignment(Pos.BASELINE_LEFT);
-        buttonPane.getChildren().addAll(pauseButton,playButton);
+        buttonPane.getChildren().addAll(pauseButton,playButton,timeLabel);
         
         gameFrame.setLeft(buttonPane);
         gameFrame.setTop(menuBar);
@@ -82,6 +90,11 @@ public class GameView extends GameViewSuper{
         
         stage.show();
         stage.centerOnScreen();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        timeLabel.setText(String.valueOf(((GameTimer)o).getSeconds()));
     }
     
 }
