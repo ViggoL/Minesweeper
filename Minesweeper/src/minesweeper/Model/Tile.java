@@ -29,6 +29,12 @@ public class Tile extends Observable{
     {
         return this.point;
     }
+    public int getX(){
+        return point.x;
+    }
+    public int getY(){
+        return point.y;
+    }
     public TileType getType()
     {
         return this.type;
@@ -100,7 +106,3 @@ public class Tile extends Observable{
     }
 }
 
-enum TileType
-{
-    BOMB, FLAG, NUMBER, EMPTY
-}
