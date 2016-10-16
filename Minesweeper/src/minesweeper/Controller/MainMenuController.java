@@ -63,13 +63,15 @@ public class MainMenuController {
     }
     
     public void playButtonSelected(){
+        stage.close();
         view.root.setVisible(false);
         GameView gameView = new GameView();
-        GameController gameController = new GameController(gameView);
+        //GameController gameController = new GameController(gameView);
         Minesweeper game = new Minesweeper();
         game.addObserver(gameView);
+        game.timer.addObserver(gameView);
         gameView.update(game, new Stage());
-        stage.close();
+        
     }
     public void playButtonClickedRight()
     {

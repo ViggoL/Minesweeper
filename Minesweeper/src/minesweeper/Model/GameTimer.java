@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.scene.control.Label;
+import minesweeper.View.ClockView;
 
 
 /**

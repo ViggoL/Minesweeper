@@ -29,9 +29,6 @@ import javafx.stage.Stage;
  */
 public abstract class GameViewSuper {
     
-    public Button settingsButton;
-    public Button rulesButton;
-    public Button resumeButton;
     public VBox buttonPane;
     public Scene scene;
     protected double buttonSpacing;

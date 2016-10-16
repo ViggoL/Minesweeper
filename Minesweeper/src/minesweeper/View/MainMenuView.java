@@ -16,7 +16,7 @@ import javafx.*;
 import static javafx.application.Application.launch;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
-import minesweeper.View.GameButton.ButtonEnum;
+import minesweeper.Controller.GameButton.ButtonEnum;
 import static javafx.application.Application.launch;
 
 /**

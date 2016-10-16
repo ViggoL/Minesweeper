@@ -77,6 +77,7 @@ public class Tile extends Observable{
     public void uncover()
     {
         this.covered = false;
+        System.out.println("Uncover tile and search surroundings!");
         
     // The model has changed, notify observers!
         this.setChanged();

@@ -71,4 +71,5 @@ public class Minesweeper extends Observable{
     public boolean isPaused(){
         return this.paused;
     }
+
 }
