@@ -19,6 +19,7 @@ package minesweeper.View;
 
 import java.util.Observable;
 import java.util.Observer;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
