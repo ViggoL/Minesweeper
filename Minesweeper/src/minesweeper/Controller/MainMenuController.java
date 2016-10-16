@@ -67,7 +67,8 @@ public class MainMenuController {
         GameView gameView = new GameView();
         GameController gameController = new GameController(gameView);
         Minesweeper game = new Minesweeper();
-        gameView.update(game, stage);
+        game.addObserver(gameView);
+        gameView.update(game, new Stage());
         stage.close();
     }
     public void playButtonClickedRight()

@@ -32,15 +32,17 @@ public class MinesweeperMain extends Application {
         paused = false;
         
         // The observable-observer initialization
-        Board board = new Board();
+        //Board board = new Board();
         Minesweeper game = new Minesweeper();
         GameView gameView = new GameView();
         
         game.addObserver(gameView);
+        game.timer.addObserver(gameView); 
+        for(Tile t: game.board.getTiles())
+            t.addObserver(gameView);
         
         MainMenuView view = new MainMenuView();
         new MainMenuController(view, primaryStage);
-        
         view.update(primaryStage);
     }
 

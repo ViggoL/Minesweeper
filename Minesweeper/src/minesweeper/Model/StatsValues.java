@@ -17,40 +17,10 @@
  */
 package minesweeper.Model;
 
-import java.util.Observable;
-import javafx.scene.paint.Color;
-import static minesweeper.Model.Difficulty.*;
-
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class Settings extends Observable{
-    private Color tileColor;
-    Difficulty difficulty;
-    
-    public Settings(){
-        tileColor = Color.GRAY;
-        difficulty = EASY;
-    }
-    
-    public Color getTileColor(){
-        return tileColor;
-    }
-    public void setTileColor(Color color){
-        this.tileColor = color;
-         // The model has changed, notify observers!
-        this.setChanged();
-        this.notifyObservers();
-    }
-    
-    public void setDifficulty(Difficulty diff){
-        this.difficulty = diff;
-    }
-
-    public Difficulty getDifficulty() {
-        return this.difficulty;
-    }
-    
-    
+public enum StatsValues {
+    IDENTITY,GAME,TIME, DIFFICULTY;
 }

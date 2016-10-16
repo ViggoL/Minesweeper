@@ -57,8 +57,7 @@ public class MainMenuView extends GameViewSuper {
         root.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(title, buttonPane);
         
-        Scene scene = new Scene(root, 200, 200);
-
+        scene = new Scene(root, 200, 200);
         primaryStage.setTitle("Minesweeper");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);

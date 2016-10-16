@@ -5,11 +5,13 @@
  */
 package minesweeper.Model;
 
+import java.util.Observable;
+
 /**
  *
  * @author Viggo
  */
-public class Point {
+public class Point extends Observable{
     public final int x, y;
     public Point(int x, int y)
     {

@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.scene.control.Label;
 
 
 /**
@@ -39,19 +40,23 @@ public class GameTimer extends Observable {
             }
             
         }, 0, interval);
+        
     }
     
     private void tick()
     {
         seconds++;
-        setChanged();
-        notifyObservers();
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
     
     public void stopTimer()
     {
-        seconds = 0;
+        //seconds = 0;
         ticking = false;
+
     }
 
     public int getSeconds()

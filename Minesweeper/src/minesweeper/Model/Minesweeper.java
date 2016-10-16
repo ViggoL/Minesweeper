@@ -18,7 +18,7 @@ import java.util.Observable;
 public class Minesweeper extends Observable{
     private boolean paused;
     public Board board;
-    private GameTimer timer;
+    public GameTimer timer;
     private Settings settings;
     
     public Minesweeper() {
@@ -29,6 +29,11 @@ public class Minesweeper extends Observable{
         timer = new GameTimer(); 
         
     }
+    
+    public Minesweeper(Difficulty diff){
+        this();
+        board = new Board(diff);
+    }
 
     public List<Tile> getBoardTiles(){
         return board.getTiles();
@@ -37,6 +42,7 @@ public class Minesweeper extends Observable{
     public void pause(){
         timer.stopTimer();
         this.paused = true;
+        
         this.setChanged();
         this.notifyObservers();
     }
@@ -44,6 +50,7 @@ public class Minesweeper extends Observable{
     public void resume(){
         timer.startTimer();
         this.paused = false;
+        
         this.setChanged();
         this.notifyObservers();
     }
@@ -55,5 +62,13 @@ public class Minesweeper extends Observable{
     public void startNewGame(){
 
         board = new Board(settings.getDifficulty());
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    public boolean isPaused(){
+        return this.paused;
     }
 }

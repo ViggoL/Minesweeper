@@ -18,6 +18,7 @@
 package minesweeper.View;
 
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -32,9 +33,12 @@ public abstract class GameViewSuper {
     public Button rulesButton;
     public Button resumeButton;
     public VBox buttonPane;
+    public Scene scene;
     protected double buttonSpacing;
     protected double buttonWidth;
     protected double buttonPaneWidth;
+    
+    
 
     public GameViewSuper() {
         buttonPane = new VBox();

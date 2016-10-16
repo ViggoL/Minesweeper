@@ -59,10 +59,10 @@ public class GameView extends GameViewSuper implements Observer{
     public Label timeLabel;
     public final Menu menu1, menu2, menu3;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
     
-    private Stage stage;
-    public GameView() {
+    private Stage stage, mainStage;;
+    public GameView(Minesweeper game) {
         super();
-
+        this.game = game;
         
         buttonPaneWidth = 20.0;
         buttonWidth = 20;
@@ -71,13 +71,13 @@ public class GameView extends GameViewSuper implements Observer{
         pauseButton = new GameButton(20, GameButton.ButtonEnum.PAUSE).getButton();
         rulesButton = new GameButton(20, GameButton.ButtonEnum.HELP).getButton();
         resumeButton = new GameButton(20, GameButton.ButtonEnum.PLAY).getButton();
+        
         timeLabel = new Label();
         
         menu1 = new Menu("File");
         menu2 = new Menu("Settings");
         menu3 = new Menu("Help");
         menuBar = new MenuBar();
-        menuBar.getMenus().addAll(menu1, menu2, menu3);
         
         gameFrame = new BorderPane();
         grid = new GridPane();
@@ -88,10 +88,16 @@ public class GameView extends GameViewSuper implements Observer{
         //BorderStroke[] BorderStroke = null;
         //grid.setBorder(new Border(BorderStroke));
         
-        buttonPane.setPadding(new Insets(5));
+        Insets inset = new Insets(5);
+        buttonPane.setPadding(inset);
+        timeLabel.setPadding(inset);
+        
         buttonPane.setAlignment(Pos.BASELINE_LEFT);
-
+        buttonPane.setSpacing(10);
+        
         buttonPane.getChildren().addAll(pauseButton, rulesButton, timeLabel);
+        menuBar.getMenus().addAll(menu1, menu2, menu3);
+        
         gameFrame.setLeft(buttonPane);
         gameFrame.setTop(menuBar);
         gameFrame.setCenter(grid);
@@ -105,23 +111,33 @@ public class GameView extends GameViewSuper implements Observer{
         gameFrame.setBottom(tempV);
         
         stage = new Stage();
+        scene = new Scene(gameFrame);
         
+    }
+    
+    public GameView(){
+        this(new Minesweeper());
     }
 
     @Override
     public void update(Observable o,Object primaryStage) {
         this.game = (Minesweeper) o;
+        if(primaryStage != null) {
+            mainStage = (Stage) primaryStage;
+            mainStage.close();
+        }
+        
+        timeLabel.setText("Time: " + Integer.toString(game.getTime()) + "s");
         
         // http://www.java2s.com/Code/Java/JavaFX/UsingImageViewtodisplayimage.htm
 
-        
         for(Tile t: game.getBoardTiles()) {
             Button b = new Button(Integer.toString(game.getBoardTiles().indexOf(t)));
             b.setMinSize(gridTileSize, gridTileSize);
             grid.add(b, t.getX(), t.getY());
         }
         
-        Scene scene = new Scene(gameFrame);
+        
         stage.setTitle("Minesweeper");
         stage.setScene(scene);
         stage.setResizable(false);
