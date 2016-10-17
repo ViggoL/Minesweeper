@@ -25,8 +25,9 @@ public class GameControllers extends VBox {
     private Minesweeper game;
     private final Button rulesButton, resumeButton, pauseButton;
     private HBox timeBox;
-    private final TimeLabel time;
+    //private final TimeLabel time;
     private Insets inset;
+    private final Button timeButton;
     
     public GameControllers(Minesweeper game)
     {
@@ -36,28 +37,19 @@ public class GameControllers extends VBox {
         pauseButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PAUSE).getButton();
         rulesButton = new GameButton(buttonWidth, GameButton.ButtonEnum.HELP).getButton();
         resumeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PLAY).getButton();
-        
-        time = new TimeLabel("Time: \n" + Integer.toString(game.getTime()) + " seconds");
-        game.addObserver(time);
-        
-        timeBox = new HBox(time);
-        
-        //timeBox.getChildren().add(time);
-        timeBox.setAlignment(Pos.BASELINE_CENTER);
-        this.setAlignment(Pos.BASELINE_LEFT);
-        
+        timeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.TIME).getButton();
+ 
         inset = new Insets(5);
-        time.setPadding(inset);
         this.setPadding(inset);
-        
         this.setSpacing(10);
+        this.setAlignment(Pos.BASELINE_CENTER);
          
         resumeButton.setOnMouseClicked(this::ResumeButtonClicked);
         pauseButton.setOnMouseClicked(this::PauseButtonClicked);
         rulesButton.setOnMouseClicked(this::RulesButtonClicked);
-        timeBox.setOnMouseClicked(this::TimePaneClicked);
+        timeButton.setOnMouseClicked(this::TimePaneClicked);
         
-        this.getChildren().addAll(pauseButton,rulesButton,timeBox);
+        this.getChildren().addAll(pauseButton,rulesButton,timeButton);
     }
     
     

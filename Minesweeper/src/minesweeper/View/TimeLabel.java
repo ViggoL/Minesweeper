@@ -20,7 +20,7 @@ public class TimeLabel extends Label implements Observer {
 
     public TimeLabel() {
         super("- - -");
-        this.setFont(Font.font("Consolas", 20));
+        this.setFont(Font.font("Helvetica", 20));
     }
 
     public TimeLabel(String string) {
@@ -32,7 +32,7 @@ public class TimeLabel extends Label implements Observer {
     public void update(Observable o, Object arg) {
         if(o instanceof Minesweeper){
             Minesweeper model = (Minesweeper) o;
-        this.setText("Time:" + model.getTime() + " s");
+            this.setText("Time:" + model.getTime() + " s");
         }
         else if (o instanceof GameTimer){
             GameTimer model = (GameTimer) o;

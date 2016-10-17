@@ -16,6 +16,8 @@
 package minesweeper.Controller;
 
 import java.util.Arrays;
+import java.util.Observable;
+import java.util.Observer;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -25,22 +27,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
+import minesweeper.Model.GameTimer;
+import minesweeper.Model.Minesweeper;
 
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class GameButton {
+public class GameButton implements Observer{
     
     private final Button button;
     private DropShadow shadow;
     private double shadowOffset;
     private double sideLength;
+    private Text text;
 
     public GameButton(double diameter, ButtonEnum type) {
         button = new Button();
@@ -95,13 +101,22 @@ public class GameButton {
             case HELP:
                 Font myFont = new Font("Garamond",diameter);
                 
-                Text text = new Text("?");
+                text = new Text("?");
                 text.setEffect(shadow);
                 text.setFont(myFont);
                 
                 button.setGraphic(text);
                 break;
-            default: break;
+            default: 
+                myFont = new Font("Garamond",14);
+                
+                text = new Text("Time");
+                text.setEffect(shadow);
+                text.setFont(myFont);
+                
+                button.setShape(new Rectangle(10.0,20.0));
+                button.setGraphic(text);
+                break;
                      
         }
             
@@ -111,8 +126,20 @@ public class GameButton {
         return button;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof Minesweeper){
+            Minesweeper model = (Minesweeper) o;
+            this.text = new Text(Integer.toString(model.getTime()));
+        }
+        else if (o instanceof GameTimer){
+            GameTimer model = (GameTimer) o;
+            this.text = new Text(Integer.toString(model.getSeconds()));
+        }
+    }
+
     public enum ButtonEnum {
-        PLAY,PAUSE,HELP;
+        PLAY,PAUSE,HELP,TIME;
     }
     
 }
