@@ -38,22 +38,34 @@ public class ClockView implements Observer, Runnable{
     private TimeLabel timeLabel;
     private final Scene scene;
     private int seconds;
-    private GameTimer timer;
     
-    public ClockView(GameTimer time){
-        timer = time;
+    public ClockView(GameTimer timer){
         Pane clock = new Pane();
         HBox timeBox = new HBox();
+        stage = new Stage();
         
         timeBox.setPadding(new Insets(10));
         timeBox.setMinSize(200.0, 50.0);
         timeBox.setAlignment(Pos.CENTER);
         
-        stage = new Stage();
+        
         timeLabel = new TimeLabel();
+        timer.addObserver(timeLabel);
+        
         timeBox.getChildren().add(timeLabel);
         clock.getChildren().add(timeBox);
         scene = new Scene(clock);
+
+        //stage.sizeToScene();
+        seconds = timer.getSeconds();
+        timeLabel.setText("Time: " + seconds + " seconds");
+        
+        stage.setTitle("Minesweeper Time");
+        stage.setScene(scene);
+        stage.setX(0.0);
+        stage.show();
+        
+        
     }
     
     public ClockView(Minesweeper game){
@@ -66,23 +78,8 @@ public class ClockView implements Observer, Runnable{
     public void run() {
         try{
             
-            seconds = timer.getSeconds();
-            
-            timeLabel.setText("Time: " + seconds + " seconds");
-            
-            
-            stage.setTitle("Minesweeper Time");
-            stage.setScene(scene);
-            
-            stage.sizeToScene();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-            
             stage.show();
 
-            
-            
-            
         }
         finally{
             //stage.close();
@@ -94,7 +91,15 @@ public class ClockView implements Observer, Runnable{
     @Override
     public void update(Observable o, Object arg) {
         
-        timeLabel.setText("Time: " + seconds + " seconds");
+        if(o instanceof GameTimer) {
+            GameTimer timer = (GameTimer) o;
+        
+            seconds = timer.getSeconds();
+            timeLabel.setText("Time: " + seconds + " seconds");
+            stage.setTitle("Minesweeper Time");
+            stage.setScene(scene);
+            stage.show();
+        }
     }
 
     public Runnable start() {

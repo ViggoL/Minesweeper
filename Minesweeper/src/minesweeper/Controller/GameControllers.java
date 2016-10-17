@@ -82,7 +82,6 @@ public class GameControllers extends VBox {
     }
     public void TimePaneClicked(Event event){
         ClockView clock = new ClockView(game.timer);
-        //game.timer.addObserver(clock);
         clock.start();
         game.timer.addObserver(clock);
     }

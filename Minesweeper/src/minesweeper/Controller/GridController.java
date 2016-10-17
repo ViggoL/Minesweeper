@@ -31,7 +31,6 @@ public class GridController extends GridPane{
         this.setGridLinesVisible(false);
 
         for(Tile t: game.getBoardTiles()) {
-            System.out.println(t.toString());
             ID = game.getBoardTiles().indexOf(t);
             
             Button b = new Button();
