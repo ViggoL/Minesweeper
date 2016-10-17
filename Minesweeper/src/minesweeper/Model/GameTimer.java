@@ -62,6 +62,13 @@ public class GameTimer extends Observable {
         this.setChanged();
         this.notifyObservers();
     }
+    
+    public void resumeTimer(){
+        ticking = true;
+        
+        this.setChanged();
+        this.notifyObservers();
+    }
 
     public int getSeconds()
     {

@@ -48,7 +48,7 @@ public class Minesweeper extends Observable{
     }
     
     public void resume(){
-        timer.startTimer();
+        timer.resumeTimer();
         this.paused = false;
         
         this.setChanged();

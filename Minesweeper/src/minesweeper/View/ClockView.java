@@ -64,12 +64,6 @@ public class ClockView implements Observer, Runnable{
 
     @Override
     public void run() {
-            update(timer, new Object());
-    
-    }
-    
-    @Override
-    public void update(Observable o, Object arg) {
         try{
             
             seconds = timer.getSeconds();
@@ -83,14 +77,24 @@ public class ClockView implements Observer, Runnable{
             stage.sizeToScene();
             stage.setAlwaysOnTop(true);
             stage.toFront();
-
+            
             stage.show();
+
+            
             
             
         }
         finally{
             //stage.close();
         }
+            //update(timer, new Object());
+    
+    }
+    
+    @Override
+    public void update(Observable o, Object arg) {
+        
+        timeLabel.setText("Time: " + seconds + " seconds");
     }
 
     public Runnable start() {
