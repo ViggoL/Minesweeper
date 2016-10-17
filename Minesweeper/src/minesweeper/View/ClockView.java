@@ -19,6 +19,8 @@ package minesweeper.View;
 
 import java.util.Observable;
 import java.util.Observer;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -43,12 +45,15 @@ public class ClockView implements Observer, Runnable{
         Pane clock = new Pane();
         HBox timeBox = new HBox();
         
+        timeBox.setPadding(new Insets(10));
+        timeBox.setMinSize(200.0, 50.0);
+        timeBox.setAlignment(Pos.CENTER);
+        
         stage = new Stage();
         timeLabel = new TimeLabel();
         timeBox.getChildren().add(timeLabel);
         clock.getChildren().add(timeBox);
         scene = new Scene(clock);
-        time.addObserver(this);
     }
     
     public ClockView(Minesweeper game){
@@ -59,35 +64,28 @@ public class ClockView implements Observer, Runnable{
 
     @Override
     public void run() {
-            seconds = timer.getSeconds();
-            
-            timeLabel.setText("Time: " + seconds + "seconds");
-            
-            
-            stage.setTitle("Minesweeper Time");
-            stage.setScene(scene);
-            stage.setResizable(false);
-
-            stage.show();
+            update(timer, new Object());
     
     }
     
     @Override
     public void update(Observable o, Object arg) {
         try{
-            GameTimer time = (GameTimer) o;
-            seconds = time.getSeconds();
+            
+            seconds = timer.getSeconds();
             
             timeLabel.setText("Time: " + seconds + " seconds");
             
             
             stage.setTitle("Minesweeper Time");
             stage.setScene(scene);
-            stage.setResizable(false);
-
-            stage.show();
+            
+            stage.sizeToScene();
             stage.setAlwaysOnTop(true);
             stage.toFront();
+
+            stage.show();
+            
             
         }
         finally{

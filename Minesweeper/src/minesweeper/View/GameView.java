@@ -20,7 +20,9 @@ package minesweeper.View;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -29,6 +31,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Box;
 import minesweeper.Controller.GameControllers;
 import minesweeper.Controller.GridController;
+import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
 
 
@@ -90,7 +93,35 @@ public class GameView extends GameViewSuper implements Observer{
 
     @Override
     public void update(Observable o, Object arg) {
-        gameFrame.setLeft(controller);
+        //gameFrame.setLeft(controller);
+        //gameFrame.getCenter().setVisible(false);
+        if(o instanceof GameTimer){
+            System.out.println("YO my man!");
+            GameTimer time = (GameTimer) o; 
+            if(time.getSeconds() > 0){
+                if(time.isTicking()){
+                    grid.setVisible(true);
+                    gameFrame.setCenter(grid);
+                }
+                else {
+                    grid.setVisible(false);
+                    gameFrame.setCenter(new TimeLabel("Time:" + game.getTime() + " seconds"));
+                }
+            }
+            else if (time.isTicking()) gameFrame.setCenter(grid);
+            else {
+                Alert theTimeIsNow;
+                theTimeIsNow = new Alert(Alert.AlertType.INFORMATION,"Click a tile to start playing!", ButtonType.OK);
+                theTimeIsNow.show();
+                    }
+        }
+        else if(o instanceof Minesweeper){
+            System.out.println("game update");
+        }
+        //this.controller
+        //grid.setVisible(false);
+        
+        System.out.println("Caller: " + o.getClass().toString());
         
     }
 }

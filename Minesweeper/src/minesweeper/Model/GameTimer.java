@@ -27,12 +27,12 @@ public class GameTimer extends Observable {
     int seconds = 0;
     
     public GameTimer() {
+        timer = new Timer();
         
     }
     
     public void startTimer()
     {
-        timer = new Timer();
         timer.schedule(new TimerTask(){
             @Override
             public void run() {
@@ -65,5 +65,9 @@ public class GameTimer extends Observable {
     public int getSeconds()
     {
         return seconds;
+    }
+    
+    public boolean isTicking(){
+        return ticking;
     }
 }

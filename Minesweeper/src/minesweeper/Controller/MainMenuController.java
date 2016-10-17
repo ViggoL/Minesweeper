@@ -73,14 +73,15 @@ public class MainMenuController {
         // the observers are added in methods
         Minesweeper model = new Minesweeper();
         GameView viewer = new GameView(model);
+        model.timer.addObserver(viewer);
 
         // force a call to all observers
         model.pause();
 
         // control for user input
-        GameControllers buttonPane = new GameControllers(model);
+        //GameControllers buttonPane = new GameControllers(model);
         
-        // GUI initialization 
+        /* GUI initialization 
         
         double buttonPaneWidth = 20.0;
         
@@ -104,7 +105,7 @@ public class MainMenuController {
         
         tempV = new Box();
         tempV.setHeight(buttonPaneWidth);
-        gameFrame.setBottom(tempV);
+        gameFrame.setBottom(tempV);*/
         
         primaryStage = new Stage();
         primaryStage.setTitle("Minesweeper");
