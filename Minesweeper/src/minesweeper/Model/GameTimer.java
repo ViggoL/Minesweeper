@@ -33,6 +33,7 @@ public class GameTimer extends Observable {
     
     public void startTimer()
     {
+        ticking = true;
         timer.schedule(new TimerTask(){
             @Override
             public void run() {

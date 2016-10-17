@@ -96,7 +96,6 @@ public class GameView extends GameViewSuper implements Observer{
         //gameFrame.setLeft(controller);
         //gameFrame.getCenter().setVisible(false);
         if(o instanceof GameTimer){
-            System.out.println("YO my man!");
             GameTimer time = (GameTimer) o; 
             if(time.getSeconds() > 0){
                 if(time.isTicking()){
@@ -118,10 +117,8 @@ public class GameView extends GameViewSuper implements Observer{
         else if(o instanceof Minesweeper){
             System.out.println("game update");
         }
-        //this.controller
-        //grid.setVisible(false);
         
-        System.out.println("Caller: " + o.getClass().toString());
+        //System.out.println("Caller: " + o.getClass().toString());
         
     }
 }

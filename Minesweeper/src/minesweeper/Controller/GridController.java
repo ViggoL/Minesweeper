@@ -18,7 +18,7 @@ import minesweeper.Model.Tile;
  * @author Viggo
  */
 public class GridController extends GridPane{
-    private final Minesweeper game;
+    private Minesweeper game;
     
     public GridController(Minesweeper game)
     {
@@ -45,9 +45,9 @@ public class GridController extends GridPane{
     }
     
     public void TileClicked(Event event){
-        if(!game.isPaused()) {
-            game.resume();
-        }
+
+        game.timer.startTimer();
+        
         Button b = (Button) event.getSource();
         int i = this.getChildren().indexOf(b);
         Tile t = game.getBoardTiles().get(i);
