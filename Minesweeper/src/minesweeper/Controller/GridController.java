@@ -7,6 +7,7 @@ package minesweeper.Controller;
 
 import java.util.ArrayList;
 import javafx.event.Event;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import minesweeper.Model.Minesweeper;
@@ -17,13 +18,17 @@ import minesweeper.Model.Tile;
  * @author Viggo
  */
 public class GridController extends GridPane{
-    private Minesweeper game;
+    private final Minesweeper game;
     
     public GridController(Minesweeper game)
     {
+        this.game = game;
         double buttonWidth = 20;
         double gridTileSize = buttonWidth * 1.75;
         int ID;
+        
+        this.setAlignment(Pos.CENTER_LEFT);
+        this.setGridLinesVisible(false);
 
         for(Tile t: game.getBoardTiles()) {
             System.out.println(t.toString());
@@ -40,7 +45,6 @@ public class GridController extends GridPane{
     }
     
     public void TileClicked(Event event){
-        System.out.println("I'm in!!");
         if(!game.isPaused()) {
             game.resume();
         }
@@ -48,5 +52,6 @@ public class GridController extends GridPane{
         int i = this.getChildren().indexOf(b);
         Tile t = game.getBoardTiles().get(i);
         t.uncover();
+        System.out.println("Tile number: " + i);
     }
 }

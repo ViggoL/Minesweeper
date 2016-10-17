@@ -16,7 +16,6 @@ import javafx.*;
 import static javafx.application.Application.launch;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
-import minesweeper.Controller.GameButton.ButtonEnum;
 import static javafx.application.Application.launch;
 
 /**
@@ -25,6 +24,9 @@ import static javafx.application.Application.launch;
  */
 public class MainMenuView extends GameViewSuper {
     public VBox root;
+    public final Button resumeButton;
+    public final Button settingsButton;
+    public final Button rulesButton;
     public MainMenuView()
     {
         super();

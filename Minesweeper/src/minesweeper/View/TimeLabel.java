@@ -19,7 +19,7 @@ public class TimeLabel extends Label implements Observer {
 
     public TimeLabel() {
         super("- - -");
-        this.setFont(Font.font("Consolas", 32));
+        this.setFont(Font.font("Consolas", 20));
     }
 
     public TimeLabel(String string) {
@@ -30,6 +30,6 @@ public class TimeLabel extends Label implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         Minesweeper model = (Minesweeper) o;
-        this.setText("Time:\n" + model.getTime() + "seconds");
+        this.setText("Time:" + model.getTime() + " s");
     }
 }

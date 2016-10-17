@@ -19,29 +19,17 @@ package minesweeper.View;
 
 import java.util.Observable;
 import java.util.Observer;
-import javafx.event.Event;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.image.Image;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-
+import minesweeper.Controller.GameControllers;
+import minesweeper.Controller.GridController;
 import minesweeper.Model.Minesweeper;
-import minesweeper.Model.Tile;
-
-import minesweeper.Model.GameTimer;
 
 
 /**
@@ -52,14 +40,13 @@ public class GameView extends GameViewSuper implements Observer{
     
     public Minesweeper game;
     private double gridTileSize;
-    public Button pauseButton;
+    public Button pauseButton, rulesButton,resumeButton;
     public BorderPane gameFrame;
     public GridPane grid;
     public MenuBar menuBar;
     public Label timeLabel;
     public final Menu menu1, menu2, menu3;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
-    
-    private Stage stage, mainStage;;
+    private final GameControllers controller;
     public GameView(Minesweeper game) {
         super();
         this.game = game;
@@ -68,11 +55,8 @@ public class GameView extends GameViewSuper implements Observer{
         buttonWidth = 20;
         gridTileSize = buttonWidth * 1.75;
 
-        pauseButton = new GameButton(20, GameButton.ButtonEnum.PAUSE).getButton();
-        rulesButton = new GameButton(20, GameButton.ButtonEnum.HELP).getButton();
-        resumeButton = new GameButton(20, GameButton.ButtonEnum.PLAY).getButton();
-        
-        timeLabel = new Label();
+        controller = new GameControllers(game);
+        grid = new GridController(game);
         
         menu1 = new Menu("File");
         menu2 = new Menu("Settings");
@@ -80,25 +64,9 @@ public class GameView extends GameViewSuper implements Observer{
         menuBar = new MenuBar();
         
         gameFrame = new BorderPane();
-        grid = new GridPane();
-        buttonPane = new VBox();
-        
-        grid.setAlignment(Pos.CENTER_LEFT);
-        grid.setGridLinesVisible(false);
-        //BorderStroke[] BorderStroke = null;
-        //grid.setBorder(new Border(BorderStroke));
-        
-        Insets inset = new Insets(5);
-        buttonPane.setPadding(inset);
-        timeLabel.setPadding(inset);
-        
-        buttonPane.setAlignment(Pos.BASELINE_LEFT);
-        buttonPane.setSpacing(10);
-        
-        buttonPane.getChildren().addAll(pauseButton, rulesButton, timeLabel);
         menuBar.getMenus().addAll(menu1, menu2, menu3);
         
-        gameFrame.setLeft(buttonPane);
+        gameFrame.setLeft(controller);
         gameFrame.setTop(menuBar);
         gameFrame.setCenter(grid);
         
@@ -110,40 +78,19 @@ public class GameView extends GameViewSuper implements Observer{
         tempV.setHeight(buttonPaneWidth);
         gameFrame.setBottom(tempV);
         
-        stage = new Stage();
+        //stage = new Stage();
         scene = new Scene(gameFrame);
         
     }
     
     public GameView(){
         this(new Minesweeper());
+        
     }
 
     @Override
-    public void update(Observable o,Object primaryStage) {
-        this.game = (Minesweeper) o;
-        if(primaryStage != null) {
-            mainStage = (Stage) primaryStage;
-            mainStage.close();
-        }
+    public void update(Observable o, Object arg) {
+        gameFrame.setLeft(controller);
         
-        timeLabel.setText("Time: " + Integer.toString(game.getTime()) + "s");
-        
-        // http://www.java2s.com/Code/Java/JavaFX/UsingImageViewtodisplayimage.htm
-
-        for(Tile t: game.getBoardTiles()) {
-            Button b = new Button(Integer.toString(game.getBoardTiles().indexOf(t)));
-            b.setMinSize(gridTileSize, gridTileSize);
-            grid.add(b, t.getX(), t.getY());
-        }
-        
-        
-        stage.setTitle("Minesweeper");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        
-        stage.show();
-        stage.centerOnScreen();
     }
-    
 }

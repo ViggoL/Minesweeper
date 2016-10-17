@@ -78,7 +78,7 @@ public class ClockView implements Observer, Runnable{
             GameTimer time = (GameTimer) o;
             seconds = time.getSeconds();
             
-            timeLabel.setText("Time: " + seconds + "seconds");
+            timeLabel.setText("Time: " + seconds + " seconds");
             
             
             stage.setTitle("Minesweeper Time");
@@ -86,6 +86,8 @@ public class ClockView implements Observer, Runnable{
             stage.setResizable(false);
 
             stage.show();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
             
         }
         finally{

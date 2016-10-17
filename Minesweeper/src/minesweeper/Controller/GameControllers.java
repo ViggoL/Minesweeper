@@ -5,26 +5,16 @@
  */
 package minesweeper.Controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.collections.ObservableList;
+
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import minesweeper.Model.Minesweeper;
-import minesweeper.Model.Tile;
 import minesweeper.View.ClockView;
-import minesweeper.View.GameView;
 import minesweeper.View.TimeLabel;
 
 /**
@@ -33,11 +23,10 @@ import minesweeper.View.TimeLabel;
  */
 public class GameControllers extends VBox {
     private Minesweeper game;
-    private final Button rulesButton;
-    private final Button resumeButton;
-    private final Button pauseButton;
+    private final Button rulesButton, resumeButton, pauseButton;
     private HBox timeBox;
-    private TimeLabel time;
+    private final TimeLabel time;
+    private Insets inset;
     
     public GameControllers(Minesweeper game)
     {
@@ -49,26 +38,40 @@ public class GameControllers extends VBox {
         resumeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PLAY).getButton();
         
         time = new TimeLabel("Time: \n" + Integer.toString(game.getTime()) + " seconds");
-        timeBox.getChildren().add(time);
+        game.addObserver(time);
+        
+        timeBox = new HBox(time);
+        
+        //timeBox.getChildren().add(time);
         timeBox.setAlignment(Pos.BASELINE_CENTER);
+        this.setAlignment(Pos.BASELINE_LEFT);
+        
+        inset = new Insets(5);
+        time.setPadding(inset);
+        this.setPadding(inset);
+        
+        this.setSpacing(10);
          
         resumeButton.setOnMouseClicked(this::ResumeButtonClicked);
         pauseButton.setOnMouseClicked(this::PauseButtonClicked);
         rulesButton.setOnMouseClicked(this::RulesButtonClicked);
         timeBox.setOnMouseClicked(this::TimePaneClicked);
         
-        this.getChildren().addAll(resumeButton,rulesButton,timeBox);
+        this.getChildren().addAll(pauseButton,rulesButton,timeBox);
     }
     
     
 
     public void ResumeButtonClicked(Event event)
     {
+        this.getChildren().set(0, pauseButton);
         game.resume();
     }
     public void PauseButtonClicked(Event event)
     {
+        this.getChildren().set(0, resumeButton);
         game.pause();
+        
     }
     public void RulesButtonClicked(Event event)
     {
@@ -78,15 +81,8 @@ public class GameControllers extends VBox {
         dialog.showAndWait();
     }
     public void TimePaneClicked(Event event){
-        Thread thread = new Thread(new ClockView(game.timer).start());
-    }
-    public void TileClicked(Event event){
-        System.out.println("I'm in!!");
-        if(!game.isPaused()) {
-            game.resume();
-        }
-        Object n = event.getSource();
-        Button b = (Button) event.getSource();
-        System.out.println(n.getClass());
+        ClockView clock = new ClockView(game.timer);
+        //game.timer.addObserver(clock);
+        clock.start();
     }
 }

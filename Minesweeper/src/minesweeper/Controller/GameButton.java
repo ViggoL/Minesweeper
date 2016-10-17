@@ -111,7 +111,7 @@ public class GameButton {
         return button;
     }
 
-    enum ButtonEnum {
+    public enum ButtonEnum {
         PLAY,PAUSE,HELP;
     }
     
