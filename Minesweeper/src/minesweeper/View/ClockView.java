@@ -39,7 +39,7 @@ public class ClockView implements Observer, Runnable{
     private final Scene scene;
     private int seconds;
     
-    public ClockView(GameTimer timer){
+    public ClockView(Minesweeper game){
         Pane clock = new Pane();
         HBox timeBox = new HBox();
         stage = new Stage();
@@ -50,14 +50,14 @@ public class ClockView implements Observer, Runnable{
         
         
         timeLabel = new TimeLabel();
-        timer.addObserver(timeLabel);
+        game.timer.addObserver(timeLabel);
         
         timeBox.getChildren().add(timeLabel);
         clock.getChildren().add(timeBox);
         scene = new Scene(clock);
 
         //stage.sizeToScene();
-        seconds = timer.getSeconds();
+        seconds = game.timer.getSeconds();
         timeLabel.setText("Time: " + seconds + " seconds");
         
         stage.setTitle("Minesweeper Time");
@@ -66,10 +66,6 @@ public class ClockView implements Observer, Runnable{
         stage.show();
         
         
-    }
-    
-    public ClockView(Minesweeper game){
-        this(game.timer);
     }
 
 
@@ -91,10 +87,10 @@ public class ClockView implements Observer, Runnable{
     @Override
     public void update(Observable o, Object arg) {
         
-        if(o instanceof GameTimer) {
-            GameTimer timer = (GameTimer) o;
-        
-            seconds = timer.getSeconds();
+        if(o instanceof Minesweeper) {
+            Minesweeper game = (Minesweeper) o;
+            System.out.println("uppdatering!");
+            seconds = game.timer.getSeconds();
             timeLabel.setText("Time: " + seconds + " seconds");
             stage.setTitle("Minesweeper Time");
             stage.setScene(scene);

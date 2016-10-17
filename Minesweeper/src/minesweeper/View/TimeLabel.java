@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
 
 /**
@@ -29,7 +30,13 @@ public class TimeLabel extends Label implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        Minesweeper model = (Minesweeper) o;
+        if(o instanceof Minesweeper){
+            Minesweeper model = (Minesweeper) o;
         this.setText("Time:" + model.getTime() + " s");
+        }
+        else if (o instanceof GameTimer){
+            GameTimer model = (GameTimer) o;
+            this.setText("Time:" + model.getSeconds() + " s");
+        }
     }
 }

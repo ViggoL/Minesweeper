@@ -81,8 +81,7 @@ public class GameControllers extends VBox {
         dialog.showAndWait();
     }
     public void TimePaneClicked(Event event){
-        ClockView clock = new ClockView(game.timer);
+        ClockView clock = new ClockView(game);
         clock.start();
-        game.timer.addObserver(clock);
     }
 }
