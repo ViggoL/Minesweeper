@@ -6,6 +6,7 @@
 package minesweeper.Controller;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.event.Event;
@@ -99,6 +100,39 @@ public class GridController extends GridPane implements Observer {
     public void update(Observable o, Object arg) {
         Tile tile = (Tile)o;
         ImageView img = (ImageView)this.getChildren().get(game.getBoardTiles().indexOf(tile));
-        if (!tile.isCovered()) img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
+        if (!tile.isCovered()) {
+            int surBombs = Tile.bombCount(tile.getSurroundingTiles(game.board));
+            switch (surBombs)
+            {
+                case 0:
+                    img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
+                    break;
+                case 1:
+                    img.setImage(new Image("1.png", buttonWidth, buttonWidth, false, true));
+                    break;
+                case 2:
+                    img.setImage(new Image("2.png", buttonWidth, buttonWidth, false, true));
+                    break;
+                case 3:
+                    img.setImage(new Image("3.png", buttonWidth, buttonWidth, false, true));
+                    break;
+                case 4:
+                    img.setImage(new Image("4.png", buttonWidth, buttonWidth, false, true));
+                    break;
+                case 5:
+                    img.setImage(new Image("5.png", buttonWidth, buttonWidth, false, true));
+                    break;
+                case 6:
+                    img.setImage(new Image("6.png", buttonWidth, buttonWidth, false, true));
+                    break;
+                case 7:
+                    img.setImage(new Image("7.png", buttonWidth, buttonWidth, false, true));
+                    break;
+                case 8:
+                    img.setImage(new Image("8.png", buttonWidth, buttonWidth, false, true));
+                    break;    
+            }
+            
+        }
     }
 }

@@ -79,7 +79,7 @@ public class Tile extends Observable{
         this.covered = false;
         System.out.println("Uncover tile and search surroundings!");
         
-    // The model has changed, notify observers!
+        // The model has changed, notify observers!
         this.setChanged();
         this.notifyObservers();
     }
@@ -105,6 +105,17 @@ public class Tile extends Observable{
         tiles[6] = board.getTile(new Point(point.x, point.y + 1));
         tiles[7] = board.getTile(new Point(point.x - 1, point.y + 1));
         return Arrays.asList(tiles);
+    }
+    
+    public static int bombCount(List<Tile> tiles)
+    {
+        int i = 0;
+        for (Tile t : tiles)
+        {
+            if (t == null) continue;
+            if (t.getType() == TileType.BOMB) i++;
+        }
+        return i;
     }
 }
 
