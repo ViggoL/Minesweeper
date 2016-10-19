@@ -28,9 +28,7 @@ import minesweeper.View.MainMenuView;
 public class MainMenuController {
     private final MainMenuView view;
     private Stage stage, primaryStage;
-    private Menu menu1, menu2, menu3;
-    private MenuBar menuBar;
-    private BorderPane gameFrame;
+    
     public MainMenuController(MainMenuView view, Stage stage)
     {
         this.view = view;
@@ -70,42 +68,14 @@ public class MainMenuController {
         stage.close();
         
         // The observable-observer initialization
-        // the observers are added in methods
         Minesweeper model = new Minesweeper();
+        
+        //The GUI is initialized
         GameView viewer = new GameView(model);
+        
+        //Observers are added
         model.timer.addObserver(viewer);
 
-        // force a call to all observers
-        model.pause();
-
-        // control for user input
-        //GameControllers buttonPane = new GameControllers(model);
-        
-        /* GUI initialization 
-        
-        double buttonPaneWidth = 20.0;
-        
-        menu1 = new Menu("File");
-        menu2 = new Menu("Settings");
-        menu3 = new Menu("Help");
-        menuBar = new MenuBar();
-        
-        gameFrame = new BorderPane();
-        GridController grid = new GridController(model);
-        
-        menuBar.getMenus().addAll(menu1, menu2, menu3);
-        
-        gameFrame.setLeft(buttonPane);
-        gameFrame.setTop(menuBar);
-        gameFrame.setCenter(grid);
-        
-        Box tempV = new Box();
-        tempV.setWidth(buttonPaneWidth);
-        gameFrame.setRight(tempV);
-        
-        tempV = new Box();
-        tempV.setHeight(buttonPaneWidth);
-        gameFrame.setBottom(tempV);*/
         
         primaryStage = new Stage();
         primaryStage.setTitle("Minesweeper");

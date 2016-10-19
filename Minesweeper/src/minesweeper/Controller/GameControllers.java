@@ -24,9 +24,7 @@ import minesweeper.View.TimeLabel;
 public class GameControllers extends VBox {
     private Minesweeper game;
     private final Button rulesButton, resumeButton, pauseButton;
-    private HBox timeBox;
-    //private final TimeLabel time;
-    private Insets inset;
+    private final Insets inset;
     private final Button timeButton;
     
     public GameControllers(Minesweeper game)
@@ -62,8 +60,8 @@ public class GameControllers extends VBox {
     public void PauseButtonClicked(Event event)
     {
         this.getChildren().set(0, resumeButton);
-        TimeLabel time = new TimeLabel(Integer.toString(game.timer.getSeconds()) + " s");
-        time.setPadding(inset);
+        //TimeLabel time = new TimeLabel(Integer.toString(game.timer.getSeconds()) + " s");
+        //time.setPadding(inset);
         game.pause();
         
     }
