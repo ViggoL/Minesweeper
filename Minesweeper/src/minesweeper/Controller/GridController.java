@@ -72,7 +72,7 @@ public class GridController extends GridPane implements Observer {
             imageViewButton.setFitWidth(gridTileSize);
             imageViewButton.setOnMouseClicked(this::TileClicked);
             this.add(imageViewButton, t.getX(), t.getY()); 
-            t.addObserver(this);
+            //t.addObserver(this);
             
             /*
             Button b = new Button();
@@ -111,19 +111,12 @@ public class GridController extends GridPane implements Observer {
             Tile t = game.getBoardTiles().get(i);
             t.uncover();
             System.out.println("Tile number: " + i);
+            if (game.getBoardTiles().get(i).getType() == TileType.BOMB) System.out.println("BOMB!!!!!!");
         }
         catch (IndexOutOfBoundsException index) {
             for(String s: Arrays.toString(index.getStackTrace()).split(","))
                 System.err.print(s);         
             throw new TileEventException("Event source not supported");
-        }
-        
-        finally {
-            Tile t = game.getBoardTiles().get(i);
-            t.uncover();
-            System.out.println("Tile number: " + i);
-        if (game.getBoardTiles().get(i).getType() == TileType.BOMB) System.out.println("BOMB!!!!!!");
-            
         }
     }
     
