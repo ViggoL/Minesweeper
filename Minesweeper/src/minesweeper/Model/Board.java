@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  *
@@ -63,6 +64,13 @@ public class Board extends Observable{
             }
             break;
         }
+        
+        //TODO: Tweak for each difficulty
+        while (bombCount() <= 10)
+        {
+            int r = ThreadLocalRandom.current().nextInt(0, 100);
+            tiles.get(r).setType(TileType.BOMB);
+        }
     }
 
     public Board() {
@@ -72,6 +80,15 @@ public class Board extends Observable{
     public List<Tile> getTiles()
     {
         return tiles;
+    }
+    
+    public int bombCount()
+    {
+        int bombs = 0;
+        for (Tile tile : tiles) {
+            if (tile.getType() == TileType.BOMB) bombs++;
+        }
+        return bombs;
     }
     
     /**

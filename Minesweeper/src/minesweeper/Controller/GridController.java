@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import minesweeper.Model.Minesweeper;
 import minesweeper.Model.Tile;
+import minesweeper.Model.TileType;
 
 /**
  *
@@ -86,5 +87,6 @@ public class GridController extends GridPane {
         Tile t = game.getBoardTiles().get(i);
         t.uncover();
         System.out.println("Tile number: " + i);
+        if (game.getBoardTiles().get(i).getType() == TileType.BOMB) System.out.println("BOMB!!!!!!");
     }
 }
