@@ -6,12 +6,19 @@
 package minesweeper.Controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import javafx.event.Event;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import minesweeper.Model.Difficulty;
 import minesweeper.Model.Minesweeper;
 import minesweeper.Model.Tile;
 
@@ -22,30 +29,37 @@ import minesweeper.Model.Tile;
 public class GridController extends GridPane {
     private Minesweeper game;
     private boolean timerStarted;
+    private Insets inset;
+    public static ImageView imageViewButton;
     
-    public GridController(Minesweeper game) throws IllegalArgumentException
+    public GridController(Minesweeper game) 
     {
         this.game = game;
         timerStarted = false;
         double buttonWidth = 20;
         double gridTileSize = buttonWidth * 1.75;
         int ID;
+        inset = new Insets(20);
         
         this.setAlignment(Pos.CENTER_LEFT);
         this.setGridLinesVisible(true);
+        this.setPadding(inset);
         
         
         
         //get image for buttons
-        
+        Image image = new Image("water.png", buttonWidth, buttonWidth, false, true);
+        DropShadow shadow = new DropShadow(2.0,Color.WHITE);
         
         //map tiles to a grid and set grid x and y for button 
         //using Tile Point X and Y
         for(Tile t: game.getBoardTiles()) {
             ID = game.getBoardTiles().indexOf(t);
             
-            Image image = new Image("water.png", buttonWidth, buttonWidth, false, true);
-            ImageView imageViewButton = new ImageView(image);
+            
+            image.isSmooth();
+            imageViewButton = new ImageView(image);
+            imageViewButton.setEffect(shadow);
             
             /*
             Button b = new Button();
@@ -54,17 +68,17 @@ public class GridController extends GridPane {
             b.setOnMouseClicked(this::TileClicked);
             this.add(b, t.getX(), t.getY());
             */
-            imageViewButton.setFitHeight(buttonWidth);
-            imageViewButton.setFitWidth(buttonWidth);
+            imageViewButton.setFitHeight(gridTileSize);
+            imageViewButton.setFitWidth(gridTileSize);
             imageViewButton.setOnMouseClicked(this::TileClicked);
-            this.add(imageViewButton, t.getX(), t.getY());
+            this.add(imageViewButton, t.getX(), t.getY()); 
             
         }
             
     }
     
-    public void TileClicked(Event event){
-
+    public void TileClicked(Event event) throws TileEventException{
+        
         if(timerStarted == false){
             game.timer.startTimer();
             timerStarted = true;
@@ -77,14 +91,67 @@ public class GridController extends GridPane {
             b = (Button) event.getSource();
             i = this.getChildren().indexOf(b);
         }
+        
         else if(o instanceof ImageView) {
             im = (ImageView) o;
             i = this.getChildren().indexOf(im);
         }
-        else i = -1;
         
-        Tile t = game.getBoardTiles().get(i);
-        t.uncover();
-        System.out.println("Tile number: " + i);
+        else i = -1;
+        try{
+            Tile t = game.getBoardTiles().get(i);
+            t.uncover();
+            System.out.println("Tile number: " + i);
+        }
+        catch (IndexOutOfBoundsException index) {
+            for(String s: Arrays.toString(index.getStackTrace()).split(","))
+                System.err.print(s);         
+            throw new TileEventException("Event source not supported");
+        }
+        
+        finally {
+            
+        }
+    }
+    
+    /**
+     * code snippet from https://examples.javacodegeeks.com
+     */
+    public class TileEventException extends RuntimeException{
+        
+        public TileEventException(){
+            
+        }
+        
+        public TileEventException(String message){
+            super(message);
+            Alert a;
+            a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("Serious Runtime Error");
+            a.setContentText("A serious error has interrupted your game. \n"
+                    + "Should the problems persist,\n"
+                    + "please e-mail the Minesweeper team at support@minesweep.com");
+            a.setOnCloseRequest(this::TerminateGame);
+            a.setGraphic(GridController.imageViewButton);
+            a.show();
+        }
+        
+        public TileEventException(Throwable cause){
+            super(cause);
+        }
+        
+        public TileEventException(String message, Throwable cause){
+            super(message,cause);
+            
+        }
+        
+        public TileEventException(String message, Throwable cause, 
+                boolean enableSuppression, boolean writeableStacktrace){
+            super( message, cause, enableSuppression, writeableStacktrace);
+        }
+        
+        public void TerminateGame(Event event){
+                System.exit(666);
+        }
     }
 }

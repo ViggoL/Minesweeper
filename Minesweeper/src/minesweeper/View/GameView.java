@@ -68,7 +68,7 @@ public class GameView extends GameViewSuper implements Observer{
         menu1 = new Menu("File");
         menu2 = new Menu("Settings");
         menu3 = new Menu("Help");
-        menu4 = new MenuItem("Exit");
+        menu4 = new MenuItem("Quit");
         menuBar = new MenuBar();
         
         menu4.setOnAction(new EventHandler<ActionEvent>() {
@@ -77,7 +77,7 @@ public class GameView extends GameViewSuper implements Observer{
                 }
         });
         
-        menu3.getItems().add(menu4);
+        menu1.getItems().add(menu4);
         
         gameFrame = new BorderPane();
         menuBar.getMenus().addAll(menu1, menu2, menu3);
@@ -86,17 +86,7 @@ public class GameView extends GameViewSuper implements Observer{
         gameFrame.setTop(menuBar);
         gameFrame.setCenter(grid);
         
-        Box tempV = new Box();
-        tempV.setWidth(buttonPaneWidth);
-        gameFrame.setRight(tempV);
-        
-        tempV = new Box();
-        tempV.setHeight(buttonPaneWidth);
-        gameFrame.setBottom(tempV);
-        
-        //stage = new Stage();
         scene = new Scene(gameFrame);
-        
     }
     
     public GameView(){
@@ -106,8 +96,6 @@ public class GameView extends GameViewSuper implements Observer{
 
     @Override
     public void update(Observable o, Object arg) {
-        //gameFrame.setLeft(controller);
-        //gameFrame.getCenter().setVisible(false);
         if(o instanceof GameTimer){
             GameTimer time = (GameTimer) o; 
             if(time.getSeconds() > 0){
@@ -117,7 +105,7 @@ public class GameView extends GameViewSuper implements Observer{
                 }
                 else {
                     grid.setVisible(false);
-                    gameFrame.setCenter(new TimeLabel("Time:" + game.getTime() + " seconds"));
+                    gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
                 }
             }
             else if (time.isTicking()) gameFrame.setCenter(grid);
@@ -130,8 +118,6 @@ public class GameView extends GameViewSuper implements Observer{
         else if(o instanceof Minesweeper){
             System.out.println("game update");
         }
-        
-        //System.out.println("Caller: " + o.getClass().toString());
         
     }
 }

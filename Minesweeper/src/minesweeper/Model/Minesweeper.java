@@ -60,7 +60,6 @@ public class Minesweeper extends Observable{
     }
     
     public void startNewGame(){
-
         board = new Board(settings.getDifficulty());
         
         // The model has changed, notify observers!
@@ -70,6 +69,14 @@ public class Minesweeper extends Observable{
     
     public boolean isPaused(){
         return this.paused;
+    }
+
+    public void startNewGame(Difficulty difficulty) {
+        board = new Board(difficulty);
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
 
 }
