@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import minesweeper.Model.Difficulty;
 import minesweeper.Model.Minesweeper;
 import minesweeper.Model.Tile;
+import minesweeper.Model.TileType;
 
 /**
  *
@@ -56,10 +57,13 @@ public class GridController extends GridPane {
         for(Tile t: game.getBoardTiles()) {
             ID = game.getBoardTiles().indexOf(t);
             
-            
             image.isSmooth();
             imageViewButton = new ImageView(image);
             imageViewButton.setEffect(shadow);
+            imageViewButton.setFitHeight(gridTileSize);
+            imageViewButton.setFitWidth(gridTileSize);
+            imageViewButton.setOnMouseClicked(this::TileClicked);
+            this.add(imageViewButton, t.getX(), t.getY()); 
             
             /*
             Button b = new Button();
@@ -68,13 +72,9 @@ public class GridController extends GridPane {
             b.setOnMouseClicked(this::TileClicked);
             this.add(b, t.getX(), t.getY());
             */
-            imageViewButton.setFitHeight(gridTileSize);
-            imageViewButton.setFitWidth(gridTileSize);
-            imageViewButton.setOnMouseClicked(this::TileClicked);
-            this.add(imageViewButton, t.getX(), t.getY()); 
             
         }
-            
+      
     }
     
     public void TileClicked(Event event) throws TileEventException{
@@ -89,12 +89,12 @@ public class GridController extends GridPane {
         int i;
         if(o instanceof Button) {
             b = (Button) event.getSource();
-            i = this.getChildren().indexOf(b);
+            i = this.getChildren().indexOf(b) - 1;
         }
         
         else if(o instanceof ImageView) {
             im = (ImageView) o;
-            i = this.getChildren().indexOf(im);
+            i = this.getChildren().indexOf(im) - 1;
         }
         
         else i = -1;
@@ -110,6 +110,10 @@ public class GridController extends GridPane {
         }
         
         finally {
+            Tile t = game.getBoardTiles().get(i);
+            t.uncover();
+            System.out.println("Tile number: " + i);
+        if (game.getBoardTiles().get(i).getType() == TileType.BOMB) System.out.println("BOMB!!!!!!");
             
         }
     }
@@ -153,5 +157,6 @@ public class GridController extends GridPane {
         public void TerminateGame(Event event){
                 System.exit(666);
         }
+  
     }
 }
