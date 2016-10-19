@@ -6,6 +6,8 @@
 package minesweeper.Controller;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -20,16 +22,17 @@ import minesweeper.Model.TileType;
  *
  * @author Viggo
  */
-public class GridController extends GridPane {
+public class GridController extends GridPane implements Observer {
     private Minesweeper game;
     private boolean timerStarted;
-    
+    double buttonWidth = 20;
+    double gridTileSize = buttonWidth * 1.75;
     public GridController(Minesweeper game) throws IllegalArgumentException
     {
+        
         this.game = game;
         timerStarted = false;
-        double buttonWidth = 20;
-        double gridTileSize = buttonWidth * 1.75;
+
         int ID;
         
         this.setAlignment(Pos.CENTER_LEFT);
@@ -59,6 +62,7 @@ public class GridController extends GridPane {
             imageViewButton.setFitWidth(buttonWidth);
             imageViewButton.setOnMouseClicked(this::TileClicked);
             this.add(imageViewButton, t.getX(), t.getY());
+            t.addObserver(this);
             
         }
             
@@ -88,5 +92,13 @@ public class GridController extends GridPane {
         t.uncover();
         System.out.println("Tile number: " + i);
         if (game.getBoardTiles().get(i).getType() == TileType.BOMB) System.out.println("BOMB!!!!!!");
+        
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        Tile tile = (Tile)o;
+        ImageView img = (ImageView)this.getChildren().get(game.getBoardTiles().indexOf(tile));
+        if (!tile.isCovered()) img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
     }
 }
