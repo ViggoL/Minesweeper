@@ -111,7 +111,13 @@ public class GridController extends GridPane implements Observer {
             Tile t = game.getBoardTiles().get(i);
             t.uncover();
             System.out.println("Tile number: " + i);
-            if (game.getBoardTiles().get(i).getType() == TileType.BOMB) System.out.println("BOMB!!!!!!");
+            if (game.getBoardTiles().get(i).getType() == TileType.BOMB) {
+                game.unCoverThemAll();
+                game.tellTheUserItsOver(); 
+                game.wouldYouLikeToPlayAgain();
+                
+                System.out.println("BOMB!!!!!!");
+            }
         }
         catch (IndexOutOfBoundsException index) {
             for(String s: Arrays.toString(index.getStackTrace()).split(","))
@@ -166,7 +172,9 @@ public class GridController extends GridPane implements Observer {
     public void update(Observable o, Object arg) {
         Tile tile = (Tile)o;
         ImageView img = (ImageView)this.getChildren().get(game.getBoardTiles().indexOf(tile));
-        if (!tile.isCovered()) img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
+        if (!tile.isCovered()) {
+            img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
+        }
 
     }
 }
