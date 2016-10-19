@@ -17,6 +17,7 @@
  */
 package minesweeper.View;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Timer;
@@ -119,7 +120,10 @@ public class ClockView implements Observer, Runnable{
     
     public static ClockView getInstance(Minesweeper game){
         if(theClock != null){
-            theClock.grow();
+            if(theClock.stage.isShowing()) { 
+                theClock.grow();
+            }
+            
             theClock.update();
         }
         else {
@@ -132,10 +136,11 @@ public class ClockView implements Observer, Runnable{
         return this;
     }
 
-    private void grow() {
+    private void grow(){
         howManyTimes++;
-        setBoxSize(xSize*2);
-        this.timeBox.setMinSize(xSize, ySize);
+        if(getBoxSize()[0] >= scene.getRoot().minWidth(ySize))
+            setBoxSize(xSize*1.1);
+        timeBox.setMinSize(xSize, ySize);
         clock = new Pane();
         clock.getChildren().add(timeBox);
         stage.close();
@@ -144,13 +149,20 @@ public class ClockView implements Observer, Runnable{
     
     private void setBoxSize(double x){
         xSize = x;
-        ySize = xSize/4;
+        ySize = xSize/2;
     }
+    
+    //returns x and y values for Label HBox
+    public Double [] getBoxSize(){
+        
+        return new Double[]{xSize,ySize};
+    }
+    
 
     private void positionStage() {
-        screenPosition *= 2;
+        screenPosition += screenPosition*2;
         stage.setX(screenPosition);
-        stage.setY((screenPosition + 20)/2);
+        stage.setY((screenPosition)/1.5);
         
     }
     

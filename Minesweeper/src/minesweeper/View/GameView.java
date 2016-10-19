@@ -19,6 +19,8 @@ package minesweeper.View;
 
 import java.util.Observable;
 import java.util.Observer;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -26,6 +28,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Box;
@@ -50,6 +53,7 @@ public class GameView extends GameViewSuper implements Observer{
     public Label timeLabel;
     public final Menu menu1, menu2, menu3;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
     private final GameControllers controller;
+    private final MenuItem menu4;
     public GameView(Minesweeper game) {
         super();
         this.game = game;
@@ -64,7 +68,16 @@ public class GameView extends GameViewSuper implements Observer{
         menu1 = new Menu("File");
         menu2 = new Menu("Settings");
         menu3 = new Menu("Help");
+        menu4 = new MenuItem("Exit");
         menuBar = new MenuBar();
+        
+        menu4.setOnAction(new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent t) {
+                System.exit(0);
+                }
+        });
+        
+        menu3.getItems().add(menu4);
         
         gameFrame = new BorderPane();
         menuBar.getMenus().addAll(menu1, menu2, menu3);
