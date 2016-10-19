@@ -103,11 +103,9 @@ public class ClockView implements Observer, Runnable{
     }
     
     @Override
-    public void update(Observable o, Object arg)throws NullPointerException  {
-        
+    public void update(Observable o, Object arg) {
         if(o instanceof Minesweeper) {
             Minesweeper game = (Minesweeper) o;
-            System.out.println("uppdatering!");
             try{
                 seconds = (int) arg;
                 timeLabel.setText("Time: " + seconds + " seconds");
