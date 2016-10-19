@@ -5,6 +5,8 @@ import java.util.Observer;
 
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import minesweeper.Controller.GameButton;
+import minesweeper.Controller.GameButton.ButtonEnum;
 import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
 
@@ -16,7 +18,7 @@ import minesweeper.Model.Minesweeper;
  *
  * @author anderslm@kth.se
  */
-public class TimeLabel extends Label implements Observer {
+public class TimeLabel extends Label implements Observer{
 
     public TimeLabel() {
         super("- - -");
@@ -36,7 +38,9 @@ public class TimeLabel extends Label implements Observer {
         }
         else if (o instanceof GameTimer){
             GameTimer model = (GameTimer) o;
-            this.setText("Time:" + model.getSeconds() + " s");
+            int i = ((Integer) arg).intValue();
+            this.setText("Time: " + i + " seconds");
         }
+            
     }
 }

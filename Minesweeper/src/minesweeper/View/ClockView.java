@@ -19,7 +19,11 @@ package minesweeper.View;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -34,72 +38,132 @@ import minesweeper.Model.Minesweeper;
  * @author Johan Lipecki <lipecki@kth.se>
  */
 public class ClockView implements Observer, Runnable{
+    Minesweeper game;
     private Stage stage;
     private TimeLabel timeLabel;
     private final Scene scene;
     private int seconds;
+    private static ClockView theClock;
+    private HBox timeBox;
+    private double xSize, ySize;
+    private double screenPosition; 
+    private int howManyTimes;
+    private Pane clock;
     
-    public ClockView(Minesweeper game){
-        Pane clock = new Pane();
-        HBox timeBox = new HBox();
-        stage = new Stage();
+    
+    private ClockView(Minesweeper game){
+        this.game = game;
+                    
+        clock = new Pane();
+        timeBox = new HBox();
         
+
         timeBox.setPadding(new Insets(10));
-        timeBox.setMinSize(200.0, 50.0);
+
+        setBoxSize(200.0);
+
+        timeBox.setMinSize(xSize, ySize);
         timeBox.setAlignment(Pos.CENTER);
-        
-        
+
+
         timeLabel = new TimeLabel();
-        game.timer.addObserver(timeLabel);
-        
+        seconds = game.timer.getSeconds();
+        timeLabel.setText("Time: " + seconds + " seconds");
+
         timeBox.getChildren().add(timeLabel);
         clock.getChildren().add(timeBox);
         scene = new Scene(clock);
-
-        //stage.sizeToScene();
-        seconds = game.timer.getSeconds();
-        timeLabel.setText("Time: " + seconds + " seconds");
         
-        stage.setTitle("Minesweeper Time");
-        stage.setScene(scene);
-        stage.setX(0.0);
-        stage.show();
+        screenPosition = 2.0;
+        howManyTimes = 1;
         
+        addSceneToStage(scene);
+        update();
         
+        //Platform thread must control timer (http://stackoverflow.com/a/18654916)
+        Timer timer = new java.util.Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {    
+                Platform.runLater(new Runnable() {    
+                    public void run() {
+                        timeLabel.update(game.timer,game.timer.getSeconds());                
+                    }
+                });
+            }
+        }, 1000, 1000);
     }
-
-
 
     @Override
     public void run() {
-        try{
-            
             stage.show();
-
-        }
-        finally{
-            //stage.close();
-        }
-            //update(timer, new Object());
-    
+    }
+        
+    private void update() {
+        update(game, game.timer.getSeconds());
     }
     
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable o, Object arg)throws NullPointerException  {
         
         if(o instanceof Minesweeper) {
             Minesweeper game = (Minesweeper) o;
             System.out.println("uppdatering!");
-            seconds = game.timer.getSeconds();
-            timeLabel.setText("Time: " + seconds + " seconds");
-            stage.setTitle("Minesweeper Time");
-            stage.setScene(scene);
-            stage.show();
+            try{
+                seconds = (int) arg;
+                timeLabel.setText("Time: " + seconds + " seconds");
+                
+            } finally {
+
+                stage.show();
+            }
         }
+    }
+    
+    public static ClockView getInstance(Minesweeper game){
+        if(theClock != null){
+            theClock.grow();
+            theClock.update();
+        }
+        else {
+            theClock = new ClockView(game);
+        }
+        return theClock;
     }
 
     public Runnable start() {
         return this;
     }
+
+    private void grow() {
+        howManyTimes++;
+        setBoxSize(xSize*2);
+        this.timeBox.setMinSize(xSize, ySize);
+        clock = new Pane();
+        clock.getChildren().add(timeBox);
+        stage.close();
+        addSceneToStage(new Scene(clock));
+    }
+    
+    private void setBoxSize(double x){
+        xSize = x;
+        ySize = xSize/4;
+    }
+
+    private void positionStage() {
+        screenPosition *= 2;
+        stage.setX(screenPosition);
+        stage.setY((screenPosition + 20)/2);
+        
+    }
+    
+    private void addSceneToStage(Scene scene){
+        stage = new Stage();
+        stage.setTitle("Minesweeper Time");
+        stage.setScene(scene);
+        positionStage();
+    }
+
+
+    
     
 }

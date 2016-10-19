@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.scene.control.Label;
 import minesweeper.View.ClockView;
+import minesweeper.View.TimeLabel;
 
 
 /**
@@ -51,7 +52,7 @@ public class GameTimer extends Observable {
         
         // The model has changed, notify observers!
         this.setChanged();
-        this.notifyObservers();
+        this.notifyObservers(seconds);
     }
     
     public void stopTimer()
@@ -60,14 +61,14 @@ public class GameTimer extends Observable {
         ticking = false;
         
         this.setChanged();
-        this.notifyObservers();
+        this.notifyObservers(seconds);
     }
     
     public void resumeTimer(){
         ticking = true;
         
         this.setChanged();
-        this.notifyObservers();
+        this.notifyObservers(seconds);
     }
 
     public int getSeconds()
@@ -78,4 +79,9 @@ public class GameTimer extends Observable {
     public boolean isTicking(){
         return ticking;
     }
+
+    public String toString(){
+        return Integer.toString(seconds);
+    }
+
 }

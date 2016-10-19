@@ -47,6 +47,7 @@ public class GameButton implements Observer{
     private double shadowOffset;
     private double sideLength;
     private Text text;
+    public final ButtonEnum type;
 
     public GameButton(double diameter, ButtonEnum type) {
         button = new Button();
@@ -68,6 +69,7 @@ public class GameButton implements Observer{
         double hypotenuse = Math.sqrt(Math.pow(diameter, 2.0)*2);
         double x1 = (hypotenuse - diameter)/Math.PI;
         double y1 = (hypotenuse - diameter)/(Math.PI*Math.E);
+        this.type = type;
         
         switch(type){
             case PLAY:
