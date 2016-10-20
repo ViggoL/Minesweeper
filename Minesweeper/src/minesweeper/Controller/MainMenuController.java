@@ -18,7 +18,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.Box;
 import javafx.stage.Stage;
+import minesweeper.Model.Difficulty;
 import minesweeper.Model.Minesweeper;
+import minesweeper.Model.Settings;
 import minesweeper.View.MainMenuView;
 
 /**
@@ -65,26 +67,7 @@ public class MainMenuController {
     }
     
     public void playButtonSelected(){
-        stage.close();
-        
-        // The observable-observer initialization
-        Minesweeper model = new Minesweeper();
-        
-        //The GUI is initialized
-        GameView viewer = new GameView(model);
-        
-        //Observers are added
-        model.timer.addObserver(viewer);
-
-        
-        primaryStage = new Stage();
-        primaryStage.setTitle("Minesweeper");
-        primaryStage.setScene(viewer.scene);
-        primaryStage.setResizable(false);
-
-        primaryStage.show();
-        primaryStage.centerOnScreen();
-        
+        new NewGame(stage,Difficulty.EASY);        
     }
     public void playButtonClickedRight()
     {

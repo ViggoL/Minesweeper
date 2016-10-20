@@ -115,16 +115,18 @@ public class GridController extends GridPane implements Observer {
             
             TileType type = t.getType();
             switch(type){
-                case FLAG: break;
+                case FLAG: 
+                    System.out.println("It's flagged!");
+                    break;
                 case BOMB: 
-                    game.unCoverThemAll();
-                    game.tellTheUserItsOver(); 
+                    //game.unCoverThemAll();
+                    //game.tellTheUserItsOver(); 
                     game.wouldYouLikeToPlayAgainPrompt();
                     System.out.println("BOMB!!!!!!");
                     //perhapsWePlaySomeClipWithAnExplosionHere();
                     break;
                 default: 
-                    game.viggoUncoverAdjacentNumbers();
+                    game.viggo_sUncoverAdjacentNumbers();
                     break;
             }
 

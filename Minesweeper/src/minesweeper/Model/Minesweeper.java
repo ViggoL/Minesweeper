@@ -9,6 +9,7 @@ package minesweeper.Model;
 
 import java.util.List;
 import java.util.Observable;
+import minesweeper.Controller.NewGame;
 
 
 /**
@@ -88,10 +89,11 @@ public class Minesweeper extends Observable{
     }
 
     public void wouldYouLikeToPlayAgainPrompt() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        new NewGame(this.settings.getDifficulty()); 
     }
 
-    public void viggoUncoverAdjacentNumbers() {
+    public void viggo_sUncoverAdjacentNumbers() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -5,6 +5,7 @@
  */
 package minesweeper.View;
 
+import java.util.Arrays;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,6 +18,8 @@ import static javafx.application.Application.launch;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
 import static javafx.application.Application.launch;
+import javafx.scene.control.ComboBox;
+import minesweeper.Model.Difficulty;
 
 /**
  *
@@ -27,6 +30,7 @@ public class MainMenuView extends GameViewSuper {
     public final Button resumeButton;
     public final Button settingsButton;
     public final Button rulesButton;
+    private ComboBox<String> settings;
     public MainMenuView()
     {
         super();
@@ -34,6 +38,10 @@ public class MainMenuView extends GameViewSuper {
         settingsButton = new Button();
         rulesButton = new Button();
         this.buttonPaneWidth = 70.0;
+        settings = new ComboBox<>();
+        
+        
+        settings.getItems().setAll(Arrays.toString(Difficulty.values()).split(","));
     }
     
     public void update(Stage primaryStage)
@@ -53,7 +61,7 @@ public class MainMenuView extends GameViewSuper {
         rulesButton.setMaxWidth(buttonWidth);
         
         buttonPane.setMaxWidth(buttonPaneWidth);
-        buttonPane.getChildren().addAll(resumeButton,settingsButton,rulesButton);
+        buttonPane.getChildren().addAll(resumeButton,settings,rulesButton);
         
         root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
