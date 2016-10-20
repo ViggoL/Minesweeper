@@ -60,8 +60,6 @@ public class GameControllers extends VBox {
     public void PauseButtonClicked(Event event)
     {
         this.getChildren().set(0, resumeButton);
-        //TimeLabel time = new TimeLabel(Integer.toString(game.timer.getSeconds()) + " s");
-        //time.setPadding(inset);
         game.pause();
         
     }

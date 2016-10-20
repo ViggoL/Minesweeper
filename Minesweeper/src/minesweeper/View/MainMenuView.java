@@ -19,7 +19,26 @@ import javafx.geometry.Insets;
 import javafx.scene.text.Font;
 import static javafx.application.Application.launch;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.StackPane;
 import minesweeper.Model.Difficulty;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import javafx.scene.control.Menu;
+import javafx.scene.layout.HBox;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 
 /**
  *
@@ -30,28 +49,41 @@ public class MainMenuView extends GameViewSuper {
     public final Button resumeButton;
     public final Button settingsButton;
     public final Button rulesButton;
-    private ComboBox<String> settings;
+    public final Menu settingsMenu;
+    public final MenuBar menuBar;
+    private Label title;
     public MainMenuView()
     {
         super();
         resumeButton = new Button();
         settingsButton = new Button();
         rulesButton = new Button();
-        this.buttonPaneWidth = 70.0;
-        settings = new ComboBox<>();
+        this.buttonPaneWidth = 90.0;
         
+        settingsMenu = new Menu(" Settings");
         
-        settings.getItems().setAll(Arrays.toString(Difficulty.values()).split(","));
+        menuBar = new MenuBar();
+
+        for(Difficulty d: Difficulty.values()){
+            MenuItem item = new MenuItem(d.toString());
+            settingsMenu.getItems().add(item);
+        }
+        
+        menuBar.getMenus().add(settingsMenu);
+        menuBar.useSystemMenuBarProperty();
     }
     
     public void update(Stage primaryStage)
     {
         
-        Label title = new Label("Minesweeper");
+        title = new Label("Minesweeper");
         title.setFont(new Font("Helvetica", 30));
         title.setPadding(new Insets(5,5,20,5));
         
         resumeButton.setAlignment(Pos.CENTER);
+        settingsButton.setAlignment(Pos.CENTER);
+        rulesButton.setAlignment(Pos.CENTER);
+        
         resumeButton.setText("Play");
         settingsButton.setText("Settings");
         rulesButton.setText("Rules");
@@ -59,9 +91,10 @@ public class MainMenuView extends GameViewSuper {
         resumeButton.setMaxWidth(buttonWidth);
         settingsButton.setMaxWidth(buttonWidth);
         rulesButton.setMaxWidth(buttonWidth);
+
         
         buttonPane.setMaxWidth(buttonPaneWidth);
-        buttonPane.getChildren().addAll(resumeButton,settings,rulesButton);
+        buttonPane.getChildren().addAll(resumeButton,rulesButton,menuBar);
         
         root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);

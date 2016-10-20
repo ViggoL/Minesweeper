@@ -51,11 +51,7 @@ public class MainMenuController {
                     playButtonSelected();
             }
         });
-        
-        view.settingsButton.setOnMouseClicked((Event event) -> {
-            settingsButtonClicked();
-        });
-        
+       
         view.rulesButton.setOnMouseClicked((Event event) -> {
             MouseEvent mouse;
             if (event instanceof MouseEvent){
@@ -74,11 +70,9 @@ public class MainMenuController {
         view.resumeButton.setText("Don't play!");
     }
     public void settingsButtonClicked(){
-        Alert dialog = new Alert(AlertType.INFORMATION);
-        dialog.setTitle("Settings dialog");
-        dialog.setContentText("Settings view will show here");
-        dialog.showAndWait();
+        
     }
+    
     public void rulesButtonClicked()
     {
         Alert dialog = new Alert(AlertType.INFORMATION);
@@ -86,5 +80,6 @@ public class MainMenuController {
         dialog.setContentText("Rules will show in a non-alert window");
         dialog.showAndWait();
     }
+    
     
 }

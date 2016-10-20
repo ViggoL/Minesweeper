@@ -17,14 +17,19 @@
  */
 package minesweeper.View;
 
+import java.awt.Window;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogEvent;
+import static javafx.scene.control.DialogEvent.DIALOG_CLOSE_REQUEST;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -32,6 +37,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Box;
+import javax.swing.event.HyperlinkEvent;
 import minesweeper.Controller.GameControllers;
 import minesweeper.Controller.GridController;
 import minesweeper.Model.GameTimer;
@@ -52,7 +58,7 @@ public class GameView extends GameViewSuper implements Observer{
     public MenuBar menuBar;
     public Label timeLabel;
     public final Menu menu1, menu2, menu3;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
-    private final GameControllers controller;
+    private GameControllers controller;
     private final MenuItem menu4;
     public GameView(Minesweeper game) {
         super();
@@ -80,6 +86,7 @@ public class GameView extends GameViewSuper implements Observer{
         menu1.getItems().add(menu4);
         
         gameFrame = new BorderPane();
+        
         menuBar.getMenus().addAll(menu1, menu2, menu3);
         
         gameFrame.setLeft(controller);
@@ -112,12 +119,32 @@ public class GameView extends GameViewSuper implements Observer{
             else {
                 Alert theTimeIsNow;
                 theTimeIsNow = new Alert(Alert.AlertType.INFORMATION,"Click a tile to start playing!", ButtonType.OK);
-                theTimeIsNow.show();
-                    }
+                theTimeIsNow.onCloseRequestProperty().set(new TheTimerIsNotRunning_AlertEventHandler(new DialogEvent(theTimeIsNow,DialogEvent.DIALOG_CLOSE_REQUEST)));
+                theTimeIsNow.show();        
+            }
         }
         else if(o instanceof Minesweeper){
             System.out.println("game update");
         }
         
+    }
+
+    private class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {
+        private Event event;
+
+        private TheTimerIsNotRunning_AlertEventHandler(DialogEvent event) {
+            this.event = event;
+            handle((DialogEvent) event);
+        }
+
+        private TheTimerIsNotRunning_AlertEventHandler(EventType<DialogEvent> DIALOG_CLOSE_REQUEST) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void handle(DialogEvent event) {
+            System.out.println("Yes!");
+            controller.ResumeButtonClicked(event);
+        }
     }
 }
