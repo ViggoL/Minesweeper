@@ -20,8 +20,12 @@ package minesweeper.View;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import minesweeper.Model.Difficulty;
 
 /**
  *
@@ -34,6 +38,8 @@ public abstract class GameViewSuper {
     protected double buttonSpacing;
     protected double buttonWidth;
     protected double buttonPaneWidth;
+    protected final Menu settingsMenu;
+    protected final MenuBar menuBar;
     
     
 
@@ -44,6 +50,18 @@ public abstract class GameViewSuper {
         
         buttonPane.setSpacing(buttonSpacing);
         buttonPane.setAlignment(Pos.TOP_CENTER);
+        
+        settingsMenu = new Menu(" Settings");
+        
+        menuBar = new MenuBar();
+
+        for(Difficulty d: Difficulty.values()){
+            MenuItem item = new MenuItem(d.toString());
+            settingsMenu.getItems().add(item);
+        }
+        
+        menuBar.getMenus().add(settingsMenu);
+        menuBar.useSystemMenuBarProperty();
     }
     
 }

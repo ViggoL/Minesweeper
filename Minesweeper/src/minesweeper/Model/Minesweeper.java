@@ -25,7 +25,7 @@ public class Minesweeper extends Observable{
     public Minesweeper() {
         super();
         this.paused = false;
-        board = new Board();
+        board = new Board(Difficulty.EASY);
         settings = new Settings();
         timer = new GameTimer(); 
         
@@ -78,6 +78,14 @@ public class Minesweeper extends Observable{
         // The model has changed, notify observers!
         this.setChanged();
         this.notifyObservers();
+    }
+    
+    public Difficulty getDifficultySetting(){
+        return settings.getDifficulty();
+    }
+    
+    public void setDifficulty(Difficulty diff){
+        settings.setDifficulty(diff);
     }
 
     public void unCoverThemAll() {

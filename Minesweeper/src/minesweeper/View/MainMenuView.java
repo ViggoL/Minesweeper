@@ -49,8 +49,6 @@ public class MainMenuView extends GameViewSuper {
     public final Button resumeButton;
     public final Button settingsButton;
     public final Button rulesButton;
-    public final Menu settingsMenu;
-    public final MenuBar menuBar;
     private Label title;
     public MainMenuView()
     {
@@ -60,17 +58,7 @@ public class MainMenuView extends GameViewSuper {
         rulesButton = new Button();
         this.buttonPaneWidth = 90.0;
         
-        settingsMenu = new Menu(" Settings");
         
-        menuBar = new MenuBar();
-
-        for(Difficulty d: Difficulty.values()){
-            MenuItem item = new MenuItem(d.toString());
-            settingsMenu.getItems().add(item);
-        }
-        
-        menuBar.getMenus().add(settingsMenu);
-        menuBar.useSystemMenuBarProperty();
     }
     
     public void update(Stage primaryStage)
@@ -94,7 +82,7 @@ public class MainMenuView extends GameViewSuper {
 
         
         buttonPane.setMaxWidth(buttonPaneWidth);
-        buttonPane.getChildren().addAll(resumeButton,rulesButton,menuBar);
+        buttonPane.getChildren().addAll(resumeButton,rulesButton,menuBar); 
         
         root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);

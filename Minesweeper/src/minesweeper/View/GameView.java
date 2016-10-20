@@ -1,6 +1,6 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template menu1, choose Tools | Templates
+ * To change this template fileMenu, choose Tools | Templates
  * [Project] license
  * 
  * Copyright © 2016 Johan Lipecki
@@ -49,11 +49,10 @@ public class GameView extends GameViewSuper implements Observer{
     public Button pauseButton, rulesButton,resumeButton;
     public BorderPane gameFrame;
     public GridPane grid;
-    public MenuBar menuBar;
     public Label timeLabel;
-    public final Menu menu1, menu2, menu3;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
+    public final Menu fileMenu, helpMenu;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
     private GameControllers controller;
-    private final MenuItem menu4;
+    private final MenuItem menuItemQuit, menuItemNewGame;
     public GameView(Minesweeper game) {
         super();
         this.game = game;
@@ -64,27 +63,32 @@ public class GameView extends GameViewSuper implements Observer{
         controller = new GameControllers(game);
         grid = new GridController(game);
         
-        menu1 = new Menu("File");
-        menu2 = new Menu("Settings");
-        menu3 = new Menu("Help");
-        menu4 = new MenuItem("Quit");
-        menuBar = new MenuBar();
+        fileMenu = new Menu("File");
+        helpMenu = new Menu("Help");
+        menuItemQuit = new MenuItem("Quit");
+        menuItemNewGame = new MenuItem("New Game");
         
-        menu4.setOnAction(new EventHandler<ActionEvent>() {
+        menuItemQuit.setOnAction(new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent t) {
-                System.exit(0);
+                    System.exit(0);
+                }
+        });
+        menuItemNewGame.setOnAction(new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent t) {
+                    game.startNewGame(game.getDifficultySetting());
                 }
         });
         
-        menu1.getItems().add(menu4);
+        fileMenu.getItems().addAll(menuItemQuit,menuItemNewGame);
         
         gameFrame = new BorderPane();
         
-        menuBar.getMenus().addAll(menu1, menu2, menu3);
+        menuBar.getMenus().add(fileMenu);
         
         gameFrame.setLeft(controller);
         gameFrame.setTop(menuBar);
         gameFrame.setCenter(grid);
+        
         
         scene = new Scene(gameFrame);
     }
