@@ -103,7 +103,7 @@ public class GridController extends GridPane implements Observer {
         
         else if(o instanceof ImageView) {
             im = (ImageView) o;
-            i = this.getChildren().indexOf(im) - 1;
+            i = this.getChildren().indexOf(im);// - 1;
         }
         
         else i = -1;
@@ -188,8 +188,15 @@ public class GridController extends GridPane implements Observer {
     public void update(Observable o, Object arg) {
         Tile tile = (Tile)o;
         ImageView img = (ImageView)this.getChildren().get(game.getBoardTiles().indexOf(tile));
-        if (!tile.isCovered()) {
+        if (!tile.isCovered() && tile.getType() != TileType.BOMB) {
             img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
+            for (int i = 1; i <= 8; i++)
+            {
+                if (Tile.bombCount(tile.getSurroundingTiles(game.board)) == i)
+                {
+                    img.setImage(new Image(i + ".png", buttonWidth, buttonWidth, false, true));
+                }
+            }
         }
 
     }
