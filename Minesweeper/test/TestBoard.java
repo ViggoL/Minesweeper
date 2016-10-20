@@ -51,8 +51,8 @@ public class TestBoard {
 
     private void TestMinesweeper() {
         Minesweeper game = new Minesweeper();
-        game.Minesweeper();
-        System.out.println(game.getBoard().toString());
+
+        System.out.println(game.getBoardTiles().toString());
     }
     
     

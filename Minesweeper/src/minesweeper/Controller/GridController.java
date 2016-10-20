@@ -5,6 +5,7 @@
  */
 package minesweeper.Controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public class GridController extends GridPane implements Observer {
             imageViewButton.setEffect(shadow);
             imageViewButton.setFitHeight(gridTileSize);
             imageViewButton.setFitWidth(gridTileSize);
-            imageViewButton.setOnMouseClicked(this::TileClicked);
+            imageViewButton.setOnMouseClicked(this::TileClicked); 
             this.add(imageViewButton, t.getX(), t.getY()); 
             t.addObserver(this);
             
