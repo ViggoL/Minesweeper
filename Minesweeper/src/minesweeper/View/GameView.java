@@ -17,27 +17,22 @@
  */
 package minesweeper.View;
 
-import java.awt.Window;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogEvent;
-import static javafx.scene.control.DialogEvent.DIALOG_CLOSE_REQUEST;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Box;
-import javax.swing.event.HyperlinkEvent;
 import minesweeper.Controller.GameControllers;
 import minesweeper.Controller.GridController;
 import minesweeper.Model.GameTimer;
@@ -51,7 +46,6 @@ import minesweeper.Model.Minesweeper;
 public class GameView extends GameViewSuper implements Observer{
     
     public Minesweeper game;
-    private double gridTileSize;
     public Button pauseButton, rulesButton,resumeButton;
     public BorderPane gameFrame;
     public GridPane grid;
@@ -66,7 +60,6 @@ public class GameView extends GameViewSuper implements Observer{
         
         buttonPaneWidth = 20.0;
         buttonWidth = 20;
-        gridTileSize = buttonWidth * 1.75;
 
         controller = new GameControllers(game);
         grid = new GridController(game);
@@ -135,10 +128,6 @@ public class GameView extends GameViewSuper implements Observer{
         private TheTimerIsNotRunning_AlertEventHandler(DialogEvent event) {
             this.event = event;
             handle((DialogEvent) event);
-        }
-
-        private TheTimerIsNotRunning_AlertEventHandler(EventType<DialogEvent> DIALOG_CLOSE_REQUEST) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override

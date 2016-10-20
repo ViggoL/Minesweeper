@@ -11,18 +11,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import minesweeper.Model.Minesweeper;
 import minesweeper.View.ClockView;
-import minesweeper.View.TimeLabel;
 
 /**
  *
  * @author Viggo
  */
 public class GameControllers extends VBox {
-    private Minesweeper game;
+    private final Minesweeper game;
     private final Button rulesButton, resumeButton, pauseButton;
     private final Insets inset;
     private final Button timeButton;
