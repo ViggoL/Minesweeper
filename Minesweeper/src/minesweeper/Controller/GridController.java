@@ -72,7 +72,7 @@ public class GridController extends GridPane implements Observer {
             imageViewButton.setFitWidth(gridTileSize);
             imageViewButton.setOnMouseClicked(this::TileClicked);
             this.add(imageViewButton, t.getX(), t.getY()); 
-            //t.addObserver(this);
+            t.addObserver(this);
             
             /*
             Button b = new Button();
@@ -110,20 +110,34 @@ public class GridController extends GridPane implements Observer {
         try{
             Tile t = game.getBoardTiles().get(i);
             t.uncover();
+            
             System.out.println("Tile number: " + i);
-            if (game.getBoardTiles().get(i).getType() == TileType.BOMB) {
-                game.unCoverThemAll();
-                game.tellTheUserItsOver(); 
-                game.wouldYouLikeToPlayAgain();
-                
-                System.out.println("BOMB!!!!!!");
+            
+            TileType type = t.getType();
+            switch(type){
+                case FLAG: break;
+                case BOMB: 
+                    game.unCoverThemAll();
+                    game.tellTheUserItsOver(); 
+                    game.wouldYouLikeToPlayAgainPrompt();
+                    System.out.println("BOMB!!!!!!");
+                    //perhapsWePlaySomeClipWithAnExplosionHere();
+                    break;
+                default: 
+                    game.viggoUncoverAdjacentNumbers();
+                    break;
             }
+
         }
         catch (IndexOutOfBoundsException index) {
             for(String s: Arrays.toString(index.getStackTrace()).split(","))
                 System.err.print(s);         
             throw new TileEventException("Event source not supported");
         }
+    }
+
+    private void perhapsWePlaySomeClipWithAnExplosionHere() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /**

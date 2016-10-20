@@ -87,7 +87,11 @@ public class Minesweeper extends Observable{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void wouldYouLikeToPlayAgain() {
+    public void wouldYouLikeToPlayAgainPrompt() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void viggoUncoverAdjacentNumbers() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
