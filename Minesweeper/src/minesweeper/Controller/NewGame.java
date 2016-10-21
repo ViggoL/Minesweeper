@@ -17,9 +17,11 @@
  */
 package minesweeper.Controller;
 
+import javafx.scene.Node;
 import javafx.stage.Stage;
 import minesweeper.Model.Difficulty;
 import minesweeper.Model.Minesweeper;
+import minesweeper.Model.Tile;
 import minesweeper.View.GameView;
 
 /**
@@ -44,8 +46,8 @@ public class NewGame {
         
         //Observers are added
         game.timer.addObserver(viewer);
-
-        
+        game.addObserver(viewer);
+        //for(Tile t: game.board.getTiles()) t.addObserver(viewer);
         
         primaryStage.setTitle("Minesweeper");
         primaryStage.setScene(viewer.scene);
@@ -57,10 +59,6 @@ public class NewGame {
     
     public NewGame(Difficulty diff){
         this(new Stage(),diff);
-    }
-    
-    public NewGame(){
-        this(Difficulty.EASY);
     }
     
     public void hideStage(){

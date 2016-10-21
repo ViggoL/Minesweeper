@@ -5,22 +5,15 @@
  */
 package minesweeper.Controller;
 
-import minesweeper.View.GameView;
+
 import javafx.event.Event;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Box;
 import javafx.stage.Stage;
-import minesweeper.Model.Difficulty;
-import minesweeper.Model.Minesweeper;
-import minesweeper.Model.Settings;
 import minesweeper.View.MainMenuView;
 
 /**

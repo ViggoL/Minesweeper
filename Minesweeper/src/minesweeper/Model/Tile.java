@@ -76,12 +76,14 @@ public class Tile extends Observable{
     }
     public void uncover()
     {
-        this.covered = false;
-        System.out.println("Uncover tile and search surroundings!");
-        
-        // The model has changed, notify observers!
-        this.setChanged();
-        this.notifyObservers();
+        if(this.covered){
+            this.covered = false;
+            System.out.println("Uncover tile and search surroundings!");
+
+            // The model has changed, notify observers!
+            this.setChanged();
+            this.notifyObservers();
+        }
     }
     
     public int getAdjacentMines(Board board)
@@ -95,16 +97,31 @@ public class Tile extends Observable{
     
     public List<Tile> getSurroundingTiles(Board board)
     {
-        Tile tiles[] = new Tile[8];
-        tiles[0] = board.getTile(new Point(point.x - 1, point.y));
-        tiles[1] = board.getTile(new Point(point.x - 1, point.y - 1));
-        tiles[2] = board.getTile(new Point(point.x, point.y - 1));
-        tiles[3] = board.getTile(new Point(point.x + 1, point.y - 1));
-        tiles[4] = board.getTile(new Point(point.x + 1, point.y));
-        tiles[5] = board.getTile(new Point(point.x + 1, point.y + 1));
-        tiles[6] = board.getTile(new Point(point.x, point.y + 1));
-        tiles[7] = board.getTile(new Point(point.x - 1, point.y + 1));
-        return Arrays.asList(tiles);
+        int [] XYmax = board.getXYboundary();
+        ArrayList<Tile> tiles = new ArrayList();
+        if(point.x>0){
+            tiles.add(board.getTile(new Point(point.x - 1, point.y)));
+            if(point.y>0){
+                tiles.add(board.getTile(new Point(point.x - 1, point.y - 1)));
+                if(point.y<XYmax[1]) 
+                    tiles.add(board.getTile(new Point(point.x - 1, point.y + 1)));
+            }
+        }
+        if(point.y>0){
+            tiles.add(board.getTile(new Point(point.x, point.y - 1)));
+            if(point.y<XYmax[1]){
+                tiles.add(board.getTile(new Point(point.x, point.y + 1)));
+                if(point.x<XYmax[0]) 
+                    tiles.add(board.getTile(new Point(point.x + 1, point.y - 1)));
+            }
+        }
+        if(point.x<XYmax[0]){
+            tiles.add(board.getTile(new Point(point.x + 1, point.y)));
+            if(point.y<XYmax[1])
+                tiles.add(board.getTile(new Point(point.x + 1, point.y + 1)));
+        }
+        
+        return tiles;
     }
     
     public static int bombCount(List<Tile> tiles)

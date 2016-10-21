@@ -31,6 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Board extends Observable{
     private List<Tile> tiles;
     private boolean win;
+    private int maxX,maxY;
     
     public Board(Difficulty diff){
         win = false;
@@ -41,32 +42,35 @@ public class Board extends Observable{
         switch(diff){
             case EASY: while(tiles.size() < 100) {
                 while(tiles.size()/10 <= 9){
-                    x = tiles.size()%10;
-                    y = tiles.size()/10;
+                    x = tiles.size()/10;
+                    y = tiles.size()%10;
+                    tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
+                }
+            }
+            
+            break;
+            case MEDIUM: while(tiles.size() < 175) {
+                while(tiles.size()/15 <= 14){
+                    x = tiles.size()/15;
+                    y = tiles.size()%15;
                     tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
                 }
             }
             break;
-            case MEDIUM: while(tiles.size() < 200) {
-                while(tiles.size()/20 <= 19){
-                    x = tiles.size()%20;
-                    y = tiles.size()/20;
-                    tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
-                }
-            }
-            break;
-            case HARD: while(tiles.size() < 400) {
-                while(tiles.size()/40 <= 39){
-                    x = tiles.size()%40;
-                    y = tiles.size()/40;
+            case HARD: while(tiles.size() < 289) {
+                while(tiles.size()/17 <= 16){
+                    x = tiles.size()/17;
+                    y = tiles.size()%17;
                     tiles.add(new Tile(new Point(x,y),TileType.EMPTY));
                 }
             }
             break;
         }
+        maxX=x;
+        maxY=y;
         
         //TODO: Tweak for each difficulty
-        while (bombCount() <= 10)
+        while (bombCount() <= maxX*Math.E)
         {
             int r = ThreadLocalRandom.current().nextInt(0, 100);
             tiles.get(r).setType(TileType.BOMB);
@@ -103,6 +107,10 @@ public class Board extends Observable{
         return null;
     }
     
+    public int [] getXYboundary(){
+        int [] array = {maxX,maxY};
+        return array;
+    }
     /**
      * Get information on Tile Point(x and y coordinates) and TileType
      * @return ArrayList<Object[]> where Object[0] is Point and Object[1] is TileType

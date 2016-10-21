@@ -43,6 +43,7 @@ import minesweeper.Controller.NewGame;
 import minesweeper.Model.Difficulty;
 import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
+import minesweeper.Model.Tile;
 
 
 /**
@@ -69,6 +70,7 @@ public class GameView extends GameViewSuper implements Observer{
         controller = new GameControllers(game);
         grid = new GridController(game);
         
+        
         fileMenu = new Menu("File");
         helpMenu = new Menu("Help");
         exitMenuItem = new MenuItem("Exit");
@@ -80,9 +82,6 @@ public class GameView extends GameViewSuper implements Observer{
                 public void handle(ActionEvent t) {
                     gameFrame.getChildren().clear();
                     gameFrame.setPrefSize(0.0, 0.0);
-                    new NewGame();
-                    System.exit(0);
-                    
                 }
         });
         menuItemQuit.setOnAction(new EventHandler<ActionEvent>() {
@@ -135,32 +134,31 @@ public class GameView extends GameViewSuper implements Observer{
                     grid.setVisible(true);
                     gameFrame.setCenter(grid);
                 }
-                else {
+                else if (game.isPaused()){
                     grid.setVisible(false);
                     gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
                 }
             }
-            else if (time.isTicking()) gameFrame.setCenter(grid);
+            //else if (time.isTicking()) ;//gameFrame.setCenter(grid);
             else {
-                Alert theTimeIsNow;
-                theTimeIsNow = new Alert(Alert.AlertType.INFORMATION,"Click a tile to start playing!", ButtonType.OK);
-                theTimeIsNow.onCloseRequestProperty().set(new TheTimerIsNotRunning_AlertEventHandler(new DialogEvent(theTimeIsNow,DialogEvent.DIALOG_CLOSE_REQUEST)));
+                Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION,"Click a tile to start playing!", ButtonType.OK);
+                DialogEvent event = new DialogEvent(theTimeIsNow,DialogEvent.DIALOG_CLOSE_REQUEST);
+                
+                theTimeIsNow.onCloseRequestProperty().set(new TheTimerIsNotRunning_AlertEventHandler(event));
                 theTimeIsNow.show();        
             }
         }
         else if(o instanceof Minesweeper){
             System.out.println("game update");
+            if(game.isGameOver())
+                for(Tile t: game.getBoardTiles()) t.uncover();
         }
         
     }
     
     public void tellTheUserItsOver() {
         MainMenuView view = null;
-        try {
-            view.wait((long) 10.0);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Minesweeper.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
         view = new MainMenuView();
         Stage stage = new Stage();
         MainMenuController main = new MainMenuController(view,stage);
@@ -183,7 +181,6 @@ public class GameView extends GameViewSuper implements Observer{
 
         @Override
         public void handle(DialogEvent event) {
-            System.out.println("Yes!");
             controller.ResumeButtonClicked(event);
         }
     }

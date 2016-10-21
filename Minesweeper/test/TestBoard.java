@@ -33,7 +33,7 @@ public class TestBoard {
     
     public TestBoard(){
         MinesweeperMain game = new MinesweeperMain();
-        board = new Board(Difficulty.EASY);
+        board = new Board(Difficulty.HARD);
         
         TestMinesweeper();
     }

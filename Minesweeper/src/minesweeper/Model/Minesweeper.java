@@ -26,6 +26,7 @@ public class Minesweeper extends Observable{
     public Board board;
     public GameTimer timer;
     private Settings settings;
+    private boolean gameOver;
     
     public Minesweeper() {
         super();
@@ -33,6 +34,7 @@ public class Minesweeper extends Observable{
         board = new Board(Difficulty.EASY);
         settings = new Settings();
         timer = new GameTimer(); 
+        gameOver = false;
         
     }
     
@@ -94,11 +96,25 @@ public class Minesweeper extends Observable{
     }
 
     public void unCoverThemAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for(Tile t: board.getTiles()) t.uncover();
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
 
-    public void viggo_sUncoverAdjacentNumbers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setGameOver() {
+        gameOver = true;
+        timer.stopTimer();
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+        
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
 }
