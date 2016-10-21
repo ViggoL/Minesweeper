@@ -29,21 +29,24 @@ import minesweeper.View.GameView;
 public class NewGame {
 
     private final Stage primaryStage;
+    private final Minesweeper game;
     
-    public NewGame(Stage stage, Difficulty diff){
-        stage.close();
-        
-        // The observable-observer initialization
-        Minesweeper model = new Minesweeper(diff);
-        
-        //The GUI is initialized
-        GameView viewer = new GameView(model);
-        
-        //Observers are added
-        model.timer.addObserver(viewer);
-
+    public NewGame(Stage oldstage, Difficulty diff){
+        oldstage.close();
         
         primaryStage = new Stage();
+        
+        // The observable-observer initialization
+        game = new Minesweeper(diff);
+        
+        //The GUI is initialized
+        GameView viewer = new GameView(game);
+        
+        //Observers are added
+        game.timer.addObserver(viewer);
+
+        
+        
         primaryStage.setTitle("Minesweeper");
         primaryStage.setScene(viewer.scene);
         primaryStage.setResizable(false);
@@ -58,6 +61,18 @@ public class NewGame {
     
     public NewGame(){
         this(Difficulty.EASY);
+    }
+    
+    public void hideStage(){
+        primaryStage.hide();
+    }
+    
+    public void showStage(){
+        primaryStage.show();
+    }
+    
+    public Minesweeper getGame(){
+        return game;
     }
     
 }

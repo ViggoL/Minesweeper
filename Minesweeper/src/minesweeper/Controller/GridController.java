@@ -120,14 +120,14 @@ public class GridController extends GridPane implements Observer {
                     System.out.println("It's flagged!");
                     break;
                 case BOMB: 
-                    //game.unCoverThemAll();
-                    //game.tellTheUserItsOver(); 
-                    game.wouldYouLikeToPlayAgainPrompt();
+                    //game .unCoverThemAll();
+                    //this.tellTheUserItsOver(); 
+                    //wouldYouLikeToPlayAgainPrompt();
                     System.out.println("BOMB!!!!!!");
                     //perhapsWePlaySomeClipWithAnExplosionHere();
                     break;
                 default: 
-                    game.viggo_sUncoverAdjacentNumbers();
+                    //game.viggo_sUncoverAdjacentNumbers();
                     break;
             }
 
@@ -140,6 +140,10 @@ public class GridController extends GridPane implements Observer {
     }
 
     private void perhapsWePlaySomeClipWithAnExplosionHere() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void tellTheUserItsOver() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -19,6 +19,8 @@ package minesweeper.View;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -33,8 +35,12 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import minesweeper.Controller.GameControllers;
 import minesweeper.Controller.GridController;
+import minesweeper.Controller.MainMenuController;
+import minesweeper.Controller.NewGame;
+import minesweeper.Model.Difficulty;
 import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
 
@@ -45,17 +51,17 @@ import minesweeper.Model.Minesweeper;
  */
 public class GameView extends GameViewSuper implements Observer{
     
-    public Minesweeper game;
+    
     public Button pauseButton, rulesButton,resumeButton;
     public BorderPane gameFrame;
     public GridPane grid;
     public Label timeLabel;
-    public final Menu fileMenu, helpMenu;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
+    public final Menu fileMenu, helpMenu ;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
     private GameControllers controller;
-    private final MenuItem menuItemQuit, menuItemNewGame;
+    private final MenuItem menuItemQuit, menuItemNewGame, exitMenuItem;
     public GameView(Minesweeper game) {
-        super();
-        this.game = game;
+        super(game); 
+        gameFrame = new BorderPane();
         
         buttonPaneWidth = 20.0;
         buttonWidth = 20;
@@ -65,24 +71,46 @@ public class GameView extends GameViewSuper implements Observer{
         
         fileMenu = new Menu("File");
         helpMenu = new Menu("Help");
+        exitMenuItem = new MenuItem("Exit");
         menuItemQuit = new MenuItem("Quit");
         menuItemNewGame = new MenuItem("New Game");
         
+        exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    gameFrame.getChildren().clear();
+                    gameFrame.setPrefSize(0.0, 0.0);
+                    new NewGame();
+                    System.exit(0);
+                    
+                }
+        });
         menuItemQuit.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
                 public void handle(ActionEvent t) {
                     System.exit(0);
                 }
         });
         menuItemNewGame.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
                 public void handle(ActionEvent t) {
-                    game.startNewGame(game.getDifficultySetting());
+                    
+                    new NewGame(game.getDifficultySetting());
                 }
         });
         
-        fileMenu.getItems().addAll(menuItemQuit,menuItemNewGame);
+        for(Difficulty d: Difficulty.values()){
+            MenuItem item = new MenuItem(d.toString());
+            item.setOnAction(new settingsMenuActionEvent());
+            settingsMenu.getItems().add(item);                 
+        }
         
-        gameFrame = new BorderPane();
         
+            
+        fileMenu.getItems().addAll(menuItemNewGame,exitMenuItem,menuItemQuit);
+        
+        
+        menuBar.getMenus().add(settingsMenu);
         menuBar.getMenus().add(fileMenu);
         
         gameFrame.setLeft(controller);
@@ -125,6 +153,25 @@ public class GameView extends GameViewSuper implements Observer{
         }
         
     }
+    
+    public void tellTheUserItsOver() {
+        MainMenuView view = null;
+        try {
+            view.wait((long) 10.0);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Minesweeper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        view = new MainMenuView();
+        Stage stage = new Stage();
+        MainMenuController main = new MainMenuController(view,stage);
+        view.update(stage);
+        
+    }
+
+    public void wouldYouLikeToPlayAgainPrompt() {
+        
+        new NewGame(); 
+    }
 
     private class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {
         private Event event;
@@ -139,5 +186,21 @@ public class GameView extends GameViewSuper implements Observer{
             System.out.println("Yes!");
             controller.ResumeButtonClicked(event);
         }
+    }
+    
+    private final class settingsMenuActionEvent implements EventHandler<ActionEvent> {
+        
+        private settingsMenuActionEvent(){
+            handle(new ActionEvent());
+        }
+        
+        @Override
+        public void handle(ActionEvent event) {
+            Object o = event.getSource();
+            if(o instanceof MenuItem){
+                MenuItem m = (MenuItem) o;
+                game.setDifficulty(Difficulty.valueOf(m.getText()));    
+            }
+        };
     }
 }

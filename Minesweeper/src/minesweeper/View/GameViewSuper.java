@@ -17,6 +17,8 @@
  */
 package minesweeper.View;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -26,6 +28,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import minesweeper.Model.Difficulty;
+import minesweeper.Model.Minesweeper;
 
 /**
  *
@@ -33,6 +36,7 @@ import minesweeper.Model.Difficulty;
  */
 public abstract class GameViewSuper {
     
+    public Minesweeper game;
     public VBox buttonPane;
     public Scene scene;
     protected double buttonSpacing;
@@ -40,10 +44,11 @@ public abstract class GameViewSuper {
     protected double buttonPaneWidth;
     protected final Menu settingsMenu;
     protected final MenuBar menuBar;
-    
-    
+    protected Difficulty difficulty;
 
-    public GameViewSuper() {
+    public GameViewSuper(Minesweeper game) {
+        this.game = game; 
+        difficulty = game.getDifficultySetting();
         buttonPane = new VBox();
         buttonSpacing = 10.0;
         buttonWidth = Double.MAX_VALUE;
@@ -51,17 +56,9 @@ public abstract class GameViewSuper {
         buttonPane.setSpacing(buttonSpacing);
         buttonPane.setAlignment(Pos.TOP_CENTER);
         
-        settingsMenu = new Menu(" Settings");
+        settingsMenu = new Menu(" Settings");                  
         
         menuBar = new MenuBar();
 
-        for(Difficulty d: Difficulty.values()){
-            MenuItem item = new MenuItem(d.toString());
-            settingsMenu.getItems().add(item);
-        }
-        
-        menuBar.getMenus().add(settingsMenu);
-        menuBar.useSystemMenuBarProperty();
     }
-    
 }

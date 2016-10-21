@@ -9,7 +9,12 @@ package minesweeper.Model;
 
 import java.util.List;
 import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.stage.Stage;
+import minesweeper.Controller.MainMenuController;
 import minesweeper.Controller.NewGame;
+import minesweeper.View.MainMenuView;
 
 
 /**
@@ -90,15 +95,6 @@ public class Minesweeper extends Observable{
 
     public void unCoverThemAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public void tellTheUserItsOver() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public void wouldYouLikeToPlayAgainPrompt() {
-        
-        new NewGame(this.settings.getDifficulty()); 
     }
 
     public void viggo_sUncoverAdjacentNumbers() {

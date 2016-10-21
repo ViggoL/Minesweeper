@@ -63,7 +63,7 @@ public class MainMenuController {
     }
     
     public void playButtonSelected(){
-        new NewGame(stage,Difficulty.EASY);        
+        NewGame newGame = new NewGame(stage,view.getDifficulty()); 
     }
     public void playButtonClickedRight()
     {
@@ -78,8 +78,6 @@ public class MainMenuController {
         Alert dialog = new Alert(AlertType.INFORMATION);
         dialog.setTitle("Rules dialogue");
         dialog.setContentText("Rules will show in a non-alert window");
-        dialog.showAndWait();
+        dialog.showAndWait();   
     }
-    
-    
 }

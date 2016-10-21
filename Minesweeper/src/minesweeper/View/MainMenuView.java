@@ -6,39 +6,20 @@
 package minesweeper.View;
 
 import java.util.Arrays;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.*;
-import javafx.*;
-import static javafx.application.Application.launch;
 import javafx.geometry.Insets;
-import javafx.scene.text.Font;
-import static javafx.application.Application.launch;
-import javafx.scene.control.ComboBox;
-import javafx.scene.layout.StackPane;
-import minesweeper.Model.Difficulty;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import javafx.scene.control.Menu;
-import javafx.scene.layout.HBox;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.text.Font;
+import minesweeper.Model.Difficulty;
+import minesweeper.Model.Minesweeper;
+
 
 /**
  *
@@ -52,11 +33,20 @@ public class MainMenuView extends GameViewSuper {
     private Label title;
     public MainMenuView()
     {
-        super();
+        super(new Minesweeper());
+        game = null;
         resumeButton = new Button();
         settingsButton = new Button();
         rulesButton = new Button();
         this.buttonPaneWidth = 90.0;
+        
+        for(Difficulty d: Difficulty.values()){
+            MenuItem item = new MenuItem(d.toString());
+            item.setOnAction(new settingsMenuActionEvent());
+            settingsMenu.getItems().add(item);                 
+        }
+        
+        menuBar.getMenus().add(settingsMenu);
         
         
     }
@@ -93,6 +83,30 @@ public class MainMenuView extends GameViewSuper {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+    }
+    
+    private void setDifficulty(Difficulty valueOf) {
+        difficulty = valueOf;
+    }
+    
+    public Difficulty getDifficulty(){
+        return this.difficulty;
+    }
+    
+    private final class settingsMenuActionEvent implements EventHandler<ActionEvent> {
+        
+        private settingsMenuActionEvent(){
+            handle(new ActionEvent());
+        }
+        
+        @Override
+        public void handle(ActionEvent event) {
+            Object o = event.getSource();
+            if(o instanceof MenuItem){
+                MenuItem m = (MenuItem) o;
+                setDifficulty(Difficulty.valueOf(m.getText()));    
+            }
+        };
     }
 
 }
