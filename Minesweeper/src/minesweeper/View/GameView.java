@@ -151,7 +151,7 @@ public class GameView extends GameViewSuper implements Observer{
         else if(o instanceof Minesweeper){
             System.out.println("game update");
             if(game.isGameOver())
-                for(Tile t: game.getBoardTiles()) t.uncover();
+                for(Tile t: game.getBoardTiles()) game.board.uncover(t);
         }
         
     }

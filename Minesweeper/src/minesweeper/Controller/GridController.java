@@ -117,7 +117,7 @@ public class GridController extends GridPane implements Observer {
         }
         try {
             Tile t = game.getBoardTiles().get(i);
-            t.uncover();
+            game.board.uncover(t);
 
             System.out.println("Tile number: " + i);
 
@@ -219,7 +219,7 @@ public class GridController extends GridPane implements Observer {
                 if (!tile.isCovered() && tile.getType() != TileType.BOMB) {
                     img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
                     for (int i = 1; i <= 8; i++) {
-                        if (Tile.bombCount(tile.getSurroundingTiles(game.board)) == i) {
+                        if (Tile.bombCount(game.board.getSurroundingTiles(tile)) == i) {
                             img.setImage(new Image(i + ".png", buttonWidth, buttonWidth, false, true));
                         }
                     }
