@@ -86,6 +86,7 @@ public class GridController extends GridPane implements Observer {
             imageViewButton.setFitWidth(gridTileSize);
             imageViewButton.setOnMouseClicked(this::TileClicked);
             this.add(imageViewButton, t.getX(), t.getY());
+            System.out.println("Tile ID: " + ID + t.getPoint().toString());
 
             //since the button handlers alter the tiles, 
             //action events trigger observers

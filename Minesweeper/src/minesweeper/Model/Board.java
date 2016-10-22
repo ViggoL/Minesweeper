@@ -72,7 +72,7 @@ public class Board extends Observable{
         //TODO: Tweak for each difficulty
         while (bombCount() <= maxX*Math.E)
         {
-            int r = ThreadLocalRandom.current().nextInt(0, 100);
+            int r = ThreadLocalRandom.current().nextInt(0, tiles.size());
             tiles.get(r).setType(TileType.BOMB);
         }
     }
