@@ -75,6 +75,7 @@ public class GridController extends GridPane implements Observer {
 
         //map tiles to a grid and set grid x and y for button 
         //using Tile Point X and Y
+        this.getChildren().clear();
         for (Tile t : game.getBoardTiles()) {
             ID = game.getBoardTiles().indexOf(t);
 
@@ -109,6 +110,7 @@ public class GridController extends GridPane implements Observer {
             i = this.getChildren().indexOf(b);;
         } else if (o instanceof ImageView) {
             im = (ImageView) o;
+            ObservableList<Node> l = this.getChildren();
             i = this.getChildren().indexOf(im);//;
         } else {
             i = -1;

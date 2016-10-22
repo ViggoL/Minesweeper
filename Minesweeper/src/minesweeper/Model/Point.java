@@ -11,7 +11,7 @@ import java.util.Observable;
  *
  * @author Viggo
  */
-public class Point extends Observable{
+public class Point extends Observable {
     public final int x, y;
     public Point(int x, int y)
     {
@@ -24,10 +24,11 @@ public class Point extends Observable{
         return "[" + x + ", " + y + "]";
     }
     
-    public boolean equals(Point other)
+    @Override 
+    public boolean equals(Object other) throws ClassCastException
     {
         try {
-            return (this.x == other.x && this.y == other.y);
+            return (this.x == ((Point)other).x && this.y == ((Point)other).y);
         } catch (NullPointerException e) {
             System.out.println("Point was null!");
             return false;
