@@ -83,6 +83,10 @@ public class Tile extends Observable{
 
     void setCovered(boolean covered) {
         this.covered = covered;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
 }
 

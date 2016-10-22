@@ -100,7 +100,7 @@ public class GameView extends GameViewSuper implements Observer{
         
         for(Difficulty d: Difficulty.values()){
             MenuItem item = new MenuItem(d.toString());
-            item.setOnAction(new settingsMenuActionEvent());
+            item.setOnAction(new SettingsMenuEventHandler(game,this));
             settingsMenu.getItems().add(item);                 
         }
         
@@ -171,11 +171,9 @@ public class GameView extends GameViewSuper implements Observer{
         new NewGame(game.getDifficultySetting()); 
     }
 
-    private class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {
-        private Event event;
-
-        private TheTimerIsNotRunning_AlertEventHandler(DialogEvent event) {
-            this.event = event;
+    public final class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {
+ 
+        public TheTimerIsNotRunning_AlertEventHandler(DialogEvent event) {
             handle((DialogEvent) event);
         }
 
@@ -185,19 +183,4 @@ public class GameView extends GameViewSuper implements Observer{
         }
     }
     
-    private final class settingsMenuActionEvent implements EventHandler<ActionEvent> {
-        
-        private settingsMenuActionEvent(){
-            handle(new ActionEvent());
-        }
-        
-        @Override
-        public void handle(ActionEvent event) {
-            Object o = event.getSource();
-            if(o instanceof MenuItem){
-                MenuItem m = (MenuItem) o;
-                game.setDifficulty(Difficulty.valueOf(m.getText()));    
-            }
-        };
-    }
 }

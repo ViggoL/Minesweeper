@@ -184,6 +184,7 @@ public class GridController extends GridPane implements Observer {
         else if (o instanceof Minesweeper) {
             System.out.println("Game updating GridController");
         }
+        
     }
 
     private void sleeper(int sleep) {
