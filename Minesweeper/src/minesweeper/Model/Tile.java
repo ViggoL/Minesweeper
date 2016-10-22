@@ -57,14 +57,9 @@ public class Tile extends Observable{
         this.setChanged();
         this.notifyObservers();
     }
-    public void setNumber(Board board)
-    {
-        setNumber(getAdjacentMines(board));
-        
-        // The model has changed, notify observers!
-        this.setChanged();
-        this.notifyObservers();
-    }
+
+    
+    
     public int getNumber()
     {
         return this.number;
@@ -74,56 +69,7 @@ public class Tile extends Observable{
     {
         return covered;
     }
-    public void uncover()
-    {
-        if(this.covered){
-            this.covered = false;
-            System.out.println("Uncover tile and search surroundings!");
 
-            // The model has changed, notify observers!
-            this.setChanged();
-            this.notifyObservers();
-        }
-    }
-    
-    public int getAdjacentMines(Board board)
-    {
-        List<Tile> surroundingTiles = getSurroundingTiles(board);
-        int count = 0;
-        for (Tile t : surroundingTiles)
-            if (t.getType() == TileType.BOMB) count++;
-        return count;
-    }
-    
-    public List<Tile> getSurroundingTiles(Board board)
-    {
-        int [] XYmax = board.getXYboundary();
-        ArrayList<Tile> tiles = new ArrayList();
-        if(point.x>0){
-            tiles.add(board.getTile(new Point(point.x - 1, point.y)));
-            if(point.y>0){
-                tiles.add(board.getTile(new Point(point.x - 1, point.y - 1)));
-                if(point.y<XYmax[1]) 
-                    tiles.add(board.getTile(new Point(point.x - 1, point.y + 1)));
-            }
-        }
-        if(point.y>0){
-            tiles.add(board.getTile(new Point(point.x, point.y - 1)));
-            if(point.y<XYmax[1]){
-                tiles.add(board.getTile(new Point(point.x, point.y + 1)));
-                if(point.x<XYmax[0]) 
-                    tiles.add(board.getTile(new Point(point.x + 1, point.y - 1)));
-            }
-        }
-        if(point.x<XYmax[0]){
-            tiles.add(board.getTile(new Point(point.x + 1, point.y)));
-            if(point.y<XYmax[1])
-                tiles.add(board.getTile(new Point(point.x + 1, point.y + 1)));
-        }
-        
-        return tiles;
-    }
-    
     public static int bombCount(List<Tile> tiles)
     {
         int i = 0;
@@ -133,6 +79,10 @@ public class Tile extends Observable{
             if (t.getType() == TileType.BOMB) i++;
         }
         return i;
+    }
+
+    void setCovered(boolean covered) {
+        this.covered = covered;
     }
 }
 
