@@ -128,7 +128,7 @@ public class GridController extends GridPane implements Observer {
                     System.out.println("It's flagged!");
                     break;
                 case BOMB:
-
+                    
                     this.game.setGameOver();
                     //game .unCoverThemAll();
                     //this.tellTheUserItsOver(); 
@@ -169,16 +169,15 @@ public class GridController extends GridPane implements Observer {
                 }
                 Tile tile = (Tile) o;
                 Object iv = this.getChildren().get(game.getBoardTiles().indexOf(tile));
+                
+                //ignore updates by the Group Node of a list
                 if (!(iv instanceof Group)) {
-                    updateTileSwitch(tile);
+                    Integer count = null;
+                    if(arg != null) count = (Integer) arg;
+                    else count = 0;
+                    updateTileSwitch(tile,count);
 
                 } 
-                else if (iv instanceof Group) {
-                    ObservableList<Node> tiles = ((Group) iv).getChildrenUnmodifiable();
-                    System.out.println(tiles.toArray().toString());
-                    
-                    
-                }
             }    
         }
         else if (o instanceof Minesweeper) {
@@ -195,14 +194,14 @@ public class GridController extends GridPane implements Observer {
         }
     }
 
-    private void updateTileSwitch(Tile tile) {
+    private void updateTileSwitch(Tile tile, int count) {
         ImageView img = (ImageView) this.getChildren().get(game.getBoardTiles().indexOf(tile));
         TileType type = tile.getType();
-
+        synchronized(game.board){
         switch (type) {
             case BOMB:
                 explosionCount++;
-                img.setImage(new Image("mine" + explosionCount + ".png", buttonWidth, buttonWidth, false, true));
+                img.setImage(new Image("mine" + count + ".png", buttonWidth, buttonWidth, false, true));
                 if (explosionCount == 4) {
                     System.out.println("stop: " + explosionCount);
                     stopExplosion = true;
@@ -211,7 +210,7 @@ public class GridController extends GridPane implements Observer {
                 break;
             case FLAG:
                 flagCount++;
-                img.setImage(new Image("flag" + flagCount + ".png", buttonWidth, buttonWidth, false, true));
+                img.setImage(new Image("flag" + count + ".png", buttonWidth, buttonWidth, false, true));
                 if (flagCount == 4) {
                     flagCount = 0;
                 }
@@ -231,6 +230,7 @@ public class GridController extends GridPane implements Observer {
             //MouseEvent.fireEvent(img, new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
         }
 
+        }
     }
 
 }

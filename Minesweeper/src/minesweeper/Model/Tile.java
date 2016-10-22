@@ -44,9 +44,16 @@ public class Tile extends Observable{
     {
         this.type = type;
         
-        // The model has changed, notify observers!
         this.setChanged();
-        this.notifyObservers();
+        // The model has changed, notify observers!
+        if (type == TileType.FLAG){
+                this.notifyObservers(1);notifyObservers(2);notifyObservers(3);notifyObservers(4);    
+        }
+        else this.notifyObservers();
+        
+        
+        
+        
     }
     public void setNumber(int number)
     {
@@ -81,12 +88,24 @@ public class Tile extends Observable{
         return i;
     }
 
-    void setCovered(boolean covered) {
+    void setCovered(boolean covered) throws InterruptedException {
         this.covered = covered;
         
-        // The model has changed, notify observers!
         this.setChanged();
-        this.notifyObservers();
+        // The model has changed, notify observers!
+        if (type == TileType.BOMB){
+                this.notifyObservers(1);
+                Thread.sleep(10);
+                this.setChanged();
+                notifyObservers(2);
+                Thread.sleep(10);
+                this.setChanged();
+                notifyObservers(3);
+                Thread.sleep(10);
+                this.setChanged();
+                notifyObservers(4);    
+        }
+        else this.notifyObservers();
     }
 }
 
