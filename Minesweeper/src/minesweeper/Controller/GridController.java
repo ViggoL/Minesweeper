@@ -10,7 +10,7 @@ import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 
 import java.util.Arrays;
-
+import minesweeper.Model.TileEventException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;

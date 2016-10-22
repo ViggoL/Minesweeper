@@ -1,3 +1,4 @@
+package minesweeper.Model;
 
 import javafx.event.Event;
 import javafx.scene.control.Alert;
