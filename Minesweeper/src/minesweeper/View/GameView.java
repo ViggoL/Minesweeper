@@ -167,8 +167,8 @@ public class GameView extends GameViewSuper implements Observer{
     }
 
     public void wouldYouLikeToPlayAgainPrompt() {
-        
-        new NewGame(); 
+
+        new NewGame(game.getDifficultySetting()); 
     }
 
     private class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {
