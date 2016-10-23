@@ -94,6 +94,7 @@ public class Tile extends Observable{
         this.setChanged();
         // The model has changed, notify observers!
         if (type == TileType.BOMB){
+            try{
                 this.notifyObservers(1);
                 Thread.sleep(10);
                 this.setChanged();
@@ -104,6 +105,12 @@ public class Tile extends Observable{
                 Thread.sleep(10);
                 this.setChanged();
                 notifyObservers(4);    
+            }
+            catch (InterruptedException interrupted){
+                Thread.currentThread().interrupt();
+                System.err.println("Tile sleep interrupted");
+                for(StackTraceElement s: Thread.currentThread().getStackTrace()) System.err.println(s.toString());
+            }
         }
         else this.notifyObservers();
     }

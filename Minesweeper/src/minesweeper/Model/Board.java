@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -44,8 +46,8 @@ public class Board extends Observable {
             case EASY:
                 while (tiles.size() < 100) {
                     while (tiles.size() / 10 <= 9) {
-                        x = tiles.size() / 10;
-                        y = tiles.size() % 10;
+                        x = tiles.size() % 10;
+                        y = tiles.size() / 10;
                         tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
                     }
                 }
@@ -54,8 +56,8 @@ public class Board extends Observable {
             case MEDIUM:
                 while (tiles.size() < 175) {
                     while (tiles.size() / 15 <= 14) {
-                        x = tiles.size() / 15;
-                        y = tiles.size() % 15;
+                        x = tiles.size() % 15;
+                        y = tiles.size() / 15;
                         tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
                     }
                 }
@@ -63,8 +65,8 @@ public class Board extends Observable {
             case HARD:
                 while (tiles.size() < 289) {
                     while (tiles.size() / 17 <= 16) {
-                        x = tiles.size() / 17;
-                        y = tiles.size() % 17;
+                        x = tiles.size() % 17;
+                        y = tiles.size() / 17;
                         tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
                     }
                 }
@@ -147,24 +149,28 @@ public class Board extends Observable {
 
     public void uncover(Tile tile) {
         if (tile.isCovered()) {
-            tile.setCovered(false);
-
-            // The model has changed, notify observers!
-            this.setChanged();
-            this.notifyObservers();
-
-            System.out.println("Uncover tile and search surroundings!");
-            if (tile.getType() == TileType.EMPTY) {
-                if (Tile.bombCount(getSurroundingTiles(tile)) == 0) {
-                    List<Tile> surrounding = getSurroundingTiles(tile);
-                    for (Tile t : surrounding) {
-                        if (t.getType() == TileType.EMPTY) {
-                            uncover(t);
+            try {
+                tile.setCovered(false);
+                
+                // The model has changed, notify observers!
+                this.setChanged();
+                this.notifyObservers();
+                
+                System.out.println("Uncover tile and search surroundings!");
+                if (tile.getType() == TileType.EMPTY) {
+                    if (Tile.bombCount(getSurroundingTiles(tile)) == 0) {
+                        List<Tile> surrounding = getSurroundingTiles(tile);
+                        for (Tile t : surrounding) {
+                            if (t.getType() == TileType.EMPTY) {
+                                uncover(t);
+                            }
+                            
                         }
 
                     }
-
                 }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
