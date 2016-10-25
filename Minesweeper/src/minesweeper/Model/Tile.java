@@ -5,11 +5,8 @@
  */
 package minesweeper.Model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
-import javafx.scene.layout.GridPane;
 
 /**
  *
@@ -47,8 +44,25 @@ public class Tile extends Observable{
         this.setChanged();
         // The model has changed, notify observers!
         if (type == TileType.FLAG){
-                this.notifyObservers(1);notifyObservers(2);notifyObservers(3);notifyObservers(4);    
+            
+            //four calls to observers lets the four different flag images be displayed
+            try{
+                this.notifyObservers(1);
+                Thread.sleep(10);
+                this.notifyObservers(2);
+                Thread.sleep(10);
+                this.notifyObservers(3);
+                Thread.sleep(10);
+                this.notifyObservers(4);
+                Thread.sleep(10);
+        
+            } catch (InterruptedException interrupted){
+                Thread.currentThread().interrupt();
+                System.err.println(interrupted.toString());
+                for(StackTraceElement s: Thread.currentThread().getStackTrace()) System.err.println(s.toString());
+            }
         }
+        
         else this.notifyObservers();
         
         
@@ -88,7 +102,7 @@ public class Tile extends Observable{
         return i;
     }
 
-    void setCovered(boolean covered) throws InterruptedException {
+    void setCovered(boolean covered) {
         this.covered = covered;
         
         this.setChanged();
@@ -108,7 +122,7 @@ public class Tile extends Observable{
             }
             catch (InterruptedException interrupted){
                 Thread.currentThread().interrupt();
-                System.err.println("Tile sleep interrupted");
+                System.err.println(interrupted.toString());
                 for(StackTraceElement s: Thread.currentThread().getStackTrace()) System.err.println(s.toString());
             }
         }
