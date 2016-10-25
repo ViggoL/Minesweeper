@@ -61,15 +61,17 @@ public class GameView extends GameViewSuper implements Observer{
     private GameControllers controller;
     private final MenuItem menuItemQuit, menuItemNewGame, exitMenuItem;
     Minesweeper game;
+    private ClockView clock;
     public GameView(Minesweeper game) {
         super(game);
         this.game = game;
         gameFrame = new BorderPane();
+        clock = new ClockView(game);
         
         buttonPaneWidth = 20.0;
         buttonWidth = 20;
 
-        controller = new GameControllers(game);
+        controller = new GameControllers(game,this);
         grid = new GridController(game);
         
         
@@ -140,6 +142,7 @@ public class GameView extends GameViewSuper implements Observer{
                     grid.setVisible(false);
                     gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
                 }
+                else if (game.isGameOver()) clock.update(game, arg);
             }
             //else if (time.isTicking()) ;//gameFrame.setCenter(grid);
             else {
@@ -152,8 +155,10 @@ public class GameView extends GameViewSuper implements Observer{
         }
         else if(o instanceof Minesweeper){
             System.out.println("game update");
-            if(game.isGameOver())
+            if(game.isGameOver()){
                 for(Tile t: game.getBoardTiles()) game.board.uncover(t); 
+                tellTheUserItsOver();
+            }
         }
         
     }
@@ -171,6 +176,10 @@ public class GameView extends GameViewSuper implements Observer{
     public void wouldYouLikeToPlayAgainPrompt() {
 
         new NewGame(game.getDifficultySetting()); 
+    }
+
+    public ClockView getClock() {
+        return clock;
     }
 
     public final class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {

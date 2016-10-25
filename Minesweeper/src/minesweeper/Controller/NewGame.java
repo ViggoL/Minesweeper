@@ -49,7 +49,6 @@ public class NewGame {
         game.timer.addObserver(viewer);
         game.board.addObserver(viewer);
         game.addObserver(viewer);
-        //for(Tile t: game.board.getTiles()) t.addObserver(viewer);
         
         primaryStage.setTitle("Minesweeper");
         primaryStage.setScene(viewer.scene);
