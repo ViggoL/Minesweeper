@@ -60,10 +60,8 @@ public class GameView extends GameViewSuper implements Observer{
     public final Menu fileMenu, helpMenu ;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
     private GameControllers controller;
     private final MenuItem menuItemQuit, menuItemNewGame, exitMenuItem;
-    Minesweeper game;
     public GameView(Minesweeper game) {
-        super(game);
-        this.game = game;
+        super(game); 
         gameFrame = new BorderPane();
         
         buttonPaneWidth = 20.0;
