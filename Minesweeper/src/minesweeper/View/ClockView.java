@@ -48,10 +48,11 @@ public class ClockView implements Observer, Runnable{
     private HBox timeBox;
     private double xSize, ySize;
     private double screenPosition; 
+    private int howManyTimes;
     private Pane clock;
     
     
-    ClockView(Minesweeper game){
+    private ClockView(Minesweeper game){
         this.game = game;
                     
         clock = new Pane();
@@ -75,6 +76,7 @@ public class ClockView implements Observer, Runnable{
         scene = new Scene(clock);
         
         screenPosition = 2.0;
+        howManyTimes = 1;
         
         addSceneToStage(scene);
         update();
@@ -105,20 +107,18 @@ public class ClockView implements Observer, Runnable{
     public void update(Observable o, Object arg) {
         if(o instanceof Minesweeper) {
             Minesweeper game = (Minesweeper) o;
-            if(game.isGameOver()) stage.close();
             try{
                 seconds = (int) arg;
                 timeLabel.setText("Time: " + seconds + " seconds");
                 
             } finally {
 
-                if(!game.isGameOver())
-                    stage.show();
+                stage.show();
             }
         }
     }
     
-    public ClockView getInstance(Minesweeper game){
+    public static ClockView getInstance(Minesweeper game){
         if(theClock != null){
             if(theClock.stage.isShowing()) { 
                 theClock.grow();
@@ -137,6 +137,7 @@ public class ClockView implements Observer, Runnable{
     }
 
     private void grow(){
+        howManyTimes++;
         if(getBoxSize()[0] >= scene.getRoot().minWidth(ySize))
             setBoxSize(xSize*1.1);
         timeBox.setMinSize(xSize, ySize);
