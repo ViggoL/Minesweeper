@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import minesweeper.Model.Minesweeper;
 import minesweeper.View.ClockView;
+import minesweeper.View.GameView;
 
 /**
  *
@@ -24,10 +25,12 @@ public class GameControllers extends VBox {
     private final Button rulesButton, resumeButton, pauseButton;
     private final Insets inset;
     private final Button timeButton;
+    private final GameView gameView;
     
-    public GameControllers(Minesweeper game)
+    public GameControllers(Minesweeper game, GameView gameView)
     {
         this.game = game;
+        this.gameView = gameView;
         double buttonWidth = 20;
 
         pauseButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PAUSE).getButton();
@@ -69,7 +72,6 @@ public class GameControllers extends VBox {
         dialog.showAndWait();
     }
     public void TimePaneClicked(Event event){
-        ClockView clock = ClockView.getInstance(game);
-        clock.start();
+        gameView.getClockView().showClock();
     }
 }

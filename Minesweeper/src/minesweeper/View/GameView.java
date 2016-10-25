@@ -26,6 +26,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogEvent;
@@ -45,134 +46,137 @@ import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
 import minesweeper.Model.Tile;
 
-
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
  */
-public class GameView extends GameViewSuper implements Observer{
-    
+public class GameView extends GameViewSuper implements Observer {
+
     public Stage gameStage;
-    public Button pauseButton, rulesButton,resumeButton;
+    public Button pauseButton, rulesButton, resumeButton;
     public BorderPane gameFrame;
     public GridPane grid;
     public Label timeLabel;
-    public final Menu fileMenu, helpMenu ;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
+    public final Menu fileMenu, helpMenu;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
     private GameControllers controller;
     private final MenuItem menuItemQuit, menuItemNewGame, exitMenuItem;
-    public GameView(Minesweeper game) {
-        super(game); 
+    private final ClockView clock;
+
+    public GameView(Minesweeper game, ClockView clock) {
+        super(game);
+        this.clock = clock;
         gameFrame = new BorderPane();
-        
+
         buttonPaneWidth = 20.0;
         buttonWidth = 20;
 
-        controller = new GameControllers(game);
+        controller = new GameControllers(game, this);
         grid = new GridController(game);
-        
-        
+
         fileMenu = new Menu("File");
         helpMenu = new Menu("Help");
         exitMenuItem = new MenuItem("Exit");
         menuItemQuit = new MenuItem("Quit");
         menuItemNewGame = new MenuItem("New Game");
-        
+
         exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    gameFrame.getChildren().clear();
-                    gameFrame.setPrefSize(0.0, 0.0);
-                }
+            @Override
+            public void handle(ActionEvent t) {
+                gameFrame.getChildren().clear();
+                gameFrame.setPrefSize(0.0, 0.0);
+            }
         });
         menuItemQuit.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    System.exit(0);
-                }
+            @Override
+            public void handle(ActionEvent t) {
+                System.exit(0);
+            }
         });
         menuItemNewGame.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    
-                    new NewGame(gameStage, game.getDifficultySetting());
-                }
+            @Override
+            public void handle(ActionEvent t) {
+
+                new NewGame(gameStage, game.getDifficultySetting());
+            }
         });
-        
-        for(Difficulty d: Difficulty.values()){
+
+        for (Difficulty d : Difficulty.values()) {
             MenuItem item = new MenuItem(d.toString());
-            item.setOnAction(new SettingsMenuEventHandler(game,this));
-            settingsMenu.getItems().add(item);                 
+            item.setOnAction(new SettingsMenuEventHandler(game, this));
+            settingsMenu.getItems().add(item);
         }
-        
-        
-            
-        fileMenu.getItems().addAll(menuItemNewGame,exitMenuItem,menuItemQuit);
-        
-        
+
+        fileMenu.getItems().addAll(menuItemNewGame, exitMenuItem, menuItemQuit);
+
         menuBar.getMenus().add(settingsMenu);
         menuBar.getMenus().add(fileMenu);
-        
+
         gameFrame.setLeft(controller);
         gameFrame.setTop(menuBar);
         gameFrame.setCenter(grid);
-        
-        
+
         scene = new Scene(gameFrame);
-    }
-    
-    public GameView(){
-        this(new Minesweeper());
-        
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        if(o instanceof GameTimer){
-            GameTimer time = (GameTimer) o; 
-            if(time.getSeconds() > 0){
-                if(time.isTicking()){
+        if (o instanceof GameTimer) {
+            GameTimer time = (GameTimer) o;
+            if (time.getSeconds() > 0) {
+                if (time.isTicking()) {
                     grid.setVisible(true);
                     gameFrame.setCenter(grid);
-                }
-                else if (game.isPaused()){
+                } else if (game.isPaused()) {
                     grid.setVisible(false);
                     gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
+                } else if (game.isGameOver()) ;
+            } //else if (time.isTicking()) ;//gameFrame.setCenter(grid);
+            else {
+                Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION, "Click a tile to start playing!", ButtonType.OK);
+                DialogEvent event = new DialogEvent(theTimeIsNow, DialogEvent.DIALOG_CLOSE_REQUEST);
+
+                theTimeIsNow.onCloseRequestProperty().set(new TheTimerIsNotRunning_AlertEventHandler(event));
+                theTimeIsNow.show();
+            }
+        } else if (o instanceof Minesweeper) {
+            System.out.println("game update");
+            if (game.isGameOver()) {
+                for (Tile t : game.getBoardTiles()) {
+                    game.board.uncover(t);
                 }
             }
-            //else if (time.isTicking()) ;//gameFrame.setCenter(grid);
-            else {
-                Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION,"Click a tile to start playing!", ButtonType.OK);
-                DialogEvent event = new DialogEvent(theTimeIsNow,DialogEvent.DIALOG_CLOSE_REQUEST);
-                
-                theTimeIsNow.onCloseRequestProperty().set(new TheTimerIsNotRunning_AlertEventHandler(event));
-                theTimeIsNow.show();        
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GameView.class.getName()).log(Level.SEVERE, null, ex);
+                Thread.currentThread().interrupt();
             }
+            tellTheUserItsOver();
         }
-        else if(o instanceof Minesweeper){
-            System.out.println("game update");
-            if(game.isGameOver())
-                for(Tile t: game.getBoardTiles()) game.board.uncover(t); 
-        }
-        
-    }
-    
-    public void tellTheUserItsOver() {
-        MainMenuView view = null;
 
-        view = new MainMenuView();
-        Stage stage = new Stage();
-        MainMenuController main = new MainMenuController(view,stage);
-        view.update(stage);
-        
+    }
+
+    public void tellTheUserItsOver() {
+        Alert gameOver;
+        gameOver = new Alert(AlertType.INFORMATION);
+        gameOver.setTitle("Game Over");
+        gameOver.setContentText("It's all over mate!\n\n"
+                + "Please select New Game.");
+        gameOver.showAndWait();
+
+    }
+
+    public ClockView getClockView() {
+        return this.clock;
     }
 
     public void wouldYouLikeToPlayAgainPrompt() {
 
-        new NewGame(game.getDifficultySetting()); 
+        new NewGame(game.getDifficultySetting());
     }
 
     public final class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {
- 
+
         public TheTimerIsNotRunning_AlertEventHandler(DialogEvent event) {
             handle((DialogEvent) event);
         }
@@ -182,5 +186,5 @@ public class GameView extends GameViewSuper implements Observer{
             controller.ResumeButtonClicked(event);
         }
     }
-    
+
 }

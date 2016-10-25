@@ -38,7 +38,8 @@ import minesweeper.Model.Minesweeper;
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public class ClockView implements Observer, Runnable{
+public class ClockView implements Observer {
+
     Minesweeper game;
     private Stage stage;
     private TimeLabel timeLabel;
@@ -47,17 +48,15 @@ public class ClockView implements Observer, Runnable{
     private static ClockView theClock;
     private HBox timeBox;
     private double xSize, ySize;
-    private double screenPosition; 
+    private double screenPosition;
     private int howManyTimes;
     private Pane clock;
-    
-    
-    private ClockView(Minesweeper game){
+
+    public ClockView(Minesweeper game) {
         this.game = game;
-                    
+
         clock = new Pane();
         timeBox = new HBox();
-        
 
         timeBox.setPadding(new Insets(10));
 
@@ -66,7 +65,6 @@ public class ClockView implements Observer, Runnable{
         timeBox.setMinSize(xSize, ySize);
         timeBox.setAlignment(Pos.CENTER);
 
-
         timeLabel = new TimeLabel();
         seconds = game.timer.getSeconds();
         timeLabel.setText("Time: " + seconds + " seconds");
@@ -74,106 +72,88 @@ public class ClockView implements Observer, Runnable{
         timeBox.getChildren().add(timeLabel);
         clock.getChildren().add(timeBox);
         scene = new Scene(clock);
-        
+
         screenPosition = 2.0;
         howManyTimes = 1;
-        
+
         addSceneToStage(scene);
         update();
-        
+
         //Platform thread must control timer (http://stackoverflow.com/a/18654916)
         Timer timer = new java.util.Timer();
         timer.schedule(new TimerTask() {
-            public void run() {    
-                Platform.runLater(new Runnable() {    
+            public void run() {
+                Platform.runLater(new Runnable() {
                     public void run() {
-                        timeLabel.update(game.timer,game.timer.getSeconds());                
+                        timeLabel.update(game.timer, game.timer.getSeconds());
                     }
                 });
             }
         }, 1000, 1000);
     }
 
-    @Override
-    public void run() {
-            stage.show();
-    }
-        
     private void update() {
         update(game, game.timer.getSeconds());
     }
-    
-    @Override
-    public void update(Observable o, Object arg) {
-        if(o instanceof Minesweeper) {
-            Minesweeper game = (Minesweeper) o;
-            try{
-                seconds = (int) arg;
-                timeLabel.setText("Time: " + seconds + " seconds");
-                
-            } finally {
 
-                stage.show();
-            }
+    @Override
+    public void update(Observable o, Object arg) throws NullPointerException {
+        if (o instanceof Minesweeper) {
+            Minesweeper game = (Minesweeper) o;
+
+            seconds = (int) arg;
+            timeLabel.setText("Time: " + seconds + " seconds");
         }
     }
-    
-    public static ClockView getInstance(Minesweeper game){
-        if(theClock != null){
-            if(theClock.stage.isShowing()) { 
+
+    public ClockView showClock() {
+        if (theClock != null) {
+            if (theClock.stage.isShowing()) {
                 theClock.grow();
             }
-            
-            theClock.update();
-        }
-        else {
+
+            stage.showAndWait();
+        } else {
             theClock = new ClockView(game);
         }
         return theClock;
     }
 
-    public Runnable start() {
-        return this;
-    }
-
-    private void grow(){
+    private void grow() {
         howManyTimes++;
-        if(getBoxSize()[0] >= scene.getRoot().minWidth(ySize))
-            setBoxSize(xSize*1.1);
+        if (getBoxSize()[0] >= scene.getRoot().minWidth(ySize)) {
+            setBoxSize(xSize * 1.1);
+        }
         timeBox.setMinSize(xSize, ySize);
         clock = new Pane();
         clock.getChildren().add(timeBox);
         stage.close();
         addSceneToStage(new Scene(clock));
     }
-    
-    private void setBoxSize(double x){
+
+    private void setBoxSize(double x) {
         xSize = x;
-        ySize = xSize/2;
+        ySize = xSize / 2;
     }
-    
+
     //returns x and y values for Label HBox
-    public Double [] getBoxSize(){
-        
-        return new Double[]{xSize,ySize};
+    public Double[] getBoxSize() {
+
+        return new Double[]{xSize, ySize};
     }
-    
 
     private void positionStage() {
-        screenPosition += screenPosition*2;
+        screenPosition += screenPosition * 2;
         stage.setX(screenPosition);
-        stage.setY((screenPosition)/1.5);
-        
+        stage.setY((screenPosition) / 1.5);
+
     }
-    
-    private void addSceneToStage(Scene scene){
+
+    private void addSceneToStage(Scene scene) {
         stage = new Stage();
         stage.setTitle("Minesweeper Time");
         stage.setScene(scene);
         positionStage();
     }
 
-
-    
-    
 }

@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import minesweeper.Model.Difficulty;
 import minesweeper.Model.Minesweeper;
 import minesweeper.Model.Tile;
+import minesweeper.View.ClockView;
 import minesweeper.View.GameView;
 
 /**
@@ -32,6 +33,7 @@ public class NewGame {
 
     private final Stage primaryStage;
     private final Minesweeper game;
+    private ClockView clock;
     
     public NewGame(Stage oldstage, Difficulty diff){
         oldstage.close();
@@ -40,9 +42,10 @@ public class NewGame {
         
         // The observable-observer initialization
         game = new Minesweeper(diff);
+        clock = new ClockView(game);
         
         //The GUI is initialized
-        GameView viewer = new GameView(game);
+        GameView viewer = new GameView(game, clock);
         viewer.gameStage = primaryStage;
         
         //Observers are added
