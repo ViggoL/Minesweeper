@@ -52,7 +52,7 @@ import minesweeper.Model.Tile;
  */
 public class GameView extends GameViewSuper implements Observer{
     
-    public Stage gameStage;
+    
     public Button pauseButton, rulesButton,resumeButton;
     public BorderPane gameFrame;
     public GridPane grid;
@@ -98,7 +98,7 @@ public class GameView extends GameViewSuper implements Observer{
                 @Override
                 public void handle(ActionEvent t) {
                     
-                    new NewGame(gameStage, game.getDifficultySetting());
+                    new NewGame(game.getDifficultySetting());
                 }
         });
         
