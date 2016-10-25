@@ -15,6 +15,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import minesweeper.View.MainMenuView;
+import minesweeper.View.RulesView;
 
 /**
  *
@@ -28,6 +29,7 @@ public class MainMenuController {
     {
         this.view = view;
         this.stage = stage;
+        view.update(stage);
         view.resumeButton.setOnMouseClicked((Event event) -> {
             MouseEvent in;
             if (event instanceof MouseEvent) {
@@ -62,15 +64,9 @@ public class MainMenuController {
     {
         view.resumeButton.setText("Don't play!");
     }
-    public void settingsButtonClicked(){
-        
-    }
     
     public void rulesButtonClicked()
     {
-        Alert dialog = new Alert(AlertType.INFORMATION);
-        dialog.setTitle("Rules dialogue");
-        dialog.setContentText("Rules will show in a non-alert window");
-        dialog.showAndWait();   
+        RulesView.showRules();
     }
 }

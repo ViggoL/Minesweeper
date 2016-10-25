@@ -103,20 +103,22 @@ public class ClockView implements Observer {
 
             seconds = (int) arg;
             timeLabel.setText("Time: " + seconds + " seconds");
+            if(game.isGameOver()) stage.close();
         }
     }
 
-    public ClockView showClock() {
+    public void showClock() {
         if (theClock != null) {
             if (theClock.stage.isShowing()) {
                 theClock.grow();
             }
 
-            stage.showAndWait();
+            stage.show();
         } else {
-            theClock = new ClockView(game);
+            game.timer.stopTimer();
+            //theClock = new ClockView(game);
+            //stage.show();
         }
-        return theClock;
     }
 
     private void grow() {

@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import minesweeper.Model.Minesweeper;
 import minesweeper.View.ClockView;
 import minesweeper.View.GameView;
+import minesweeper.View.RulesView;
 
 /**
  *
@@ -66,10 +67,9 @@ public class GameControllers extends VBox {
     }
     public void RulesButtonClicked(Event event)
     {
-        Alert dialog = new Alert(Alert.AlertType.INFORMATION);
-        dialog.setTitle("Rules dialogue");
-        dialog.setContentText("Rules will show in a non-alert window");
-        dialog.showAndWait();
+        Runnable rules = new RulesView();
+        Thread window = new Thread(rules);
+        window.start();
     }
     public void TimePaneClicked(Event event){
         gameView.getClockView().showClock();
