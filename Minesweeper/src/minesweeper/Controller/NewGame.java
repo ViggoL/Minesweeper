@@ -43,6 +43,7 @@ public class NewGame {
         
         //The GUI is initialized
         GameView viewer = new GameView(game);
+        viewer.gameStage = primaryStage;
         
         //Observers are added
         game.timer.addObserver(viewer);

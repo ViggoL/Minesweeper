@@ -76,8 +76,7 @@ public class Board extends Observable {
         maxY = y;
 
         //TODO: Tweak for each difficulty
-        while (bombCount() <= maxX*Math.E)
-        {
+        while (bombCount() <= maxX * Math.E) {
             int r = ThreadLocalRandom.current().nextInt(0, tiles.size());
             tiles.get(r).setType(TileType.BOMB);
         }
@@ -149,33 +148,27 @@ public class Board extends Observable {
 
     public void uncover(Tile tile) {
         if (tile.isCovered()) {
-            try {
-                tile.setCovered(false);
-                
-                // The model has changed, notify observers!
-                this.setChanged();
-                this.notifyObservers();
-                
-                System.out.println("Uncover tile and search surroundings!");
-                if (tile.getType() == TileType.EMPTY) {
-                    if (Tile.bombCount(getSurroundingTiles(tile)) == 0) {
-                        List<Tile> surrounding = getSurroundingTiles(tile);
-                        for (Tile t : surrounding) {
-                            if (t.getType() == TileType.EMPTY) {
-                                uncover(t);
-                            }
-                            
+            tile.setCovered(false);
+
+            // The model has changed, notify observers!
+            this.setChanged();
+            this.notifyObservers();
+
+            System.out.println("Uncover tile and search surroundings!");
+            if (tile.getType() == TileType.EMPTY) {
+                if (Tile.bombCount(getSurroundingTiles(tile)) == 0) {
+                    List<Tile> surrounding = getSurroundingTiles(tile);
+                    for (Tile t : surrounding) {
+                        if (t.getType() == TileType.EMPTY) {
+                            uncover(t);
                         }
 
                     }
+
                 }
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-
-    
 
     public void getAndSetAdjacentMineCount(Tile tile) {
         tile.setNumber(getAdjacentMines(tile));
