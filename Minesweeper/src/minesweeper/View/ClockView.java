@@ -66,7 +66,7 @@ public class ClockView implements Observer {
         timeBox.setAlignment(Pos.CENTER);
 
         timeLabel = new TimeLabel();
-        seconds = game.timer.getSeconds();
+        seconds = game.getTime();
         timeLabel.setText("Time: " + seconds + " seconds");
 
         timeBox.getChildren().add(timeLabel);
@@ -85,7 +85,7 @@ public class ClockView implements Observer {
             public void run() {
                 Platform.runLater(new Runnable() {
                     public void run() {
-                        timeLabel.update(game.timer, game.timer.getSeconds());
+                        timeLabel.update(game.getTimer(), game.getTime());
                     }
                 });
             }
@@ -93,7 +93,7 @@ public class ClockView implements Observer {
     }
 
     private void update() {
-        update(game, game.timer.getSeconds());
+        update(game, game.getTime());
     }
 
     @Override
@@ -115,9 +115,9 @@ public class ClockView implements Observer {
 
             stage.show();
         } else {
-            game.timer.stopTimer();
-            //theClock = new ClockView(game);
-            //stage.show();
+            game.pause();
+            theClock = new ClockView(game);
+            stage.show();
         }
     }
 

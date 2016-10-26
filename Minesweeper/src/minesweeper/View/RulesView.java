@@ -24,6 +24,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -32,7 +33,8 @@ import javafx.stage.Stage;
  */
 public class RulesView implements Runnable {
 
-    private static Label title,body;
+    private static Label title; 
+    private static Text body;
     private static VBox root;
     private static Scene scene;
 
@@ -41,9 +43,9 @@ public class RulesView implements Runnable {
         
         title = new Label("Minesweeper Rules");
         title.setFont(new Font("Helvetica", 30));
-        title.setPadding(new Insets(5, 5, 20, 5));
+        title.setPadding(new Insets(10));
         
-        body = new Label("The goal of the game is to uncover all the squares "
+        body = new Text("The goal of the game is to uncover all the squares "
                 + "without clicking on a mine and being \"blown up\". \n"
                 + "\tThe locations of the mines are discovered by a process of logic: "
                 + "clicking on a square on the game board "
@@ -58,19 +60,23 @@ public class RulesView implements Runnable {
                 + "without hitting a mine. "
                 + "Any remaining mines not identified by flags are automatically flagged by the computer.\n\n"
                 + "The game board comes in three set sizes: EASY, MEDIUM, and HARD");
-        body.setPadding(new Insets(5));
+        
+        body.maxHeight(Double.MAX_VALUE);
+        body.setWrappingWidth(250);
         
         root = new VBox();
         root.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(title,body);
+        root.setPadding(new Insets(10));
         
-        scene = new Scene(root,500,500);
+        scene = new Scene(root);
         
         stage.setTitle("Minesweeper");
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.setX(300);
+        stage.setY(150);
         stage.show();
-        
     }
 
     @Override

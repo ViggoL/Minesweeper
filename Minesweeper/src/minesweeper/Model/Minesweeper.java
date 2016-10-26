@@ -24,7 +24,7 @@ import minesweeper.View.MainMenuView;
 public class Minesweeper extends Observable{
     private boolean paused;
     public Board board;
-    public GameTimer timer;
+    private GameTimer timer;
     private Settings settings;
     private boolean gameOver;
     
@@ -65,6 +65,10 @@ public class Minesweeper extends Observable{
     
     public int getTime(){
         return timer.getSeconds();
+    }
+    
+    public void startTime(){
+        timer.startTimer();
     }
     
     public void startNewGame(){
@@ -115,6 +119,10 @@ public class Minesweeper extends Observable{
 
     public boolean isGameOver() {
         return gameOver;
+    }
+    
+    public GameTimer getTimer(){
+        return timer;
     }
 
 }

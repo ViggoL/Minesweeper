@@ -99,7 +99,7 @@ public class GridController extends GridPane implements Observer {
     public void TileClicked(Event event) throws TileEventException {
 
         if (timerStarted == false) {
-            game.timer.startTimer();
+            game.startTime();
             timerStarted = true;
         }
         Object o = event.getSource();
@@ -130,14 +130,10 @@ public class GridController extends GridPane implements Observer {
                 case BOMB:
                     
                     this.game.setGameOver();
-                    //game .unCoverThemAll();
-                    //this.tellTheUserItsOver(); 
-                    //wouldYouLikeToPlayAgainPrompt();
                     System.out.println("BOMB!!!!!!");
-                    //perhapsWePlaySomeClipWithAnExplosionHere();
+                    
                     break;
                 default:
-                    //game.viggo_sUncoverAdjacentNumbers();
                     break;
             }
 
@@ -147,14 +143,6 @@ public class GridController extends GridPane implements Observer {
             }
             throw new TileEventException("Event source not supported");
         }
-    }
-
-    private void perhapsWePlaySomeClipWithAnExplosionHere() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void tellTheUserItsOver() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -184,14 +172,6 @@ public class GridController extends GridPane implements Observer {
             System.out.println("Game updating GridController");
         }
         
-    }
-
-    private void sleeper(int sleep) {
-        try {
-            sleep(sleep);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(GridController.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     private void updateTileSwitch(Tile tile, int count) {

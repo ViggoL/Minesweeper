@@ -61,9 +61,11 @@ public class GameView extends GameViewSuper implements Observer {
     private GameControllers controller;
     private final MenuItem menuItemQuit, menuItemNewGame, exitMenuItem;
     private final ClockView clock;
+    private Minesweeper game;
 
     public GameView(Minesweeper game, ClockView clock) {
         super(game);
+        this.game = game;
         this.clock = clock;
         gameFrame = new BorderPane();
 
@@ -130,8 +132,7 @@ public class GameView extends GameViewSuper implements Observer {
                     grid.setVisible(false);
                     gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
                 } else if (game.isGameOver()) ;
-            } //else if (time.isTicking()) ;//gameFrame.setCenter(grid);
-            else {
+            } else if (time.getSeconds() == 0 && !time.isTicking()) {
                 Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION, "Click a tile to start playing!", ButtonType.OK);
                 DialogEvent event = new DialogEvent(theTimeIsNow, DialogEvent.DIALOG_CLOSE_REQUEST);
 
@@ -139,19 +140,38 @@ public class GameView extends GameViewSuper implements Observer {
                 theTimeIsNow.show();
             }
         } else if (o instanceof Minesweeper) {
+
             System.out.println("game update");
-            if (game.isGameOver()) {
-                for (Tile t : game.getBoardTiles()) {
-                    game.board.uncover(t);
+            synchronized (game.getTimer()) {
+                if (game.getTime() > 0) {
+                    if (game.getTimer().isTicking()) {
+                        grid.setVisible(true);
+                        gameFrame.setCenter(grid);
+                    } else if (game.isPaused()) {
+                        grid.setVisible(false);
+                        gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
+                    } else if (game.isGameOver()) {
+                        for (Tile t : game.getBoardTiles()) {
+                            game.board.uncover(t);
+                        }
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(GameView.class.getName()).log(Level.SEVERE, null, ex);
+                            Thread.currentThread().interrupt();
+                        }
+                        tellTheUserItsOver();
+                    }
                 }
+            }if (game.getTime() == 0 && !game.getTimer().isTicking()) {
+                Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION, "Click a tile to start playing!", ButtonType.OK);
+                DialogEvent event = new DialogEvent(theTimeIsNow, DialogEvent.DIALOG_CLOSE_REQUEST);
+
+                theTimeIsNow.onCloseRequestProperty().set(new TheTimerIsNotRunning_AlertEventHandler(event));
+                theTimeIsNow.show();
             }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(GameView.class.getName()).log(Level.SEVERE, null, ex);
-                Thread.currentThread().interrupt();
-            }
-            tellTheUserItsOver();
+
         }
 
     }
@@ -168,11 +188,6 @@ public class GameView extends GameViewSuper implements Observer {
 
     public ClockView getClockView() {
         return this.clock;
-    }
-
-    public void wouldYouLikeToPlayAgainPrompt() {
-
-        new NewGame(game.getDifficultySetting());
     }
 
     public final class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {

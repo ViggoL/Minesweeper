@@ -6,6 +6,7 @@
 package minesweeper.Controller;
 
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -67,6 +68,6 @@ public class MainMenuController {
     
     public void rulesButtonClicked()
     {
-        RulesView.showRules();
+        Platform.runLater(new RulesView());
     }
 }

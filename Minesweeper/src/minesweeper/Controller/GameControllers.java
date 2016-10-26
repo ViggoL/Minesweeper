@@ -6,6 +6,7 @@
 package minesweeper.Controller;
 
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -67,9 +68,7 @@ public class GameControllers extends VBox {
     }
     public void RulesButtonClicked(Event event)
     {
-        Runnable rules = new RulesView();
-        Thread window = new Thread(rules);
-        window.start();
+        Platform.runLater(new RulesView());
     }
     public void TimePaneClicked(Event event){
         gameView.getClockView().showClock();
