@@ -139,7 +139,7 @@ public class GameView extends GameViewSuper implements Observer {
                 theTimeIsNow.show();
             }
         } else if (o instanceof Minesweeper) {
-
+            Minesweeper game = (Minesweeper) o;
             System.out.println("game update");
             synchronized (game.board) {
                 if (game.getTime() > 0 && !game.isGameOver()) {
