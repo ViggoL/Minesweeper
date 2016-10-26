@@ -58,7 +58,8 @@ public class GameControllers extends VBox {
     public void ResumeButtonClicked(Event event)
     {
         this.getChildren().set(0, pauseButton);
-        game.resume();
+        if(!game.isGameOver())game.resume();
+        else new NewGame(gameView.gameStage,game.getDifficultySetting());
     }
     public void PauseButtonClicked(Event event)
     {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * [Project] license
  * 
- * Copyright © 2016 Johan Lipecki
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,23 @@
  */
 package minesweeper.View;
 
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
 
 /**
- *
+ * 
  * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <vlunden@kth.se>
  */
 public class ClockView implements Observer {
 

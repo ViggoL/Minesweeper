@@ -23,7 +23,7 @@ public class MinesweeperMain extends Application {
         
         MainMenuView view = new MainMenuView();
         new MainMenuController(view, primaryStage);
-        
+        //view.update(primaryStage);
     }
 
     /**

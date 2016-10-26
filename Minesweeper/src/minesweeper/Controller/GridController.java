@@ -110,9 +110,11 @@ public class GridController extends GridPane implements Observer {
             b = (Button) event.getSource();
             i = this.getChildren().indexOf(b);;
         } else if (o instanceof ImageView) {
+            
             im = (ImageView) o;
+            System.out.println(event.getEventType().toString());
             ObservableList<Node> l = this.getChildren();
-            i = this.getChildren().indexOf(im);//;
+            i = this.getChildren().indexOf(im);
         } else {
             i = -1;
         }
