@@ -6,14 +6,9 @@
 package minesweeper.Model;
 
 import java.util.Observable;
-import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import java.util.Timer;
 import java.util.TimerTask;
-import javafx.scene.control.Label;
-import minesweeper.View.ClockView;
-import minesweeper.View.TimeLabel;
 
 
 /**
@@ -22,10 +17,10 @@ import minesweeper.View.TimeLabel;
  */
 public class GameTimer extends Observable {
     
-    boolean ticking = true;
-    Timer timer;
-    int interval = 1000;
-    int seconds = 0;
+    private boolean ticking = true;
+    private Timer timer;
+    private int interval = 1000;
+    private int seconds = 0;
     
     public GameTimer() {
         timer = new Timer();
@@ -57,7 +52,6 @@ public class GameTimer extends Observable {
     
     public void stopTimer()
     {
-        //seconds = 0;
         ticking = false;
         
         this.setChanged();

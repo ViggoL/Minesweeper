@@ -5,38 +5,25 @@
  */
 package minesweeper.Controller;
 
-import java.io.IOException;
-import static java.lang.Thread.sleep;
-import java.util.ArrayList;
-
 import java.util.Arrays;
 import minesweeper.Model.TileEventException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-
 import minesweeper.Model.Minesweeper;
 import minesweeper.Model.Tile;
 import minesweeper.Model.TileType;
-import static java.lang.Thread.sleep;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -96,7 +83,7 @@ public class GridController extends GridPane implements Observer {
 
     }
 
-    public void TileClicked(Event event) throws TileEventException {
+    public void TileClicked(MouseEvent event) throws TileEventException {
 
         if (timerStarted == false) {
             game.startTime();

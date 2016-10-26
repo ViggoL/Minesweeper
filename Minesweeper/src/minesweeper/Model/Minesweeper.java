@@ -22,7 +22,6 @@ import minesweeper.View.MainMenuView;
  * @author Viggo
  */
 public class Minesweeper extends Observable{
-    private boolean paused;
     public Board board;
     private GameTimer timer;
     private Settings settings;
@@ -30,7 +29,6 @@ public class Minesweeper extends Observable{
     
     public Minesweeper() {
         super();
-        this.paused = false;
         board = new Board(Difficulty.EASY);
         settings = new Settings();
         timer = new GameTimer(); 
@@ -49,7 +47,6 @@ public class Minesweeper extends Observable{
     
     public void pause(){
         timer.stopTimer();
-        this.paused = true;
         
         this.setChanged();
         this.notifyObservers();
@@ -57,7 +54,6 @@ public class Minesweeper extends Observable{
     
     public void resume(){
         timer.resumeTimer();
-        this.paused = false;
         
         this.setChanged();
         this.notifyObservers();
@@ -80,7 +76,7 @@ public class Minesweeper extends Observable{
     }
     
     public boolean isPaused(){
-        return this.paused;
+        return timer.isTicking();
     }
 
     public void startNewGame(Difficulty difficulty) {
@@ -108,9 +104,10 @@ public class Minesweeper extends Observable{
     }
 
     public void setGameOver() {
+        synchronized (timer){
         gameOver = true;
         timer.stopTimer();
-        
+        }    
         // The model has changed, notify observers!
         this.setChanged();
         this.notifyObservers();

@@ -127,11 +127,10 @@ public class GameView extends GameViewSuper implements Observer {
             if (time.getSeconds() > 0) {
                 if (time.isTicking()) {
                     grid.setVisible(true);
-                    gameFrame.setCenter(grid);
-                } else if (game.isPaused()) {
+                } else if (!time.isTicking() && !game.isGameOver()) {
                     grid.setVisible(false);
-                    gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
-                } else if (game.isGameOver()) ;
+                    gameFrame.setCenter(new TimeLabel("Time: " + time.getSeconds() + " seconds"));
+                } else if (game.isGameOver()) grid.setVisible(true);
             } else if (time.getSeconds() == 0 && !time.isTicking()) {
                 Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION, "Click a tile to start playing!", ButtonType.OK);
                 DialogEvent event = new DialogEvent(theTimeIsNow, DialogEvent.DIALOG_CLOSE_REQUEST);
@@ -142,15 +141,17 @@ public class GameView extends GameViewSuper implements Observer {
         } else if (o instanceof Minesweeper) {
 
             System.out.println("game update");
-            synchronized (game.getTimer()) {
-                if (game.getTime() > 0) {
-                    if (game.getTimer().isTicking()) {
+            synchronized (game.board) {
+                if (game.getTime() > 0 && !game.isGameOver()) {
+                    if (game.isPaused()) {
                         grid.setVisible(true);
                         gameFrame.setCenter(grid);
-                    } else if (game.isPaused()) {
+                    } else if (!game.isPaused()) {
                         grid.setVisible(false);
                         gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
-                    } else if (game.isGameOver()) {
+                    } 
+                }
+                else if (game.isGameOver()) {
                         for (Tile t : game.getBoardTiles()) {
                             game.board.uncover(t);
                         }
@@ -163,8 +164,7 @@ public class GameView extends GameViewSuper implements Observer {
                         }
                         tellTheUserItsOver();
                     }
-                }
-            }if (game.getTime() == 0 && !game.getTimer().isTicking()) {
+            }if (game.getTime() == 0 && !game.isPaused()) {
                 Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION, "Click a tile to start playing!", ButtonType.OK);
                 DialogEvent event = new DialogEvent(theTimeIsNow, DialogEvent.DIALOG_CLOSE_REQUEST);
 
