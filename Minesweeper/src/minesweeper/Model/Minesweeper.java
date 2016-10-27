@@ -155,7 +155,9 @@ public class Minesweeper extends Observable{
         this.setChanged();
         this.notifyObservers();
     }
-    
+    /**
+     * Sets the game to game over stage
+     */
     public void setGameOver() {
         synchronized (timer){
         gameOver = true;
@@ -166,11 +168,17 @@ public class Minesweeper extends Observable{
         this.notifyObservers();
         
     }
-
+    /**
+     * Returns whether the game is over or not
+     * @return 
+     */
     public boolean isGameOver() {
         return gameOver;
     }
-    
+    /**
+     * Returns the timer of the game
+     * @return 
+     */
     public GameTimer getTimer(){
         return timer;
     }

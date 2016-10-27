@@ -22,7 +22,7 @@ import javafx.scene.paint.Color;
 import static minesweeper.Model.Difficulty.*;
 
 /**
- *
+ * Represents a collection of settings
  * @author Johan Lipecki <lipecki@kth.se>
  */
 public class Settings extends Observable{

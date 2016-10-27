@@ -6,6 +6,7 @@ import minesweeper.Controller.GridController;
 
     /**
      * code snippet from https://examples.javacodegeeks.com
+     * A tile event exception
      */
     public class TileEventException extends RuntimeException {
 
