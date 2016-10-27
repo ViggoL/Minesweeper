@@ -17,6 +17,7 @@ public class Tile extends Observable{
     private TileType type;
     private int number;
     private boolean covered;
+    private boolean flagged;
     public Tile(Point point, TileType type)
     {
         this.covered = true;
@@ -127,6 +128,14 @@ public class Tile extends Observable{
             }
         }
         else this.notifyObservers();
+    }
+
+    public void setFlagged(boolean flagged) {
+        this.flagged = flagged;
+    }
+    public boolean isFlagged()
+    {
+        return this.flagged;
     }
 }
 

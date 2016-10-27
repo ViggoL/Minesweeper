@@ -23,5 +23,5 @@ package minesweeper.Model;
  */
 public enum TileType
 {
-    BOMB, FLAG, NUMBER, EMPTY
+    BOMB, NUMBER, EMPTY
 }
