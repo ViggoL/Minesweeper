@@ -40,7 +40,7 @@ import minesweeper.Controller.GridController;
             super(message, cause, enableSuppression, writeableStacktrace);
         }
 
-        public void TerminateGame(Event event) {
+        private void TerminateGame(Event event) {
             System.exit(666);
         }
 
