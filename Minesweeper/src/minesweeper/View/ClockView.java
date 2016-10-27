@@ -109,10 +109,10 @@ public class ClockView implements Observer {
             if (theClock.stage.isShowing()) {
                 theClock.grow();
             }
-
+            else 
+            
             stage.show();
         } else {
-            game.pause();
             theClock = new ClockView(game);
             stage.show();
         }

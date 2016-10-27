@@ -96,7 +96,8 @@ public class Minesweeper extends Observable{
     }
 
     public void unCoverThemAll() {
-        for(Tile t: board.getTiles()) board.uncover(t);
+        for(Tile t: board.getTiles()) 
+            board.uncover(t);
         
         // The model has changed, notify observers!
         this.setChanged();
