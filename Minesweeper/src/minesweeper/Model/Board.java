@@ -25,6 +25,7 @@ import java.util.Observable;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import minesweeper.Controller.GridController;
 
 /**
  *
@@ -82,6 +83,12 @@ public class Board extends Observable {
         }
     }
 
+    public Board(Difficulty diff, ArrayList<Tile> tiles)
+    {
+        this(diff);
+        this.tiles = tiles;
+    }
+    
     public Board() {
         this(Difficulty.EASY);
     }
@@ -203,4 +210,16 @@ public class Board extends Observable {
     public void setTiles(List<Tile> tiles) {
         this.tiles = tiles;
     }
+    
+    public void loadTiles(GridController controller)
+    {
+        ArrayList<Tile> newTiles = FileHelper.read("save.ser");
+    }
+    public void saveTiles()
+    {
+        ArrayList<Tile> list = new ArrayList<>();
+        for (Tile t : tiles) list.add(t);
+        FileHelper.write(list, "save.ser");
+    }
+    
 }

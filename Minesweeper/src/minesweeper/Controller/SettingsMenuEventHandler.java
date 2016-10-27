@@ -15,24 +15,25 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package minesweeper.View;
+package minesweeper.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
 import minesweeper.Model.Difficulty;
 import minesweeper.Model.Minesweeper;
+import minesweeper.View.GameView;
 
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-final class SettingsMenuEventHandler implements EventHandler<ActionEvent> {
+public final class SettingsMenuEventHandler implements EventHandler<ActionEvent> {
     
     private final GameView settingsHandler;
     private final Minesweeper game;
 
-    SettingsMenuEventHandler(Minesweeper game,final GameView settingsHandler) {
+    public SettingsMenuEventHandler(Minesweeper game,final GameView settingsHandler) {
         this.settingsHandler = settingsHandler;
         this.game = game;
         handle(new ActionEvent());

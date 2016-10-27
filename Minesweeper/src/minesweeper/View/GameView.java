@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -41,7 +42,10 @@ import minesweeper.Controller.GameControllers;
 import minesweeper.Controller.GridController;
 import minesweeper.Controller.MainMenuController;
 import minesweeper.Controller.NewGame;
+import minesweeper.Controller.SettingsMenuEventHandler;
+import minesweeper.Model.Board;
 import minesweeper.Model.Difficulty;
+import minesweeper.Model.FileHelper;
 import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
 import minesweeper.Model.Tile;
@@ -62,6 +66,8 @@ public class GameView extends GameViewSuper implements Observer {
     private final MenuItem menuItemQuit, menuItemNewGame, exitMenuItem;
     private final ClockView clock;
     private Minesweeper game;
+    private final MenuItem menuItemSaveGame;
+    private final MenuItem menuItemLoadGame;
 
     public GameView(Minesweeper game, ClockView clock) {
         super(game);
@@ -80,26 +86,30 @@ public class GameView extends GameViewSuper implements Observer {
         exitMenuItem = new MenuItem("Exit");
         menuItemQuit = new MenuItem("Quit");
         menuItemNewGame = new MenuItem("New Game");
+        menuItemSaveGame = new MenuItem("Save Game");
+        menuItemLoadGame = new MenuItem("Load Game");
 
-        exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                gameFrame.getChildren().clear();
-                gameFrame.setPrefSize(0.0, 0.0);
-            }
+        menuItemSaveGame.setOnAction((ActionEvent event) -> {
+            game.board.saveTiles();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Saved game.", ButtonType.OK);
+            alert.show();
         });
-        menuItemQuit.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                System.exit(0);
-            }
+        
+        menuItemLoadGame.setOnAction((ActionEvent event) -> {
+            new NewGame(gameStage, game.getDifficultySetting(), "save.ser");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Loaded game.", ButtonType.OK);
+            alert.show();
         });
-        menuItemNewGame.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-
-                new NewGame(gameStage, game.getDifficultySetting());
-            }
+        
+        exitMenuItem.setOnAction((ActionEvent t) -> {
+            gameFrame.getChildren().clear();
+            gameFrame.setPrefSize(0.0, 0.0);
+        });
+        menuItemQuit.setOnAction((ActionEvent t) -> {
+            System.exit(0);
+        });
+        menuItemNewGame.setOnAction((ActionEvent t) -> {
+            new NewGame(gameStage, game.getDifficultySetting());
         });
 
         for (Difficulty d : Difficulty.values()) {
@@ -108,7 +118,7 @@ public class GameView extends GameViewSuper implements Observer {
             settingsMenu.getItems().add(item);
         }
 
-        fileMenu.getItems().addAll(menuItemNewGame, exitMenuItem, menuItemQuit);
+        fileMenu.getItems().addAll(menuItemSaveGame, menuItemLoadGame, menuItemNewGame, exitMenuItem, menuItemQuit);
 
         menuBar.getMenus().add(settingsMenu);
         menuBar.getMenus().add(fileMenu);

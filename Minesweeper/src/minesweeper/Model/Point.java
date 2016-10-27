@@ -5,13 +5,14 @@
  */
 package minesweeper.Model;
 
+import java.io.Serializable;
 import java.util.Observable;
 
 /**
  * Represents a Point with X and Y coordinates
  * @author Viggo
  */
-public class Point extends Observable {
+public class Point extends Observable implements Serializable {
     public final int x, y;
     public Point(int x, int y)
     {

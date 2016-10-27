@@ -36,11 +36,18 @@ public class Minesweeper extends Observable{
         
     }
     
+    
     public Minesweeper(Difficulty diff){
         this();
         board = new Board(diff);
     }
-
+    
+    public Minesweeper(Difficulty diff, String filename)
+    {
+        this(diff);
+        board.setTiles(FileHelper.read(filename));
+    }
+    
     public List<Tile> getBoardTiles(){
         return board.getTiles();
     }

@@ -66,6 +66,35 @@ public class NewGame {
         this(new Stage(),diff);
     }
     
+    public NewGame(Stage oldstage, Difficulty diff, String filename)
+    {
+        oldstage.close();
+        
+        primaryStage = new Stage();
+        
+        // The observable-observer initialization
+        game = new Minesweeper(diff, filename);
+        clock = new ClockView(game);
+        
+        //The GUI is initialized
+        GameView viewer = new GameView(game, clock);
+        viewer.gameStage = primaryStage;
+        
+        //Observers are added
+        game.getTimer().addObserver(viewer);
+        game.board.addObserver(viewer);
+        game.addObserver(viewer);
+        //for(Tile t: game.board.getTiles()) t.addObserver(viewer);
+        
+        primaryStage.setTitle("Minesweeper");
+        primaryStage.setScene(viewer.scene);
+        primaryStage.setResizable(false);
+
+        primaryStage.show();
+        primaryStage.centerOnScreen();
+        
+    }
+    
     public void hideStage(){
         primaryStage.hide();
     }

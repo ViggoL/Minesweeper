@@ -80,6 +80,7 @@ public class GridController extends GridPane implements Observer {
             //since the button handlers alter the tiles, 
             //action events trigger observers
             t.addObserver(this);
+            this.update(t, null);
 
         }
 
@@ -115,8 +116,11 @@ public class GridController extends GridPane implements Observer {
                 t.setFlagged(!t.isFlagged());
                 return;
             }
-            else if (!t.isFlagged()) game.board.uncover(t);
-
+            else if (!t.isFlagged()) {
+                game.board.uncover(t);
+                if (game.board.bombCount(t) > 0) t.setNumber(game.board.bombCount(t));
+            }
+            
             System.out.println("Tile number: " + i);
 
             TileType type = t.getType();
@@ -150,9 +154,6 @@ public class GridController extends GridPane implements Observer {
                 
                 //ignore updates by the Group Node of a list
                 if (!(iv instanceof Group)) {
-                    Integer count = null;
-                    if(arg != null) count = (Integer) arg;
-                    else count = 0;
                     updateTileSwitch(tile);
 
                 } 

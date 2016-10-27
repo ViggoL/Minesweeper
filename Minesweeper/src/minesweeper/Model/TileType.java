@@ -17,11 +17,13 @@
  */
 package minesweeper.Model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Johan Lipecki <lipecki@kth.se>
  */
-public enum TileType
+public enum TileType implements Serializable
 {
     BOMB, NUMBER, EMPTY
 }

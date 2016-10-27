@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class FileHelper {
      * @param tiles to be written
      * @param filename path
      */
-    public static void write(List<Tile> tiles, String filename)
+    public static void write(ArrayList<Tile> tiles, String filename)
     {
         FileOutputStream out = null;
         try {
