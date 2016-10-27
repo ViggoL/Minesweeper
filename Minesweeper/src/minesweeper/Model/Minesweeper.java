@@ -122,5 +122,7 @@ public class Minesweeper extends Observable{
     public GameTimer getTimer(){
         return timer;
     }
+    
+    
 
 }

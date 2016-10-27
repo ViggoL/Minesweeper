@@ -115,7 +115,7 @@ public class GridController extends GridPane implements Observer {
                 t.setFlagged(!t.isFlagged());
                 return;
             }
-            else game.board.uncover(t);
+            else if (!t.isFlagged()) game.board.uncover(t);
 
             System.out.println("Tile number: " + i);
 
@@ -123,7 +123,7 @@ public class GridController extends GridPane implements Observer {
             switch (type) {
                 case BOMB:
                     
-                    this.game.setGameOver();
+                    if (!t.isFlagged()) this.game.setGameOver();
                     System.out.println("BOMB!!!!!!");
                     
                     break;

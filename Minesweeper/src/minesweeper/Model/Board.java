@@ -90,7 +90,7 @@ public class Board extends Observable {
         return tiles;
     }
 
-    public int getAllBombs()
+    private int getAllBombs()
     {
         int count = 0;
         for (Tile t : tiles) {
@@ -118,6 +118,7 @@ public class Board extends Observable {
         Point maxP = new Point(maxX, maxY);
         Point tileP = tile.getPoint();
         ArrayList<Tile> tiles = new ArrayList();
+        
         tiles.add(getTile(new Point(tileP.x, tileP.y - 1)));
         tiles.add(getTile(new Point(tileP.x + 1, tileP.y - 1)));
         tiles.add(getTile(new Point(tileP.x + 1, tileP.y)));
@@ -126,45 +127,6 @@ public class Board extends Observable {
         tiles.add(getTile(new Point(tileP.x - 1, tileP.y)));
         tiles.add(getTile(new Point(tileP.x - 1, tileP.y - 1)));
         tiles.add(getTile(new Point(tileP.x, tileP.y + 1)));
-        
-        
-        
-        /*ArrayList<Tile> tiles = new ArrayList();
-        if (tile.getPoint().x > 0) {
-            tiles.add(this.getTile(new Point(tile.getPoint().x - 1, tile.getPoint().y)));
-            if (tile.getPoint().y > 0) {
-                tiles.add(this.getTile(new Point(tile.getPoint().x - 1, tile.getPoint().y - 1)));
-                if (tile.getPoint().y < XYmax[1]) {
-                    tiles.add(this.getTile(new Point(tile.getPoint().x - 1, tile.getPoint().y + 1)));
-                }
-
-            }
-        }
-        if (tile.getPoint().y > 0) {
-            tiles.add(this.getTile(new Point(tile.getPoint().x, tile.getPoint().y - 1)));
-            if (tile.getPoint().y < XYmax[1]) {
-                tiles.add(this.getTile(new Point(tile.getPoint().x, tile.getPoint().y + 1)));
-                if (tile.getPoint().x < XYmax[0]) {
-                    tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y - 1)));
-                }
-            }
-            else if (tile.getPoint().y == XYmax[1])
-            {
-                tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y - 1)));
-            }
-        }
-        if (tile.getPoint().x < XYmax[0]) {
-            tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y)));
-            if (tile.getPoint().y < XYmax[1]) {
-                tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y + 1)));
-                tiles.add(this.getTile(new Point(tile.getPoint().x, tile.getPoint().y + 1)));
-                tiles.add(this.getTile(new Point(tile.getPoint().x - 1, tile.getPoint().y - 1)));
-                if (tile.getPoint().y == XYmax[1] && tile.getPoint().x != XYmax[0])
-                    tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y - 1)));
-            }
-            
-            
-        }*/
 
         return tiles;
     }
@@ -182,12 +144,11 @@ public class Board extends Observable {
                 if (bombCount(tile) == 0) {
                     List<Tile> surrounding = getSurroundingTiles(tile);
                     for (Tile t : surrounding) {
-                        if (t.getType() == TileType.EMPTY) {
+                        if (t != null && t.getType() == TileType.EMPTY) {
                             uncover(t);
                         }
 
                     }
-
                 }
             }
         }
@@ -237,5 +198,9 @@ public class Board extends Observable {
             string.append("\n");
         }
         return string.toString();
+    }
+    
+    public void setTiles(List<Tile> tiles) {
+        this.tiles = tiles;
     }
 }
