@@ -8,7 +8,7 @@ package minesweeper.Model;
 import java.util.Observable;
 
 /**
- *
+ * Represents a Point with X and Y coordinates
  * @author Viggo
  */
 public class Point extends Observable {
@@ -18,12 +18,22 @@ public class Point extends Observable {
         this.x = x;
         this.y = y;
     }
+    /**
+     * 
+     * @return X and Y value of the point 
+     */
     @Override
     public String toString()
     {
         return "[" + x + ", " + y + "]";
     }
     
+    /**
+     * Compares the X and Y value of another point
+     * @param other
+     * @return True if the coordinates of the two points are equal
+     * @throws ClassCastException 
+     */
     @Override 
     public boolean equals(Object other) throws ClassCastException
     {

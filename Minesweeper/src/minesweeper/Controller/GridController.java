@@ -6,6 +6,7 @@
 package minesweeper.Controller;
 
 import java.util.Arrays;
+import java.util.List;
 import minesweeper.Model.TileEventException;
 import java.util.Observable;
 import java.util.Observer;
@@ -24,6 +25,7 @@ import minesweeper.Model.TileType;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -106,16 +108,19 @@ public class GridController extends GridPane implements Observer {
             i = -1;
         }
         try {
+            
             Tile t = game.getBoardTiles().get(i);
-            game.board.uncover(t);
+            
+            if (event.getButton() == MouseButton.SECONDARY || event.isControlDown()) {
+                t.setFlagged(!t.isFlagged());
+                return;
+            }
+            else game.board.uncover(t);
 
             System.out.println("Tile number: " + i);
 
             TileType type = t.getType();
             switch (type) {
-                case FLAG:
-                    System.out.println("It's flagged!");
-                    break;
                 case BOMB:
                     
                     this.game.setGameOver();
@@ -140,10 +145,6 @@ public class GridController extends GridPane implements Observer {
 
             synchronized (o) {
                 //System.out.println(((Tile) o).getX());
-
-                if (explosionCount == 0) {
-                    stopExplosion = false;
-                }
                 Tile tile = (Tile) o;
                 Object iv = this.getChildren().get(game.getBoardTiles().indexOf(tile));
                 
@@ -152,7 +153,7 @@ public class GridController extends GridPane implements Observer {
                     Integer count = null;
                     if(arg != null) count = (Integer) arg;
                     else count = 0;
-                    updateTileSwitch(tile,count);
+                    updateTileSwitch(tile);
 
                 } 
             }    
@@ -163,36 +164,29 @@ public class GridController extends GridPane implements Observer {
         
     }
 
-    private void updateTileSwitch(Tile tile, int count) {
+    private void updateTileSwitch(Tile tile) {
         ImageView img = (ImageView) this.getChildren().get(game.getBoardTiles().indexOf(tile));
         TileType type = tile.getType();
+        if (tile.isFlagged()) {
+            img.setImage(new Image("flag4.png", buttonWidth, buttonWidth, false, true));
+            return;
+        }
+        else {
+            img.setImage(new Image("water.png", buttonWidth, buttonWidth, false, true));
+        }
+        
         synchronized(game.board){
         switch (type) {
             case BOMB:
-                explosionCount++;
-                img.setImage(new Image("mine" + count + ".png", buttonWidth, buttonWidth, false, true));
-                if (explosionCount == 4) {
-                    System.out.println("stop: " + explosionCount);
-                    stopExplosion = true;
-                    explosionCount = 0;
-                }
-                break;
-            case FLAG:
-                flagCount++;
-                img.setImage(new Image("flag" + count + ".png", buttonWidth, buttonWidth, false, true));
-                if (flagCount == 4) {
-                    flagCount = 0;
-                }
+                if (!tile.isFlagged() && !tile.isCovered()) img.setImage(new Image("mine3.png", buttonWidth, buttonWidth, false, true));
                 break;
             default:
                 //the update is fired by a change in Tile.isCovered()
                 if (!tile.isCovered() && tile.getType() != TileType.BOMB) {
                     img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
-                    for (int i = 1; i <= 8; i++) {
-                        if (Tile.bombCount(game.board.getSurroundingTiles(tile)) == i) {
-                            img.setImage(new Image(i + ".png", buttonWidth, buttonWidth, false, true));
-                        }
-                    }
+                    int bombCount = game.board.bombCount(tile);
+                    if (bombCount != 0) 
+                        img.setImage(new Image(bombCount + ".png", buttonWidth, buttonWidth, false, true));
                 }
         }
         if (!stopExplosion && type == TileType.BOMB) {

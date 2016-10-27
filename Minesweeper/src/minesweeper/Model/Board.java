@@ -76,7 +76,7 @@ public class Board extends Observable {
         maxY = y;
 
         //TODO: Tweak for each difficulty
-        while (bombCount() <= maxX * Math.E) {
+        while (getAllBombs() <= maxX * Math.E) {
             int r = ThreadLocalRandom.current().nextInt(0, tiles.size());
             tiles.get(r).setType(TileType.BOMB);
         }
@@ -90,19 +90,46 @@ public class Board extends Observable {
         return tiles;
     }
 
-    public int bombCount() {
-        int bombs = 0;
-        for (Tile tile : tiles) {
-            if (tile.getType() == TileType.BOMB) {
-                bombs++;
-            }
+    public int getAllBombs()
+    {
+        int count = 0;
+        for (Tile t : tiles) {
+            if (t.getType() == TileType.BOMB) count++;
         }
-        return bombs;
+        return count;
+    }
+    
+    public int bombCount(Tile tile) {
+        List<Tile> tiles = getSurroundingTiles(tile);
+        int i = 0;
+        for (Tile t : tiles)
+        {
+            if (t != null && t.getType() == TileType.BOMB) i++;
+        }
+        return i;
     }
 
+    /**
+     * 
+     * @param tile
+     * @return All surrounding tiles. Null-values for tiles outside of board.
+     */
     public List<Tile> getSurroundingTiles(Tile tile) {
-        int[] XYmax = this.getXYboundary();
+        Point maxP = new Point(maxX, maxY);
+        Point tileP = tile.getPoint();
         ArrayList<Tile> tiles = new ArrayList();
+        tiles.add(getTile(new Point(tileP.x, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y + 1)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y + 1)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x, tileP.y + 1)));
+        
+        
+        
+        /*ArrayList<Tile> tiles = new ArrayList();
         if (tile.getPoint().x > 0) {
             tiles.add(this.getTile(new Point(tile.getPoint().x - 1, tile.getPoint().y)));
             if (tile.getPoint().y > 0) {
@@ -110,6 +137,7 @@ public class Board extends Observable {
                 if (tile.getPoint().y < XYmax[1]) {
                     tiles.add(this.getTile(new Point(tile.getPoint().x - 1, tile.getPoint().y + 1)));
                 }
+
             }
         }
         if (tile.getPoint().y > 0) {
@@ -120,30 +148,25 @@ public class Board extends Observable {
                     tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y - 1)));
                 }
             }
+            else if (tile.getPoint().y == XYmax[1])
+            {
+                tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y - 1)));
+            }
         }
         if (tile.getPoint().x < XYmax[0]) {
             tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y)));
             if (tile.getPoint().y < XYmax[1]) {
                 tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y + 1)));
+                tiles.add(this.getTile(new Point(tile.getPoint().x, tile.getPoint().y + 1)));
+                tiles.add(this.getTile(new Point(tile.getPoint().x - 1, tile.getPoint().y - 1)));
+                if (tile.getPoint().y == XYmax[1] && tile.getPoint().x != XYmax[0])
+                    tiles.add(this.getTile(new Point(tile.getPoint().x + 1, tile.getPoint().y - 1)));
             }
-        }
+            
+            
+        }*/
 
         return tiles;
-    }
-
-    public void startExpand(Tile tile) {
-        List<Tile> tiles = getSurroundingTiles(tile);
-
-        for (Tile t : tiles) {
-
-            if (t.getType() == TileType.EMPTY) {
-                uncover(t);
-                //startExpand(tile);
-            }
-            if (t.getType() == TileType.NUMBER) {
-                uncover(t);
-            }
-        }
     }
 
     public void uncover(Tile tile) {
@@ -156,7 +179,7 @@ public class Board extends Observable {
 
             System.out.println("Uncover tile and search surroundings!");
             if (tile.getType() == TileType.EMPTY) {
-                if (Tile.bombCount(getSurroundingTiles(tile)) == 0) {
+                if (bombCount(tile) == 0) {
                     List<Tile> surrounding = getSurroundingTiles(tile);
                     for (Tile t : surrounding) {
                         if (t.getType() == TileType.EMPTY) {
@@ -168,25 +191,6 @@ public class Board extends Observable {
                 }
             }
         }
-    }
-
-    public void getAndSetAdjacentMineCount(Tile tile) {
-        tile.setNumber(getAdjacentMines(tile));
-
-        // The model has changed, notify observers!
-        this.setChanged();
-        this.notifyObservers();
-    }
-
-    public int getAdjacentMines(Tile tile) {
-        List<Tile> surroundingTiles = this.getSurroundingTiles(tile);
-        int count = 0;
-        for (Tile t : surroundingTiles) {
-            if (t.getType() == TileType.BOMB) {
-                count++;
-            }
-        }
-        return count;
     }
 
     /**

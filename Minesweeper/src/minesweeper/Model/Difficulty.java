@@ -19,7 +19,12 @@ package minesweeper.Model;
 
 /**
  *
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
+ */
+
+/**
+ * Represents the difficulty of the game
+ * @author Viggo
  */
 public enum Difficulty {
 
