@@ -25,14 +25,19 @@ import minesweeper.Model.Minesweeper;
 import minesweeper.View.GameView;
 
 /**
- *
+ * The controller for the settings menu
  * @author Johan Lipecki <lipecki@kth.se>
  */
 public final class SettingsMenuEventHandler implements EventHandler<ActionEvent> {
     
     private final GameView settingsHandler;
     private final Minesweeper game;
-
+    
+    /**
+     * Create a new settings menu event handler
+     * @param game the game to handle
+     * @param settingsHandler the game view to handle
+     */
     public SettingsMenuEventHandler(Minesweeper game,final GameView settingsHandler) {
         this.settingsHandler = settingsHandler;
         this.game = game;

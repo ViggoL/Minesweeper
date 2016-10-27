@@ -26,7 +26,7 @@ import minesweeper.View.ClockView;
 import minesweeper.View.GameView;
 
 /**
- *
+ * Used for creating a new game
  * @author Johan Lipecki <lipecki@kth.se>
  */
 public class NewGame {
@@ -35,6 +35,11 @@ public class NewGame {
     private final Minesweeper game;
     private ClockView clock;
     
+    /**
+     * Create a new game
+     * @param oldstage the old stage to close
+     * @param diff the difficulty of the new game
+     */
     public NewGame(Stage oldstage, Difficulty diff){
         oldstage.close();
         
@@ -62,10 +67,19 @@ public class NewGame {
         primaryStage.centerOnScreen();
     }
     
+    /**
+     * Create a new game without closing the old stage
+     * @param diff the difficulty of the new game
+     */
     public NewGame(Difficulty diff){
         this(new Stage(),diff);
     }
-    
+    /**
+     * Creates and loads an old game from a file
+     * @param oldstage the old stage to close
+     * @param diff the difficulty of the new game
+     * @param filename the filename of the save file to load
+     */
     public NewGame(Stage oldstage, Difficulty diff, String filename)
     {
         oldstage.close();
@@ -94,15 +108,22 @@ public class NewGame {
         primaryStage.centerOnScreen();
         
     }
-    
+    /**
+     * Hides the game
+     */
     public void hideStage(){
         primaryStage.hide();
     }
-    
+    /**
+     * Shows the game
+     */
     public void showStage(){
         primaryStage.show();
     }
-    
+    /**
+     * 
+     * @return the inner game object
+     */
     public Minesweeper getGame(){
         return game;
     }

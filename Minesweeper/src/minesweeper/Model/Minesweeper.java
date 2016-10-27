@@ -18,7 +18,7 @@ import minesweeper.View.MainMenuView;
 
 
 /**
- *
+ * Represents an observable Minesweeper game
  * @author Viggo
  */
 public class Minesweeper extends Observable{
@@ -27,6 +27,9 @@ public class Minesweeper extends Observable{
     private Settings settings;
     private boolean gameOver;
     
+    /**
+     * Creates a new game with difficulty EASY
+     */
     public Minesweeper() {
         super();
         board = new Board(Difficulty.EASY);
@@ -36,22 +39,37 @@ public class Minesweeper extends Observable{
         
     }
     
-    
+    /**
+     * Creates a new game with desired difficulty
+     * @param diff 
+     */
     public Minesweeper(Difficulty diff){
         this();
         board = new Board(diff);
     }
     
+    /**
+     * Creates a new game with desired difficulty and save file to load
+     * @param diff
+     * @param filename 
+     */
     public Minesweeper(Difficulty diff, String filename)
     {
         this(diff);
         board.setTiles(FileHelper.read(filename));
     }
     
+    /**
+     * Returns all the tiles on the board
+     * @return 
+     */
     public List<Tile> getBoardTiles(){
         return board.getTiles();
     }
     
+    /**
+     * Pause the game
+     */
     public void pause(){
         timer.stopTimer();
         
@@ -59,6 +77,9 @@ public class Minesweeper extends Observable{
         this.notifyObservers();
     }
     
+    /**
+     * Resume the game
+     */
     public void resume(){
         timer.resumeTimer();
         
@@ -66,14 +87,22 @@ public class Minesweeper extends Observable{
         this.notifyObservers();
     }
     
+    /**
+     * Get the seconds that has passed since the game started, excluding paused periods
+     * @return 
+     */
     public int getTime(){
         return timer.getSeconds();
     }
-    
+    /**
+     * Starts the game timer
+     */
     public void startTime(){
         timer.startTimer();
     }
-    
+    /**
+     * Starts a new game with already set difficulty
+     */
     public void startNewGame(){
         board = new Board(settings.getDifficulty());
         
@@ -81,11 +110,17 @@ public class Minesweeper extends Observable{
         this.setChanged();
         this.notifyObservers();
     }
-    
+    /**
+     * Get whether the game timer is paused
+     * @return 
+     */
     public boolean isPaused(){
         return timer.isTicking();
     }
-
+    /**
+     * Starts a new game with desired difficulty
+     * @param difficulty 
+     */
     public void startNewGame(Difficulty difficulty) {
         board = new Board(difficulty);
         
@@ -94,14 +129,24 @@ public class Minesweeper extends Observable{
         this.notifyObservers();
     }
     
+    /**
+     * Gets the difficulty setting of the game
+     * @return 
+     */
     public Difficulty getDifficultySetting(){
         return settings.getDifficulty();
     }
-    
+    /**
+     * Sets the difficulty of the game
+     * @param diff 
+     */
     public void setDifficulty(Difficulty diff){
         settings.setDifficulty(diff);
     }
 
+    /**
+     * Uncovers all tiles on the board
+     */
     public void unCoverThemAll() {
         for(Tile t: board.getTiles()) 
             board.uncover(t);
@@ -110,7 +155,7 @@ public class Minesweeper extends Observable{
         this.setChanged();
         this.notifyObservers();
     }
-
+    
     public void setGameOver() {
         synchronized (timer){
         gameOver = true;

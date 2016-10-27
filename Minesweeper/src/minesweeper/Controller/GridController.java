@@ -29,7 +29,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 /**
- *
+ * The grid controller for the game view
  * @author Viggo
  */
 public class GridController extends GridPane implements Observer {
@@ -43,6 +43,11 @@ public class GridController extends GridPane implements Observer {
     private static int explosionCount, flagCount;
     private boolean stopExplosion;
 
+    /**
+     * Creates a new grid controller
+     * @param game the game to handle
+     * @throws IllegalArgumentException 
+     */
     public GridController(Minesweeper game) throws IllegalArgumentException {
 
         this.game = game;
@@ -85,7 +90,12 @@ public class GridController extends GridPane implements Observer {
         }
 
     }
-
+    
+    /**
+     * Called whenever a tile on the grid is clicked
+     * @param event
+     * @throws TileEventException 
+     */
     public void TileClicked(MouseEvent event) throws TileEventException {
 
         if (timerStarted == false) {
@@ -164,7 +174,11 @@ public class GridController extends GridPane implements Observer {
         }
         
     }
-
+    
+    /**
+     * Update the tile to corresponding image depending on TileType
+     * @param tile 
+     */
     private void updateTileSwitch(Tile tile) {
         ImageView img = (ImageView) this.getChildren().get(game.getBoardTiles().indexOf(tile));
         TileType type = tile.getType();

@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import minesweeper.Controller.GridController;
 
 /**
- *
+ * Represents a minesweeper board
  * @author Johan Lipecki <lipecki@kth.se>
  */
 public class Board extends Observable {
@@ -37,6 +37,10 @@ public class Board extends Observable {
     private boolean win;
     private int maxX, maxY;
 
+    /**
+     * Creates a new board with desired difficulty
+     * @param diff 
+     */
     public Board(Difficulty diff) {
         win = false;
         tiles = new ArrayList<>();
@@ -83,20 +87,34 @@ public class Board extends Observable {
         }
     }
 
+    /**
+     * Creates a new board with desired difficulty and predetermined tiles (for loading games)
+     * @param diff
+     * @param tiles 
+     */
     public Board(Difficulty diff, ArrayList<Tile> tiles)
     {
         this(diff);
         this.tiles = tiles;
     }
     
+    /**
+     * Creates a new board with EASY difficulty
+     */
     public Board() {
         this(Difficulty.EASY);
     }
 
+    /**
+     * @return all of the tiles on the board
+     */
     public List<Tile> getTiles() {
         return tiles;
     }
 
+    /**
+     * @return the number of bombs on the board
+     */
     private int getAllBombs()
     {
         int count = 0;
@@ -106,6 +124,11 @@ public class Board extends Observable {
         return count;
     }
     
+    /**
+     * Returns the number of bombs adjacent to a tile
+     * @param tile The Tile to check
+     * @return 
+     */
     public int bombCount(Tile tile) {
         List<Tile> tiles = getSurroundingTiles(tile);
         int i = 0;
@@ -119,7 +142,7 @@ public class Board extends Observable {
     /**
      * 
      * @param tile
-     * @return All surrounding tiles. Null-values for tiles outside of board.
+     * @return All surrounding tiles of a Tile. Null-values for tiles outside of board.
      */
     public List<Tile> getSurroundingTiles(Tile tile) {
         Point maxP = new Point(maxX, maxY);
@@ -138,6 +161,10 @@ public class Board extends Observable {
         return tiles;
     }
 
+    /**
+     * Recursive method to uncover all the tiles of a board from a Tile, causing the board to expand according to the rules
+     * @param tile the Tile to start uncovering from
+     */
     public void uncover(Tile tile) {
         if (tile.isCovered()) {
             tile.setCovered(false);
@@ -164,7 +191,7 @@ public class Board extends Observable {
     /**
      * Returns the tile at the given point at the board.
      *
-     * @param point
+     * @param point The given points. Does not have to be a reference to the tile's point.
      * @return null if the tile can't be found
      */
     public Tile getTile(Point point) {
@@ -176,6 +203,10 @@ public class Board extends Observable {
         return null;
     }
 
+    /**
+     * Returns the X and Y boundary of the board
+     * @return 
+     */
     public int[] getXYboundary() {
         int[] array = {maxX, maxY};
         return array;
@@ -207,14 +238,17 @@ public class Board extends Observable {
         return string.toString();
     }
     
+    /**
+     * Set all tiles on the board 
+     * @param tiles 
+     */
     public void setTiles(List<Tile> tiles) {
         this.tiles = tiles;
     }
     
-    public void loadTiles(GridController controller)
-    {
-        ArrayList<Tile> newTiles = FileHelper.read("save.ser");
-    }
+    /**
+     * Serialize and save the tiles to a .ser file for loading later
+     */
     public void saveTiles()
     {
         ArrayList<Tile> list = new ArrayList<>();

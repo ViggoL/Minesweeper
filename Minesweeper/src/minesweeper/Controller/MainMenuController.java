@@ -19,13 +19,17 @@ import minesweeper.View.MainMenuView;
 import minesweeper.View.RulesView;
 
 /**
- *
+ * The Main Menu controller
  * @author Viggo
  */
 public class MainMenuController {
     private final MainMenuView view;
     private Stage stage, primaryStage;
-    
+    /**
+     * Creates a new Main menu controller
+     * @param view The view to handle
+     * @param stage The view's stage to handle
+     */
     public MainMenuController(MainMenuView view, Stage stage)
     {
         this.view = view;
@@ -36,7 +40,6 @@ public class MainMenuController {
             if (event instanceof MouseEvent) {
                 in = (MouseEvent)event;
                 if (in.getButton() == MouseButton.PRIMARY) playButtonSelected();
-                else if (in.getButton() == MouseButton.SECONDARY) playButtonClickedRight();
             }
         });
         view.resumeButton.setOnKeyPressed((Event event) -> {
@@ -58,14 +61,15 @@ public class MainMenuController {
         });
     }
     
+    /**
+     * User clicked the play button
+     */
     public void playButtonSelected(){
         NewGame newGame = new NewGame(stage,view.getDifficulty()); 
     }
-    public void playButtonClickedRight()
-    {
-        view.resumeButton.setText("Don't play!");
-    }
-    
+    /**
+     * User clicked the rules button
+     */
     public void rulesButtonClicked()
     {
         Platform.runLater(new RulesView());

@@ -19,7 +19,7 @@ import minesweeper.View.GameView;
 import minesweeper.View.RulesView;
 
 /**
- *
+ * The Game controllers
  * @author Viggo
  */
 public class GameControllers extends VBox {
@@ -29,6 +29,11 @@ public class GameControllers extends VBox {
     private final Button timeButton;
     private final GameView gameView;
     
+    /**
+     * Creates a new class containing the Game controllers
+     * @param game The game to handle
+     * @param gameView The view to handle
+     */
     public GameControllers(Minesweeper game, GameView gameView)
     {
         this.game = game;
@@ -54,7 +59,10 @@ public class GameControllers extends VBox {
     }
     
     
-
+    /**
+     * Called whenever the user pressed the resume button
+     * @param event 
+     */
     public void ResumeButtonClicked(Event event)
     {
         this.getChildren().set(0, pauseButton);
@@ -63,16 +71,28 @@ public class GameControllers extends VBox {
         }
         else new NewGame(gameView.gameStage,game.getDifficultySetting());
     }
+    /**
+     * Called whenever the user pressed the pause button
+     * @param event 
+     */
     public void PauseButtonClicked(Event event)
     {
         this.getChildren().set(0, resumeButton);
         game.pause();
         
     }
+    /**
+     * Called whenever the user pressed the rules button
+     * @param event 
+     */
     public void RulesButtonClicked(Event event)
     {
         Platform.runLater(new RulesView());
     }
+    /**
+     * Called whenever the user clicks the Time button
+     * @param event 
+     */
     public void TimePaneClicked(Event event){
         gameView.getClockView().showClock();
     }

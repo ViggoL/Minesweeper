@@ -12,7 +12,7 @@ import java.util.TimerTask;
 
 
 /**
- *
+ * Represents an observable game timer during playing the game
  * @author Viggo
  */
 public class GameTimer extends Observable {
@@ -22,11 +22,17 @@ public class GameTimer extends Observable {
     private int interval = 1000;
     private int seconds = 0;
     
+    /**
+     * Creates a new timer without starting it
+     */
     public GameTimer() {
         timer = new Timer();
         
     }
     
+    /**
+     * Starts the timers
+     */
     public void startTimer()
     {
         ticking = true;
@@ -41,6 +47,9 @@ public class GameTimer extends Observable {
         
     }
     
+    /**
+     * Increase seconds by 1
+     */
     private void tick()
     {
         seconds++;
@@ -65,15 +74,27 @@ public class GameTimer extends Observable {
         this.notifyObservers(seconds);
     }
 
+    /**
+     * Get the amount of seconds that has passed
+     * @return 
+     */
     public int getSeconds()
     {
         return seconds;
     }
     
+    /**
+     * Get whether the timer is ticking or not
+     * @return 
+     */
     public boolean isTicking(){
         return ticking;
     }
 
+    /**
+     * Returns the seconds in string form
+     * @return 
+     */
     public String toString(){
         return Integer.toString(seconds);
     }

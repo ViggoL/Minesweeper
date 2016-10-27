@@ -37,7 +37,7 @@ import minesweeper.Model.GameTimer;
 import minesweeper.Model.Minesweeper;
 
 /**
- *
+ * An observable Game button. Used for pausing, playing, etc.
  * @author Johan Lipecki <lipecki@kth.se>
  */
 public class GameButton implements Observer{
@@ -49,6 +49,11 @@ public class GameButton implements Observer{
     private Text text;
     public final ButtonEnum type;
 
+    /**
+     * Creates a new GameButton
+     * @param diameter The diameter of the game button
+     * @param type The type of game button
+     */
     public GameButton(double diameter, ButtonEnum type) {
         button = new Button();
         shadow = new DropShadow();
@@ -124,6 +129,10 @@ public class GameButton implements Observer{
             
     }
     
+    /**
+     * 
+     * @return The inner button of the Game button 
+     */
     public Button getButton(){
         return button;
     }
@@ -139,7 +148,8 @@ public class GameButton implements Observer{
             this.text = new Text(Integer.toString(model.getSeconds()));
         }
     }
-
+    
+    
     public enum ButtonEnum {
         PLAY,PAUSE,HELP,TIME;
     }
