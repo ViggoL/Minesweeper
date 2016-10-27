@@ -18,8 +18,8 @@
 package minesweeper.Model;
 
 /**
- *
- * @author Johan Lipecki <lipecki@kth.se>
+ * Value types for game statistics
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
  */
 public enum StatsValues {
     IDENTITY,GAME,TIME, DIFFICULTY;

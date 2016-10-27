@@ -76,7 +76,7 @@ public class GameTimer extends Observable {
 
     /**
      * Get the amount of seconds that has passed
-     * @return 
+     * @return seconds
      */
     public int getSeconds()
     {
@@ -85,7 +85,7 @@ public class GameTimer extends Observable {
     
     /**
      * Get whether the timer is ticking or not
-     * @return 
+     * @return boolean
      */
     public boolean isTicking(){
         return ticking;
@@ -93,7 +93,7 @@ public class GameTimer extends Observable {
 
     /**
      * Returns the seconds in string form
-     * @return 
+     * @return String
      */
     public String toString(){
         return Integer.toString(seconds);

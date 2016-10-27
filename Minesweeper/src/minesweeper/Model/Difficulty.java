@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * [Project] license
+ * Minesweeper license
  * 
  * Copyright © 2016 Johan Lipecki & Viggo Lundén
  * 

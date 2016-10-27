@@ -26,7 +26,7 @@ import minesweeper.View.GameView;
 
 /**
  * The controller for the settings menu
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
  */
 public final class SettingsMenuEventHandler implements EventHandler<ActionEvent> {
     

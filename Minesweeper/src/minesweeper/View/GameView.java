@@ -52,7 +52,7 @@ import minesweeper.Model.Tile;
 
 /**
  *
- * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>, Viggo Lundén <b>vlunden@kth.se</b>
  */
 public class GameView extends GameViewSuper implements Observer {
 
@@ -128,6 +128,7 @@ public class GameView extends GameViewSuper implements Observer {
         gameFrame.setCenter(grid);
 
         scene = new Scene(gameFrame);
+        
     }
 
     @Override

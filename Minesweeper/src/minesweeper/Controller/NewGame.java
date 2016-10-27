@@ -27,7 +27,7 @@ import minesweeper.View.GameView;
 
 /**
  * Used for creating a new game
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
  */
 public class NewGame {
 

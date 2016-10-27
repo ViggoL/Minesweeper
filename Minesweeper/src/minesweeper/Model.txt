@@ -1,0 +1,1075 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Observable;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import minesweeper.Controller.GridController;
+
+/**
+ * Represents a minesweeper board
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public class Board extends Observable {
+
+    private List<Tile> tiles;
+    private boolean win;
+    private int maxX, maxY;
+
+    /**
+     * Creates a new board with desired difficulty
+     * @param diff 
+     */
+    public Board(Difficulty diff) {
+        win = false;
+        tiles = new ArrayList<>();
+        int x = 0;
+        int y = 0;
+
+        switch (diff) {
+            case EASY:
+                while (tiles.size() < 100) {
+                    while (tiles.size() / 10 <= 9) {
+                        x = tiles.size() % 10;
+                        y = tiles.size() / 10;
+                        tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
+                    }
+                }
+
+                break;
+            case MEDIUM:
+                while (tiles.size() < 175) {
+                    while (tiles.size() / 15 <= 14) {
+                        x = tiles.size() % 15;
+                        y = tiles.size() / 15;
+                        tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
+                    }
+                }
+                break;
+            case HARD:
+                while (tiles.size() < 289) {
+                    while (tiles.size() / 17 <= 16) {
+                        x = tiles.size() % 17;
+                        y = tiles.size() / 17;
+                        tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
+                    }
+                }
+                break;
+        }
+        maxX = x;
+        maxY = y;
+
+        //TODO: Tweak for each difficulty
+        while (getAllBombs() <= maxX * Math.E) {
+            int r = ThreadLocalRandom.current().nextInt(0, tiles.size());
+            tiles.get(r).setType(TileType.BOMB);
+        }
+    }
+
+    /**
+     * Creates a new board with desired difficulty and predetermined tiles (for loading games)
+     * @param diff
+     * @param tiles 
+     */
+    public Board(Difficulty diff, ArrayList<Tile> tiles)
+    {
+        this(diff);
+        this.tiles = tiles;
+    }
+    
+    /**
+     * Creates a new board with EASY difficulty
+     */
+    public Board() {
+        this(Difficulty.EASY);
+    }
+
+    /**
+     * @return all of the tiles on the board
+     */
+    public List<Tile> getTiles() {
+        return tiles;
+    }
+
+    /**
+     * @return the number of bombs on the board
+     */
+    private int getAllBombs()
+    {
+        int count = 0;
+        for (Tile t : tiles) {
+            if (t.getType() == TileType.BOMB) count++;
+        }
+        return count;
+    }
+    
+    /**
+     * Returns the number of bombs adjacent to a tile
+     * @param tile The Tile to check
+     * @return 
+     */
+    public int bombCount(Tile tile) {
+        List<Tile> tiles = getSurroundingTiles(tile);
+        int i = 0;
+        for (Tile t : tiles)
+        {
+            if (t != null && t.getType() == TileType.BOMB) i++;
+        }
+        return i;
+    }
+
+    /**
+     * 
+     * @param tile
+     * @return All surrounding tiles of a Tile. Null-values for tiles outside of board.
+     */
+    public List<Tile> getSurroundingTiles(Tile tile) {
+        Point maxP = new Point(maxX, maxY);
+        Point tileP = tile.getPoint();
+        ArrayList<Tile> tiles = new ArrayList();
+        
+        tiles.add(getTile(new Point(tileP.x, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y + 1)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y + 1)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x, tileP.y + 1)));
+
+        return tiles;
+    }
+
+    /**
+     * Recursive method to uncover all the tiles of a board from a Tile, causing the board to expand according to the rules
+     * @param tile the Tile to start uncovering from
+     */
+    public void uncover(Tile tile) {
+        if (tile.isCovered()) {
+            tile.setCovered(false);
+
+            // The model has changed, notify observers!
+            this.setChanged();
+            this.notifyObservers();
+
+            System.out.println("Uncover tile and search surroundings!");
+            if (tile.getType() == TileType.EMPTY) {
+                if (bombCount(tile) == 0) {
+                    List<Tile> surrounding = getSurroundingTiles(tile);
+                    for (Tile t : surrounding) {
+                        if (t != null && t.getType() == TileType.EMPTY) {
+                            uncover(t);
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the tile at the given point at the board.
+     *
+     * @param point The given points. Does not have to be a reference to the tile's point.
+     * @return null if the tile can't be found
+     */
+    public Tile getTile(Point point) {
+        for (Tile t : tiles) {
+            if (t.getPoint().equals(point)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the X and Y boundary of the board
+     * @return 
+     */
+    public int[] getXYboundary() {
+        int[] array = {maxX, maxY};
+        return array;
+    }
+
+    /**
+     * Get information on Tile Point(x and y coordinates) and TileType
+     *
+     * @return ArrayList<Object[]> where Object[0] is Point and Object[1] is
+     * TileType
+     */
+    public ArrayList<Object[]> getTileInfo() {
+        ArrayList<Object[]> infoList = new ArrayList();
+        for (Tile t : (ArrayList<Tile>) tiles) {
+            Object[] o = {t.getPoint(), t.getType()};
+            infoList.add(o);
+        }
+
+        return infoList;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        for (Object[] ss : getTileInfo()) {
+            string.append(Arrays.toString(ss));
+            string.append("\n");
+        }
+        return string.toString();
+    }
+    
+    /**
+     * Set all tiles on the board 
+     * @param tiles 
+     */
+    public void setTiles(List<Tile> tiles) {
+        this.tiles = tiles;
+    }
+    
+    /**
+     * Serialize and save the tiles to a .ser file for loading later
+     */
+    public void saveTiles()
+    {
+        ArrayList<Tile> list = new ArrayList<>();
+        for (Tile t : tiles) list.add(t);
+        FileHelper.write(list, "save.ser");
+    }
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Model;
+
+/**
+ *
+ * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
+ */
+
+/**
+ * Represents the difficulty of the game
+ * @author Viggo
+ */
+public enum Difficulty {
+
+EASY,MEDIUM,HARD;
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Model;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A toolkit for creating, deleting, reading and writing Tiles from a board to a file. 
+ * Prints exception messages to System.out
+ * @author Viggo Lundén <vlunden@kth.se>
+ */
+public class FileHelper {
+    /**
+     * Creates a new file
+     * @param filename the path and name of the file
+     */
+    public static void newFile(String filename)
+    {
+            
+        try {
+            File file = new File(filename);
+            file.delete();
+            file.createNewFile();
+        } catch (IOException iOException) {
+            System.out.println("Failed to create new file.");
+            System.out.print(iOException.getMessage());
+            System.out.println("");
+        } 
+    }
+    
+    /**
+     * Deletes a file
+     * @param filename The path and name of the file to delete
+     */
+    public static void deleteFile(String filename)
+    {
+        File file = new File(filename);
+        file.delete();
+    }
+    
+
+    /**
+     * Writes a List of Tiles to a file 
+     * @param tiles to be written
+     * @param filename path
+     */
+    public static void write(ArrayList<Tile> tiles, String filename)
+    {
+        FileOutputStream out = null;
+        try {
+            File file = new File(filename);
+            out = new FileOutputStream(file);
+            ObjectOutputStream obout = new ObjectOutputStream(out);
+            obout.writeObject(tiles);
+        }
+        catch (FileNotFoundException fnfex)
+        {
+            System.out.println("Could not find the file containing books!");
+            System.out.print(fnfex.getMessage());
+            System.out.println("");
+        }
+        catch (IOException ioex)
+        {
+            System.out.println("Could not write to the file, "
+                    + "please make sure that it's not "
+                    + "already in use by another process.");
+            System.out.print(ioex.getMessage());
+            System.out.println("");
+        }
+        finally {
+            try {
+                out.close();
+            } catch (IOException iOException) {
+                System.out.println("Failed to close file stream");
+                System.out.println(iOException.getMessage());
+            }
+        }
+    }
+    /**
+     * Reads a List of Tiles from file
+     * @param filename the path and name of the file to read
+     * @return ArrayList<Tile>. Null if the file is empty.
+     */
+    public static ArrayList<Tile> read(String filename)
+    {
+       ArrayList<Tile> tiles = new ArrayList<>();
+       FileInputStream fin = null;
+       try {
+            fin = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fin);
+            tiles = (ArrayList<Tile>) in.readObject();
+       }
+       catch (FileNotFoundException fnfex)
+       {
+            System.out.println("Could not find the file!");
+            System.out.print(fnfex.getMessage());
+            System.out.println("");
+       }
+       catch (IOException ioex)
+       {
+            System.out.println("Could not read from the file, "
+                    + "please make sure that it's not "
+                    + "already in use by another process.");
+            System.out.print(ioex.getMessage());
+            System.out.println("");
+       }
+       catch (ClassNotFoundException cnfex)
+       {
+           System.out.println("Failed to deserialize object");
+           System.out.print(cnfex.getMessage());
+           System.out.println("");
+       }
+       finally {
+           try {
+               fin.close();
+           } catch (IOException iOException) {
+               System.out.println("Failed to close file stream");
+               System.out.println(iOException.getMessage());
+           }
+           return tiles;
+       }
+    }
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Model;
+
+import java.util.Observable;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+
+/**
+ * Represents an observable game timer during playing the game
+ * @author Viggo
+ */
+public class GameTimer extends Observable {
+    
+    private boolean ticking = true;
+    private Timer timer;
+    private int interval = 1000;
+    private int seconds = 0;
+    
+    /**
+     * Creates a new timer without starting it
+     */
+    public GameTimer() {
+        timer = new Timer();
+        
+    }
+    
+    /**
+     * Starts the timers
+     */
+    public void startTimer()
+    {
+        ticking = true;
+        timer.schedule(new TimerTask(){
+            @Override
+            public void run() {
+                if (!ticking) return;
+                tick();
+            }
+            
+        }, 0, interval);
+        
+    }
+    
+    /**
+     * Increase seconds by 1
+     */
+    private void tick()
+    {
+        seconds++;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers(seconds);
+    }
+    
+    public void stopTimer()
+    {
+        ticking = false;
+        
+        this.setChanged();
+        this.notifyObservers(seconds);
+    }
+    
+    public void resumeTimer(){
+        ticking = true;
+        
+        this.setChanged();
+        this.notifyObservers(seconds);
+    }
+
+    /**
+     * Get the amount of seconds that has passed
+     * @return 
+     */
+    public int getSeconds()
+    {
+        return seconds;
+    }
+    
+    /**
+     * Get whether the timer is ticking or not
+     * @return 
+     */
+    public boolean isTicking(){
+        return ticking;
+    }
+
+    /**
+     * Returns the seconds in string form
+     * @return 
+     */
+    public String toString(){
+        return Integer.toString(seconds);
+    }
+
+}
+package minesweeper.Model;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
+import java.util.List;
+import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.stage.Stage;
+import minesweeper.Controller.MainMenuController;
+import minesweeper.Controller.NewGame;
+import minesweeper.View.MainMenuView;
+
+
+/**
+ * Represents an observable Minesweeper game
+ * @author Viggo
+ */
+public class Minesweeper extends Observable{
+    public Board board;
+    private GameTimer timer;
+    private Settings settings;
+    private boolean gameOver;
+    
+    /**
+     * Creates a new game with difficulty EASY
+     */
+    public Minesweeper() {
+        super();
+        board = new Board(Difficulty.EASY);
+        settings = new Settings();
+        timer = new GameTimer(); 
+        gameOver = false;
+        
+    }
+    
+    /**
+     * Creates a new game with desired difficulty
+     * @param diff 
+     */
+    public Minesweeper(Difficulty diff){
+        this();
+        board = new Board(diff);
+    }
+    
+    /**
+     * Creates a new game with desired difficulty and save file to load
+     * @param diff
+     * @param filename 
+     */
+    public Minesweeper(Difficulty diff, String filename)
+    {
+        this(diff);
+        board.setTiles(FileHelper.read(filename));
+    }
+    
+    /**
+     * Returns all the tiles on the board
+     * @return 
+     */
+    public List<Tile> getBoardTiles(){
+        return board.getTiles();
+    }
+    
+    /**
+     * Pause the game
+     */
+    public void pause(){
+        timer.stopTimer();
+        
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    /**
+     * Resume the game
+     */
+    public void resume(){
+        timer.resumeTimer();
+        
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    /**
+     * Get the seconds that has passed since the game started, excluding paused periods
+     * @return 
+     */
+    public int getTime(){
+        return timer.getSeconds();
+    }
+    /**
+     * Starts the game timer
+     */
+    public void startTime(){
+        timer.startTimer();
+    }
+    /**
+     * Starts a new game with already set difficulty
+     */
+    public void startNewGame(){
+        board = new Board(settings.getDifficulty());
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    /**
+     * Get whether the game timer is paused
+     * @return 
+     */
+    public boolean isPaused(){
+        return timer.isTicking();
+    }
+    /**
+     * Starts a new game with desired difficulty
+     * @param difficulty 
+     */
+    public void startNewGame(Difficulty difficulty) {
+        board = new Board(difficulty);
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    /**
+     * Gets the difficulty setting of the game
+     * @return 
+     */
+    public Difficulty getDifficultySetting(){
+        return settings.getDifficulty();
+    }
+    /**
+     * Sets the difficulty of the game
+     * @param diff 
+     */
+    public void setDifficulty(Difficulty diff){
+        settings.setDifficulty(diff);
+    }
+
+    /**
+     * Uncovers all tiles on the board
+     */
+    public void unCoverThemAll() {
+        for(Tile t: board.getTiles()) 
+            board.uncover(t);
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    /**
+     * Sets the game to game over stage
+     */
+    public void setGameOver() {
+        synchronized (timer){
+        gameOver = true;
+        timer.stopTimer();
+        }    
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+        
+    }
+    /**
+     * Returns whether the game is over or not
+     * @return 
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
+    /**
+     * Returns the timer of the game
+     * @return 
+     */
+    public GameTimer getTimer(){
+        return timer;
+    }
+    
+    
+
+}package minesweeper.Model;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+import minesweeper.Controller.MainMenuController;
+import minesweeper.View.MainMenuView;
+
+/**
+ *
+ * @author Viggo
+ */
+public class MinesweeperMain extends Application {
+    
+    @Override
+    public void start(Stage primaryStage) {
+        
+        MainMenuView view = new MainMenuView();
+        new MainMenuController(view, primaryStage);
+        //view.update(primaryStage);
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+    
+}/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Model;
+
+import java.io.Serializable;
+import java.util.Observable;
+
+/**
+ * Represents a Point with X and Y coordinates
+ * @author Viggo
+ */
+public class Point extends Observable implements Serializable {
+    public final int x, y;
+    public Point(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    /**
+     * 
+     * @return X and Y value of the point 
+     */
+    @Override
+    public String toString()
+    {
+        return "[" + x + ", " + y + "]";
+    }
+    
+    /**
+     * Compares the X and Y value of another point
+     * @param other
+     * @return True if the coordinates of the two points are equal
+     * @throws ClassCastException 
+     */
+    @Override 
+    public boolean equals(Object other) throws ClassCastException
+    {
+        try {
+            return (this.x == ((Point)other).x && this.y == ((Point)other).y);
+        } catch (NullPointerException e) {
+            System.out.println("Point was null!");
+            return false;
+        }
+    }
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Model;
+
+import java.util.Observable;
+import javafx.scene.paint.Color;
+import static minesweeper.Model.Difficulty.*;
+
+/**
+ * Represents a collection of settings
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public class Settings extends Observable{
+    private Color tileColor;
+    Difficulty difficulty;
+    
+    public Settings(){
+        tileColor = Color.GRAY;
+        difficulty = EASY;
+    }
+    
+    public Color getTileColor(){
+        return tileColor;
+    }
+    public void setTileColor(Color color){
+        this.tileColor = color;
+         // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    public void setDifficulty(Difficulty diff){
+        this.difficulty = diff;
+    }
+
+    public Difficulty getDifficulty() {
+        return this.difficulty;
+    }
+    
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Model;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Observable;
+
+/**
+ * Represents a tile that can be placed on the board
+ * @author Viggo
+ */
+public class Tile extends Observable implements Serializable {
+
+    private Point point;
+    private TileType type;
+    private int number;
+    private boolean covered;
+    private boolean flagged;
+    /**
+     * Creates a new tile with desired point and type
+     * @param point
+     * @param type 
+     */
+    public Tile(Point point, TileType type)
+    {
+        this.covered = true;
+        this.type = type;
+        this.point = point;
+    }
+    /**
+     * Returns the tile's Point 
+     * @return 
+     */
+    public Point getPoint()
+    {
+        return this.point;
+    }
+    /**
+     * Returns the tile's point's X-value
+     * @return 
+     */
+    public int getX(){
+        return point.x;
+    }
+    /**
+     * Returns the tile's point's Y-value
+     * @return 
+     */
+    public int getY(){
+        return point.y;
+    }
+    /**
+     * Returns the tile's TileType
+     * @return 
+     */
+    public TileType getType()
+    {
+        return this.type;
+    }
+    /**
+     * Sets the TileType of the tile
+     * @param type 
+     */
+    public void setType(TileType type)
+    {
+        this.type = type;
+        // The model has changed, notify observers!
+        this.setChanged();
+        
+        
+        this.notifyObservers();
+        
+        
+        
+        
+    }
+    /**
+     * Sets the number of the tile and changes the TileType to NUMBER
+     * @param number 
+     */
+    public void setNumber(int number)
+    {
+        this.type = TileType.NUMBER;
+        this.number = number;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+
+    
+    /**
+     * Returns the number of the tile
+     * @return 
+     */
+    public int getNumber()
+    {
+        return this.number;
+    }
+    /**
+     * Returns whether the tile is covered or not
+     * @return 
+     */
+    public boolean isCovered()
+    {
+        return covered;
+    }
+
+    /**
+     * Sets the tile to be covered or not
+     * @param covered 
+     */
+    void setCovered(boolean covered) {
+        this.covered = covered;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+
+    /**
+     * Sets the tile to be flagged or not
+     * @param flagged 
+     */
+    public void setFlagged(boolean flagged) {
+        this.flagged = flagged;
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    /**
+     * Returns whether the tile is flagged or not
+     * @return 
+     */
+    public boolean isFlagged()
+    {
+        return this.flagged;
+    }
+}
+
+package minesweeper.Model;
+
+import javafx.event.Event;
+import javafx.scene.control.Alert;
+import minesweeper.Controller.GridController;
+
+    /**
+     * code snippet from https://examples.javacodegeeks.com
+     * A tile event exception
+     */
+    public class TileEventException extends RuntimeException {
+
+        public TileEventException() {
+
+        }
+
+        public TileEventException(String message) {
+            super(message);
+            Alert a;
+            a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("Serious Runtime Error");
+            a.setContentText("A serious error has interrupted your game. \n"
+                    + "Should the problems persist,\n"
+                    + "please e-mail the Minesweeper team at support@minesweep.com");
+            a.setOnCloseRequest(this::TerminateGame);
+            a.setGraphic(GridController.imageViewButton);
+            a.show();
+        }
+
+        public TileEventException(Throwable cause) {
+            super(cause);
+        }
+
+        public TileEventException(String message, Throwable cause) {
+            super(message, cause);
+
+        }
+
+        public TileEventException(String message, Throwable cause,
+                boolean enableSuppression, boolean writeableStacktrace) {
+            super(message, cause, enableSuppression, writeableStacktrace);
+        }
+
+        private void TerminateGame(Event event) {
+            System.exit(666);
+        }
+
+    }/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Model;
+
+import java.io.Serializable;
+
+/**
+ *
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public enum TileType implements Serializable
+{
+    BOMB, NUMBER, EMPTY
+}

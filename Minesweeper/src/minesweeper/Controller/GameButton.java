@@ -38,7 +38,7 @@ import minesweeper.Model.Minesweeper;
 
 /**
  * An observable Game button. Used for pausing, playing, etc.
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
  */
 public class GameButton implements Observer{
     

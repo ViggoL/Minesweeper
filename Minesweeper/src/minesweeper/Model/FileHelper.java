@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * A toolkit for creating, deleting, reading and writing Tiles from a board to a file. 
  * Prints exception messages to System.out
- * @author Viggo Lundén <vlunden@kth.se>
+ * @author Viggo Lundén <b>vlunden@kth.se</b>
  */
 public class FileHelper {
     /**
@@ -91,7 +91,7 @@ public class FileHelper {
     /**
      * Reads a List of Tiles from file
      * @param filename the path and name of the file to read
-     * @return ArrayList<Tile>. Null if the file is empty.
+     * @return ArrayList of Tile. Null if the file is empty.
      */
     public static ArrayList<Tile> read(String filename)
     {

@@ -5,8 +5,9 @@ import javafx.scene.control.Alert;
 import minesweeper.Controller.GridController;
 
     /**
-     * code snippet from https://examples.javacodegeeks.com
-     * A tile event exception
+     * A tile event exception<br> 
+     * created with the help of a code snippet from https://examples.javacodegeeks.com
+     * 
      */
     public class TileEventException extends RuntimeException {
 

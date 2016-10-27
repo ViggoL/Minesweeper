@@ -32,7 +32,7 @@ import minesweeper.Model.Minesweeper;
 
 /**
  *
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
  */
 public abstract class GameViewSuper {
     

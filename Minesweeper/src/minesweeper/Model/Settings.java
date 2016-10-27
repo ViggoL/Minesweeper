@@ -23,7 +23,7 @@ import static minesweeper.Model.Difficulty.*;
 
 /**
  * Represents a collection of settings
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
  */
 public class Settings extends Observable{
     private Color tileColor;

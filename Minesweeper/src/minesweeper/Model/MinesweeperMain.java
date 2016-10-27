@@ -13,7 +13,7 @@ import minesweeper.Controller.MainMenuController;
 import minesweeper.View.MainMenuView;
 
 /**
- *
+ * Main class launches the Main View and Main Controller
  * @author Viggo
  */
 public class MinesweeperMain extends Application {

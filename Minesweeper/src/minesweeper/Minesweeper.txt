@@ -1,0 +1,2487 @@
+/*
+ * Minesweeper license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Controller;
+
+import java.util.Arrays;
+import java.util.Observable;
+import java.util.Observer;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.Text;
+import minesweeper.Model.GameTimer;
+import minesweeper.Model.Minesweeper;
+
+/**
+ * An observable Game button. Used for pausing, playing, etc.
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public class GameButton implements Observer{
+    
+    private final Button button;
+    private DropShadow shadow;
+    private double shadowOffset;
+    private double sideLength;
+    private Text text;
+    public final ButtonEnum type;
+
+    /**
+     * Creates a new GameButton
+     * @param diameter The diameter of the game button
+     * @param type The type of game button
+     */
+    public GameButton(double diameter, ButtonEnum type) {
+        button = new Button();
+        shadow = new DropShadow();
+        shadowOffset = diameter / 22;
+        sideLength = Math.sqrt(Math.pow(diameter, 2)*2);
+        
+        //shadow.setOffsetX(shadowOffset);
+        shadow.setOffsetY(shadowOffset);
+        shadow.setColor(Color.GREY);
+        
+        
+        button.setShape(new Circle(diameter));
+        
+        button.setMinSize(sideLength, sideLength);
+        button.setMaxSize(sideLength, Double.MAX_VALUE);
+        button.setAlignment(Pos.CENTER);
+        
+        double hypotenuse = Math.sqrt(Math.pow(diameter, 2.0)*2);
+        double x1 = (hypotenuse - diameter)/Math.PI;
+        double y1 = (hypotenuse - diameter)/(Math.PI*Math.E);
+        this.type = type;
+        
+        switch(type){
+            case PLAY:
+                Polygon triangle = new Polygon();
+                triangle.getPoints().addAll(new Double[]{x1, y1,diameter,diameter/2,x1,diameter-y1});
+                triangle.setFill(Color.GREEN);
+                triangle.setEffect(shadow);
+                button.setGraphic(triangle);
+                break;
+            case PAUSE:
+                Group root = new Group();
+                Line  line1, line2;
+                double strokeWidth = diameter / 5;//Math.pow(Math.PI,Math.E);
+                double x2 = Math.PI*diameter/3;
+                
+                line1 = new Line(diameter/2,0.0,diameter/2,diameter/2);
+                line2 = new Line(x2,0.0,x2,diameter/2);
+                
+                root.getChildren().addAll(line1, line2);
+                System.out.println("Lines: " + Arrays.toString(root.getChildren().toArray()));
+                for(Object l: root.getChildren().toArray()) {
+                    Line line = (Line) l;
+                    line.setStroke(Color.BLUE);
+                    line.setStrokeLineCap(StrokeLineCap.ROUND);
+                    line.setStrokeWidth(strokeWidth);
+                    line.setEffect(shadow);
+                    l = line;
+                }
+                button.setGraphic(root);
+                break;
+            case HELP:
+                Font myFont = new Font("Garamond",diameter);
+                
+                text = new Text("?");
+                text.setEffect(shadow);
+                text.setFont(myFont);
+                
+                button.setGraphic(text);
+                break;
+            default: 
+                myFont = new Font("Garamond",14);
+                
+                text = new Text("Time");
+                text.setEffect(shadow);
+                text.setFont(myFont);
+                
+                button.setShape(new Rectangle(10.0,20.0));
+                button.setGraphic(text);
+                break;
+                     
+        }
+            
+    }
+    
+    /**
+     * 
+     * @return The inner button of the Game button 
+     */
+    public Button getButton(){
+        return button;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof Minesweeper){
+            Minesweeper model = (Minesweeper) o;
+            this.text = new Text(Integer.toString(model.getTime()));
+        }
+        else if (o instanceof GameTimer){
+            GameTimer model = (GameTimer) o;
+            this.text = new Text(Integer.toString(model.getSeconds()));
+        }
+    }
+    
+    
+    public enum ButtonEnum {
+        PLAY,PAUSE,HELP,TIME;
+    }
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template menu1, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Controller;
+
+
+import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+import minesweeper.Model.Minesweeper;
+import minesweeper.View.ClockView;
+import minesweeper.View.GameView;
+import minesweeper.View.RulesView;
+
+/**
+ * The Game controllers
+ * @author Viggo
+ */
+public class GameControllers extends VBox {
+    private final Minesweeper game;
+    private final Button rulesButton, resumeButton, pauseButton;
+    private final Insets inset;
+    private final Button timeButton;
+    private final GameView gameView;
+    
+    /**
+     * Creates a new class containing the Game controllers
+     * @param game The game to handle
+     * @param gameView The view to handle
+     */
+    public GameControllers(Minesweeper game, GameView gameView)
+    {
+        this.game = game;
+        this.gameView = gameView;
+        double buttonWidth = 20;
+
+        pauseButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PAUSE).getButton();
+        rulesButton = new GameButton(buttonWidth, GameButton.ButtonEnum.HELP).getButton();
+        resumeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.PLAY).getButton();
+        timeButton = new GameButton(buttonWidth, GameButton.ButtonEnum.TIME).getButton();
+ 
+        inset = new Insets(5);
+        this.setPadding(inset);
+        this.setSpacing(10);
+        this.setAlignment(Pos.BASELINE_CENTER);
+         
+        resumeButton.setOnMouseClicked(this::ResumeButtonClicked);
+        pauseButton.setOnMouseClicked(this::PauseButtonClicked);
+        rulesButton.setOnMouseClicked(this::RulesButtonClicked);
+        timeButton.setOnMouseClicked(this::TimePaneClicked);
+        
+        this.getChildren().addAll(pauseButton,rulesButton,timeButton);
+    }
+    
+    
+    /**
+     * Called whenever the user pressed the resume button
+     * @param event 
+     */
+    public void ResumeButtonClicked(Event event)
+    {
+        this.getChildren().set(0, pauseButton);
+        if(!game.isGameOver()) {
+            game.resume();
+        }
+        else new NewGame(gameView.gameStage,game.getDifficultySetting());
+    }
+    /**
+     * Called whenever the user pressed the pause button
+     * @param event 
+     */
+    public void PauseButtonClicked(Event event)
+    {
+        this.getChildren().set(0, resumeButton);
+        game.pause();
+        
+    }
+    /**
+     * Called whenever the user pressed the rules button
+     * @param event 
+     */
+    public void RulesButtonClicked(Event event)
+    {
+        Platform.runLater(new RulesView());
+    }
+    /**
+     * Called whenever the user clicks the Time button
+     * @param event 
+     */
+    public void TimePaneClicked(Event event){
+        gameView.getClockView().showClock();
+    }
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template menu1, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Controller;
+
+import java.util.Arrays;
+import java.util.List;
+import minesweeper.Model.TileEventException;
+import java.util.Observable;
+import java.util.Observer;
+import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import minesweeper.Model.Minesweeper;
+import minesweeper.Model.Tile;
+import minesweeper.Model.TileType;
+import javafx.collections.ObservableList;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+
+/**
+ * The grid controller for the game view
+ * @author Viggo
+ */
+public class GridController extends GridPane implements Observer {
+
+    private Minesweeper game;
+    private boolean timerStarted;
+    private Insets inset;
+    public static ImageView imageViewButton;
+    private double buttonWidth;
+    private double gridTileSize;
+    private static int explosionCount, flagCount;
+    private boolean stopExplosion;
+
+    /**
+     * Creates a new grid controller
+     * @param game the game to handle
+     * @throws IllegalArgumentException 
+     */
+    public GridController(Minesweeper game) throws IllegalArgumentException {
+
+        this.game = game;
+        timerStarted = false;
+        buttonWidth = 20;
+        gridTileSize = buttonWidth * 1.75;
+        explosionCount = flagCount = 0;
+
+        int ID;
+        inset = new Insets(20);
+
+        this.setAlignment(Pos.CENTER_LEFT);
+        this.setGridLinesVisible(true);
+        this.setPadding(inset);
+
+        //get image for buttons
+        Image image = new Image("water.png", buttonWidth, buttonWidth, false, true);
+        DropShadow shadow = new DropShadow(2.0, Color.WHITE);
+
+        //map tiles to a grid and set grid x and y for button 
+        //using Tile Point X and Y
+        this.getChildren().clear();
+        for (Tile t : game.getBoardTiles()) {
+            ID = game.getBoardTiles().indexOf(t);
+
+            image.isSmooth();
+            imageViewButton = new ImageView(image);
+            imageViewButton.setEffect(shadow);
+            imageViewButton.setFitHeight(gridTileSize);
+            imageViewButton.setFitWidth(gridTileSize);
+            imageViewButton.setOnMouseClicked(this::TileClicked);
+            this.add(imageViewButton, t.getX(), t.getY());
+            System.out.println("Tile ID: " + ID + t.getPoint().toString());
+
+            //since the button handlers alter the tiles, 
+            //action events trigger observers
+            t.addObserver(this);
+            this.update(t, null);
+
+        }
+
+    }
+    
+    /**
+     * Called whenever a tile on the grid is clicked
+     * @param event
+     * @throws TileEventException 
+     */
+    public void TileClicked(MouseEvent event) throws TileEventException {
+
+        if (timerStarted == false) {
+            game.startTime();
+            timerStarted = true;
+        }
+        Object o = event.getSource();
+        Button b;
+        ImageView im;
+        int i;
+        if (o instanceof Button) {
+            b = (Button) event.getSource();
+            i = this.getChildren().indexOf(b);;
+        } else if (o instanceof ImageView) {
+            
+            im = (ImageView) o;
+            System.out.println(event.getEventType().toString());
+            ObservableList<Node> l = this.getChildren();
+            i = this.getChildren().indexOf(im);
+        } else {
+            i = -1;
+        }
+        try {
+            
+            Tile t = game.getBoardTiles().get(i);
+            
+            if (event.getButton() == MouseButton.SECONDARY || event.isControlDown()) {
+                t.setFlagged(!t.isFlagged());
+                return;
+            }
+            else if (!t.isFlagged()) {
+                game.board.uncover(t);
+                if (game.board.bombCount(t) > 0) t.setNumber(game.board.bombCount(t));
+            }
+            
+            System.out.println("Tile number: " + i);
+
+            TileType type = t.getType();
+            switch (type) {
+                case BOMB:
+                    
+                    if (!t.isFlagged()) this.game.setGameOver();
+                    System.out.println("BOMB!!!!!!");
+                    
+                    break;
+                default:
+                    break;
+            }
+
+        } catch (IndexOutOfBoundsException index) {
+            for (String s : Arrays.toString(index.getStackTrace()).split(",")) {
+                System.err.print(s);
+            }
+            throw new TileEventException("Event source not supported");
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof Tile) {
+
+            synchronized (o) {
+                //System.out.println(((Tile) o).getX());
+                Tile tile = (Tile) o;
+                Object iv = this.getChildren().get(game.getBoardTiles().indexOf(tile));
+                
+                //ignore updates by the Group Node of a list
+                if (!(iv instanceof Group)) {
+                    updateTileSwitch(tile);
+
+                } 
+            }    
+        }
+        else if (o instanceof Minesweeper) {
+            System.out.println("Game updating GridController");
+        }
+        
+    }
+    
+    /**
+     * Update the tile to corresponding image depending on TileType
+     * @param tile 
+     */
+    private void updateTileSwitch(Tile tile) {
+        ImageView img = (ImageView) this.getChildren().get(game.getBoardTiles().indexOf(tile));
+        TileType type = tile.getType();
+        if (tile.isFlagged()) {
+            img.setImage(new Image("flag4.png", buttonWidth, buttonWidth, false, true));
+            return;
+        }
+        else {
+            img.setImage(new Image("water.png", buttonWidth, buttonWidth, false, true));
+        }
+        
+        synchronized(game.board){
+        switch (type) {
+            case BOMB:
+                if (!tile.isFlagged() && !tile.isCovered()) img.setImage(new Image("mine3.png", buttonWidth, buttonWidth, false, true));
+                break;
+            default:
+                //the update is fired by a change in Tile.isCovered()
+                if (!tile.isCovered() && tile.getType() != TileType.BOMB) {
+                    img.setImage(new Image("uncovered.png", buttonWidth, buttonWidth, false, true));
+                    int bombCount = game.board.bombCount(tile);
+                    if (bombCount != 0) 
+                        img.setImage(new Image(bombCount + ".png", buttonWidth, buttonWidth, false, true));
+                }
+        }
+        if (!stopExplosion && type == TileType.BOMB) {
+            //MouseEvent.fireEvent(img, new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
+        }
+
+        }
+    }
+
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Controller;
+
+
+import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+import minesweeper.View.MainMenuView;
+import minesweeper.View.RulesView;
+
+/**
+ * The Main Menu controller
+ * @author Viggo
+ */
+public class MainMenuController {
+    private final MainMenuView view;
+    private Stage stage, primaryStage;
+    /**
+     * Creates a new Main menu controller
+     * @param view The view to handle
+     * @param stage The view's stage to handle
+     */
+    public MainMenuController(MainMenuView view, Stage stage)
+    {
+        this.view = view;
+        this.stage = stage;
+        view.update(stage);
+        view.resumeButton.setOnMouseClicked((Event event) -> {
+            MouseEvent in;
+            if (event instanceof MouseEvent) {
+                in = (MouseEvent)event;
+                if (in.getButton() == MouseButton.PRIMARY) playButtonSelected();
+            }
+        });
+        view.resumeButton.setOnKeyPressed((Event event) -> {
+            KeyEvent key;
+            if (event instanceof KeyEvent){
+                key = (KeyEvent) event;
+                if (key.getCode().equals(KeyCode.ENTER))
+                    playButtonSelected();
+            }
+        });
+       
+        view.rulesButton.setOnMouseClicked((Event event) -> {
+            MouseEvent mouse;
+            if (event instanceof MouseEvent){
+                mouse = (MouseEvent) event;
+                if(mouse.getButton() == MouseButton.PRIMARY)
+                    rulesButtonClicked();
+            }
+        });
+    }
+    
+    /**
+     * User clicked the play button
+     */
+    public void playButtonSelected(){
+        NewGame newGame = new NewGame(stage,view.getDifficulty()); 
+    }
+    /**
+     * User clicked the rules button
+     */
+    public void rulesButtonClicked()
+    {
+        Platform.runLater(new RulesView());
+    }
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * Minesweeper license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Controller;
+
+import javafx.scene.Node;
+import javafx.stage.Stage;
+import minesweeper.Model.Difficulty;
+import minesweeper.Model.Minesweeper;
+import minesweeper.Model.Tile;
+import minesweeper.View.ClockView;
+import minesweeper.View.GameView;
+
+/**
+ * Used for creating a new game
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public class NewGame {
+
+    private final Stage primaryStage;
+    private final Minesweeper game;
+    private ClockView clock;
+    
+    /**
+     * Create a new game
+     * @param oldstage the old stage to close
+     * @param diff the difficulty of the new game
+     */
+    public NewGame(Stage oldstage, Difficulty diff){
+        oldstage.close();
+        
+        primaryStage = new Stage();
+        
+        // The observable-observer initialization
+        game = new Minesweeper(diff);
+        clock = new ClockView(game);
+        
+        //The GUI is initialized
+        GameView viewer = new GameView(game, clock);
+        viewer.gameStage = primaryStage;
+        
+        //Observers are added
+        game.getTimer().addObserver(viewer);
+        game.board.addObserver(viewer);
+        game.addObserver(viewer);
+        //for(Tile t: game.board.getTiles()) t.addObserver(viewer);
+        
+        primaryStage.setTitle("Minesweeper");
+        primaryStage.setScene(viewer.scene);
+        primaryStage.setResizable(false);
+
+        primaryStage.show();
+        primaryStage.centerOnScreen();
+    }
+    
+    /**
+     * Create a new game without closing the old stage
+     * @param diff the difficulty of the new game
+     */
+    public NewGame(Difficulty diff){
+        this(new Stage(),diff);
+    }
+    /**
+     * Creates and loads an old game from a file
+     * @param oldstage the old stage to close
+     * @param diff the difficulty of the new game
+     * @param filename the filename of the save file to load
+     */
+    public NewGame(Stage oldstage, Difficulty diff, String filename)
+    {
+        oldstage.close();
+        
+        primaryStage = new Stage();
+        
+        // The observable-observer initialization
+        game = new Minesweeper(diff, filename);
+        clock = new ClockView(game);
+        
+        //The GUI is initialized
+        GameView viewer = new GameView(game, clock);
+        viewer.gameStage = primaryStage;
+        
+        //Observers are added
+        game.getTimer().addObserver(viewer);
+        game.board.addObserver(viewer);
+        game.addObserver(viewer);
+        //for(Tile t: game.board.getTiles()) t.addObserver(viewer);
+        
+        primaryStage.setTitle("Minesweeper");
+        primaryStage.setScene(viewer.scene);
+        primaryStage.setResizable(false);
+
+        primaryStage.show();
+        primaryStage.centerOnScreen();
+        
+    }
+    /**
+     * Hides the game
+     */
+    public void hideStage(){
+        primaryStage.hide();
+    }
+    /**
+     * Shows the game
+     */
+    public void showStage(){
+        primaryStage.show();
+    }
+    /**
+     * 
+     * @return the inner game object
+     */
+    public Minesweeper getGame(){
+        return game;
+    }
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Controller;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.MenuItem;
+import minesweeper.Model.Difficulty;
+import minesweeper.Model.Minesweeper;
+import minesweeper.View.GameView;
+
+/**
+ * The controller for the settings menu
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public final class SettingsMenuEventHandler implements EventHandler<ActionEvent> {
+    
+    private final GameView settingsHandler;
+    private final Minesweeper game;
+    
+    /**
+     * Create a new settings menu event handler
+     * @param game the game to handle
+     * @param settingsHandler the game view to handle
+     */
+    public SettingsMenuEventHandler(Minesweeper game,final GameView settingsHandler) {
+        this.settingsHandler = settingsHandler;
+        this.game = game;
+        handle(new ActionEvent());
+    }
+
+    @Override
+    public void handle(ActionEvent event) {
+        Object o = event.getSource();
+        if (o instanceof MenuItem) {
+            MenuItem m = (MenuItem) o;
+            game.setDifficulty(Difficulty.valueOf(m.getText()));
+        }
+    }
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Observable;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import minesweeper.Controller.GridController;
+
+/**
+ * Represents a minesweeper board
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public class Board extends Observable {
+
+    private List<Tile> tiles;
+    private boolean win;
+    private int maxX, maxY;
+
+    /**
+     * Creates a new board with desired difficulty
+     * @param diff 
+     */
+    public Board(Difficulty diff) {
+        win = false;
+        tiles = new ArrayList<>();
+        int x = 0;
+        int y = 0;
+
+        switch (diff) {
+            case EASY:
+                while (tiles.size() < 100) {
+                    while (tiles.size() / 10 <= 9) {
+                        x = tiles.size() % 10;
+                        y = tiles.size() / 10;
+                        tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
+                    }
+                }
+
+                break;
+            case MEDIUM:
+                while (tiles.size() < 175) {
+                    while (tiles.size() / 15 <= 14) {
+                        x = tiles.size() % 15;
+                        y = tiles.size() / 15;
+                        tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
+                    }
+                }
+                break;
+            case HARD:
+                while (tiles.size() < 289) {
+                    while (tiles.size() / 17 <= 16) {
+                        x = tiles.size() % 17;
+                        y = tiles.size() / 17;
+                        tiles.add(new Tile(new Point(x, y), TileType.EMPTY));
+                    }
+                }
+                break;
+        }
+        maxX = x;
+        maxY = y;
+
+        //TODO: Tweak for each difficulty
+        while (getAllBombs() <= maxX * Math.E) {
+            int r = ThreadLocalRandom.current().nextInt(0, tiles.size());
+            tiles.get(r).setType(TileType.BOMB);
+        }
+    }
+
+    /**
+     * Creates a new board with desired difficulty and predetermined tiles (for loading games)
+     * @param diff
+     * @param tiles 
+     */
+    public Board(Difficulty diff, ArrayList<Tile> tiles)
+    {
+        this(diff);
+        this.tiles = tiles;
+    }
+    
+    /**
+     * Creates a new board with EASY difficulty
+     */
+    public Board() {
+        this(Difficulty.EASY);
+    }
+
+    /**
+     * @return all of the tiles on the board
+     */
+    public List<Tile> getTiles() {
+        return tiles;
+    }
+
+    /**
+     * @return the number of bombs on the board
+     */
+    private int getAllBombs()
+    {
+        int count = 0;
+        for (Tile t : tiles) {
+            if (t.getType() == TileType.BOMB) count++;
+        }
+        return count;
+    }
+    
+    /**
+     * Returns the number of bombs adjacent to a tile
+     * @param tile The Tile to check
+     * @return 
+     */
+    public int bombCount(Tile tile) {
+        List<Tile> tiles = getSurroundingTiles(tile);
+        int i = 0;
+        for (Tile t : tiles)
+        {
+            if (t != null && t.getType() == TileType.BOMB) i++;
+        }
+        return i;
+    }
+
+    /**
+     * 
+     * @param tile
+     * @return All surrounding tiles of a Tile. Null-values for tiles outside of board.
+     */
+    public List<Tile> getSurroundingTiles(Tile tile) {
+        Point maxP = new Point(maxX, maxY);
+        Point tileP = tile.getPoint();
+        ArrayList<Tile> tiles = new ArrayList();
+        
+        tiles.add(getTile(new Point(tileP.x, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y)));
+        tiles.add(getTile(new Point(tileP.x + 1, tileP.y + 1)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y + 1)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y)));
+        tiles.add(getTile(new Point(tileP.x - 1, tileP.y - 1)));
+        tiles.add(getTile(new Point(tileP.x, tileP.y + 1)));
+
+        return tiles;
+    }
+
+    /**
+     * Recursive method to uncover all the tiles of a board from a Tile, causing the board to expand according to the rules
+     * @param tile the Tile to start uncovering from
+     */
+    public void uncover(Tile tile) {
+        if (tile.isCovered()) {
+            tile.setCovered(false);
+
+            // The model has changed, notify observers!
+            this.setChanged();
+            this.notifyObservers();
+
+            System.out.println("Uncover tile and search surroundings!");
+            if (tile.getType() == TileType.EMPTY) {
+                if (bombCount(tile) == 0) {
+                    List<Tile> surrounding = getSurroundingTiles(tile);
+                    for (Tile t : surrounding) {
+                        if (t != null && t.getType() == TileType.EMPTY) {
+                            uncover(t);
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the tile at the given point at the board.
+     *
+     * @param point The given points. Does not have to be a reference to the tile's point.
+     * @return null if the tile can't be found
+     */
+    public Tile getTile(Point point) {
+        for (Tile t : tiles) {
+            if (t.getPoint().equals(point)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the X and Y boundary of the board
+     * @return 
+     */
+    public int[] getXYboundary() {
+        int[] array = {maxX, maxY};
+        return array;
+    }
+
+    /**
+     * Get information on Tile Point(x and y coordinates) and TileType
+     *
+     * @return ArrayList<Object[]> where Object[0] is Point and Object[1] is
+     * TileType
+     */
+    public ArrayList<Object[]> getTileInfo() {
+        ArrayList<Object[]> infoList = new ArrayList();
+        for (Tile t : (ArrayList<Tile>) tiles) {
+            Object[] o = {t.getPoint(), t.getType()};
+            infoList.add(o);
+        }
+
+        return infoList;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        for (Object[] ss : getTileInfo()) {
+            string.append(Arrays.toString(ss));
+            string.append("\n");
+        }
+        return string.toString();
+    }
+    
+    /**
+     * Set all tiles on the board 
+     * @param tiles 
+     */
+    public void setTiles(List<Tile> tiles) {
+        this.tiles = tiles;
+    }
+    
+    /**
+     * Serialize and save the tiles to a .ser file for loading later
+     */
+    public void saveTiles()
+    {
+        ArrayList<Tile> list = new ArrayList<>();
+        for (Tile t : tiles) list.add(t);
+        FileHelper.write(list, "save.ser");
+    }
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Model;
+
+/**
+ *
+ * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
+ */
+
+/**
+ * Represents the difficulty of the game
+ * @author Viggo
+ */
+public enum Difficulty {
+
+EASY,MEDIUM,HARD;
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Model;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A toolkit for creating, deleting, reading and writing Tiles from a board to a file. 
+ * Prints exception messages to System.out
+ * @author Viggo Lundén <vlunden@kth.se>
+ */
+public class FileHelper {
+    /**
+     * Creates a new file
+     * @param filename the path and name of the file
+     */
+    public static void newFile(String filename)
+    {
+            
+        try {
+            File file = new File(filename);
+            file.delete();
+            file.createNewFile();
+        } catch (IOException iOException) {
+            System.out.println("Failed to create new file.");
+            System.out.print(iOException.getMessage());
+            System.out.println("");
+        } 
+    }
+    
+    /**
+     * Deletes a file
+     * @param filename The path and name of the file to delete
+     */
+    public static void deleteFile(String filename)
+    {
+        File file = new File(filename);
+        file.delete();
+    }
+    
+
+    /**
+     * Writes a List of Tiles to a file 
+     * @param tiles to be written
+     * @param filename path
+     */
+    public static void write(ArrayList<Tile> tiles, String filename)
+    {
+        FileOutputStream out = null;
+        try {
+            File file = new File(filename);
+            out = new FileOutputStream(file);
+            ObjectOutputStream obout = new ObjectOutputStream(out);
+            obout.writeObject(tiles);
+        }
+        catch (FileNotFoundException fnfex)
+        {
+            System.out.println("Could not find the file containing books!");
+            System.out.print(fnfex.getMessage());
+            System.out.println("");
+        }
+        catch (IOException ioex)
+        {
+            System.out.println("Could not write to the file, "
+                    + "please make sure that it's not "
+                    + "already in use by another process.");
+            System.out.print(ioex.getMessage());
+            System.out.println("");
+        }
+        finally {
+            try {
+                out.close();
+            } catch (IOException iOException) {
+                System.out.println("Failed to close file stream");
+                System.out.println(iOException.getMessage());
+            }
+        }
+    }
+    /**
+     * Reads a List of Tiles from file
+     * @param filename the path and name of the file to read
+     * @return ArrayList<Tile>. Null if the file is empty.
+     */
+    public static ArrayList<Tile> read(String filename)
+    {
+       ArrayList<Tile> tiles = new ArrayList<>();
+       FileInputStream fin = null;
+       try {
+            fin = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fin);
+            tiles = (ArrayList<Tile>) in.readObject();
+       }
+       catch (FileNotFoundException fnfex)
+       {
+            System.out.println("Could not find the file!");
+            System.out.print(fnfex.getMessage());
+            System.out.println("");
+       }
+       catch (IOException ioex)
+       {
+            System.out.println("Could not read from the file, "
+                    + "please make sure that it's not "
+                    + "already in use by another process.");
+            System.out.print(ioex.getMessage());
+            System.out.println("");
+       }
+       catch (ClassNotFoundException cnfex)
+       {
+           System.out.println("Failed to deserialize object");
+           System.out.print(cnfex.getMessage());
+           System.out.println("");
+       }
+       finally {
+           try {
+               fin.close();
+           } catch (IOException iOException) {
+               System.out.println("Failed to close file stream");
+               System.out.println(iOException.getMessage());
+           }
+           return tiles;
+       }
+    }
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Model;
+
+import java.util.Observable;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+
+/**
+ * Represents an observable game timer during playing the game
+ * @author Viggo
+ */
+public class GameTimer extends Observable {
+    
+    private boolean ticking = true;
+    private Timer timer;
+    private int interval = 1000;
+    private int seconds = 0;
+    
+    /**
+     * Creates a new timer without starting it
+     */
+    public GameTimer() {
+        timer = new Timer();
+        
+    }
+    
+    /**
+     * Starts the timers
+     */
+    public void startTimer()
+    {
+        ticking = true;
+        timer.schedule(new TimerTask(){
+            @Override
+            public void run() {
+                if (!ticking) return;
+                tick();
+            }
+            
+        }, 0, interval);
+        
+    }
+    
+    /**
+     * Increase seconds by 1
+     */
+    private void tick()
+    {
+        seconds++;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers(seconds);
+    }
+    
+    public void stopTimer()
+    {
+        ticking = false;
+        
+        this.setChanged();
+        this.notifyObservers(seconds);
+    }
+    
+    public void resumeTimer(){
+        ticking = true;
+        
+        this.setChanged();
+        this.notifyObservers(seconds);
+    }
+
+    /**
+     * Get the amount of seconds that has passed
+     * @return 
+     */
+    public int getSeconds()
+    {
+        return seconds;
+    }
+    
+    /**
+     * Get whether the timer is ticking or not
+     * @return 
+     */
+    public boolean isTicking(){
+        return ticking;
+    }
+
+    /**
+     * Returns the seconds in string form
+     * @return 
+     */
+    public String toString(){
+        return Integer.toString(seconds);
+    }
+
+}
+package minesweeper.Model;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
+import java.util.List;
+import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.stage.Stage;
+import minesweeper.Controller.MainMenuController;
+import minesweeper.Controller.NewGame;
+import minesweeper.View.MainMenuView;
+
+
+/**
+ * Represents an observable Minesweeper game
+ * @author Viggo
+ */
+public class Minesweeper extends Observable{
+    public Board board;
+    private GameTimer timer;
+    private Settings settings;
+    private boolean gameOver;
+    
+    /**
+     * Creates a new game with difficulty EASY
+     */
+    public Minesweeper() {
+        super();
+        board = new Board(Difficulty.EASY);
+        settings = new Settings();
+        timer = new GameTimer(); 
+        gameOver = false;
+        
+    }
+    
+    /**
+     * Creates a new game with desired difficulty
+     * @param diff 
+     */
+    public Minesweeper(Difficulty diff){
+        this();
+        board = new Board(diff);
+    }
+    
+    /**
+     * Creates a new game with desired difficulty and save file to load
+     * @param diff
+     * @param filename 
+     */
+    public Minesweeper(Difficulty diff, String filename)
+    {
+        this(diff);
+        board.setTiles(FileHelper.read(filename));
+    }
+    
+    /**
+     * Returns all the tiles on the board
+     * @return 
+     */
+    public List<Tile> getBoardTiles(){
+        return board.getTiles();
+    }
+    
+    /**
+     * Pause the game
+     */
+    public void pause(){
+        timer.stopTimer();
+        
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    /**
+     * Resume the game
+     */
+    public void resume(){
+        timer.resumeTimer();
+        
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    /**
+     * Get the seconds that has passed since the game started, excluding paused periods
+     * @return 
+     */
+    public int getTime(){
+        return timer.getSeconds();
+    }
+    /**
+     * Starts the game timer
+     */
+    public void startTime(){
+        timer.startTimer();
+    }
+    /**
+     * Starts a new game with already set difficulty
+     */
+    public void startNewGame(){
+        board = new Board(settings.getDifficulty());
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    /**
+     * Get whether the game timer is paused
+     * @return 
+     */
+    public boolean isPaused(){
+        return timer.isTicking();
+    }
+    /**
+     * Starts a new game with desired difficulty
+     * @param difficulty 
+     */
+    public void startNewGame(Difficulty difficulty) {
+        board = new Board(difficulty);
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    /**
+     * Gets the difficulty setting of the game
+     * @return 
+     */
+    public Difficulty getDifficultySetting(){
+        return settings.getDifficulty();
+    }
+    /**
+     * Sets the difficulty of the game
+     * @param diff 
+     */
+    public void setDifficulty(Difficulty diff){
+        settings.setDifficulty(diff);
+    }
+
+    /**
+     * Uncovers all tiles on the board
+     */
+    public void unCoverThemAll() {
+        for(Tile t: board.getTiles()) 
+            board.uncover(t);
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    /**
+     * Sets the game to game over stage
+     */
+    public void setGameOver() {
+        synchronized (timer){
+        gameOver = true;
+        timer.stopTimer();
+        }    
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+        
+    }
+    /**
+     * Returns whether the game is over or not
+     * @return 
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
+    /**
+     * Returns the timer of the game
+     * @return 
+     */
+    public GameTimer getTimer(){
+        return timer;
+    }
+    
+    
+
+}package minesweeper.Model;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+import minesweeper.Controller.MainMenuController;
+import minesweeper.View.MainMenuView;
+
+/**
+ *
+ * @author Viggo
+ */
+public class MinesweeperMain extends Application {
+    
+    @Override
+    public void start(Stage primaryStage) {
+        
+        MainMenuView view = new MainMenuView();
+        new MainMenuController(view, primaryStage);
+        //view.update(primaryStage);
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+    
+}/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Model;
+
+import java.io.Serializable;
+import java.util.Observable;
+
+/**
+ * Represents a Point with X and Y coordinates
+ * @author Viggo
+ */
+public class Point extends Observable implements Serializable {
+    public final int x, y;
+    public Point(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    /**
+     * 
+     * @return X and Y value of the point 
+     */
+    @Override
+    public String toString()
+    {
+        return "[" + x + ", " + y + "]";
+    }
+    
+    /**
+     * Compares the X and Y value of another point
+     * @param other
+     * @return True if the coordinates of the two points are equal
+     * @throws ClassCastException 
+     */
+    @Override 
+    public boolean equals(Object other) throws ClassCastException
+    {
+        try {
+            return (this.x == ((Point)other).x && this.y == ((Point)other).y);
+        } catch (NullPointerException e) {
+            System.out.println("Point was null!");
+            return false;
+        }
+    }
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Model;
+
+import java.util.Observable;
+import javafx.scene.paint.Color;
+import static minesweeper.Model.Difficulty.*;
+
+/**
+ * Represents a collection of settings
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public class Settings extends Observable{
+    private Color tileColor;
+    Difficulty difficulty;
+    
+    public Settings(){
+        tileColor = Color.GRAY;
+        difficulty = EASY;
+    }
+    
+    public Color getTileColor(){
+        return tileColor;
+    }
+    public void setTileColor(Color color){
+        this.tileColor = color;
+         // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    
+    public void setDifficulty(Difficulty diff){
+        this.difficulty = diff;
+    }
+
+    public Difficulty getDifficulty() {
+        return this.difficulty;
+    }
+    
+    
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.Model;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Observable;
+
+/**
+ * Represents a tile that can be placed on the board
+ * @author Viggo
+ */
+public class Tile extends Observable implements Serializable {
+
+    private Point point;
+    private TileType type;
+    private int number;
+    private boolean covered;
+    private boolean flagged;
+    /**
+     * Creates a new tile with desired point and type
+     * @param point
+     * @param type 
+     */
+    public Tile(Point point, TileType type)
+    {
+        this.covered = true;
+        this.type = type;
+        this.point = point;
+    }
+    /**
+     * Returns the tile's Point 
+     * @return 
+     */
+    public Point getPoint()
+    {
+        return this.point;
+    }
+    /**
+     * Returns the tile's point's X-value
+     * @return 
+     */
+    public int getX(){
+        return point.x;
+    }
+    /**
+     * Returns the tile's point's Y-value
+     * @return 
+     */
+    public int getY(){
+        return point.y;
+    }
+    /**
+     * Returns the tile's TileType
+     * @return 
+     */
+    public TileType getType()
+    {
+        return this.type;
+    }
+    /**
+     * Sets the TileType of the tile
+     * @param type 
+     */
+    public void setType(TileType type)
+    {
+        this.type = type;
+        // The model has changed, notify observers!
+        this.setChanged();
+        
+        
+        this.notifyObservers();
+        
+        
+        
+        
+    }
+    /**
+     * Sets the number of the tile and changes the TileType to NUMBER
+     * @param number 
+     */
+    public void setNumber(int number)
+    {
+        this.type = TileType.NUMBER;
+        this.number = number;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+
+    
+    /**
+     * Returns the number of the tile
+     * @return 
+     */
+    public int getNumber()
+    {
+        return this.number;
+    }
+    /**
+     * Returns whether the tile is covered or not
+     * @return 
+     */
+    public boolean isCovered()
+    {
+        return covered;
+    }
+
+    /**
+     * Sets the tile to be covered or not
+     * @param covered 
+     */
+    void setCovered(boolean covered) {
+        this.covered = covered;
+        
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+
+    /**
+     * Sets the tile to be flagged or not
+     * @param flagged 
+     */
+    public void setFlagged(boolean flagged) {
+        this.flagged = flagged;
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
+    }
+    /**
+     * Returns whether the tile is flagged or not
+     * @return 
+     */
+    public boolean isFlagged()
+    {
+        return this.flagged;
+    }
+}
+
+package minesweeper.Model;
+
+import javafx.event.Event;
+import javafx.scene.control.Alert;
+import minesweeper.Controller.GridController;
+
+    /**
+     * code snippet from https://examples.javacodegeeks.com
+     * A tile event exception
+     */
+    public class TileEventException extends RuntimeException {
+
+        public TileEventException() {
+
+        }
+
+        public TileEventException(String message) {
+            super(message);
+            Alert a;
+            a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("Serious Runtime Error");
+            a.setContentText("A serious error has interrupted your game. \n"
+                    + "Should the problems persist,\n"
+                    + "please e-mail the Minesweeper team at support@minesweep.com");
+            a.setOnCloseRequest(this::TerminateGame);
+            a.setGraphic(GridController.imageViewButton);
+            a.show();
+        }
+
+        public TileEventException(Throwable cause) {
+            super(cause);
+        }
+
+        public TileEventException(String message, Throwable cause) {
+            super(message, cause);
+
+        }
+
+        public TileEventException(String message, Throwable cause,
+                boolean enableSuppression, boolean writeableStacktrace) {
+            super(message, cause, enableSuppression, writeableStacktrace);
+        }
+
+        private void TerminateGame(Event event) {
+            System.exit(666);
+        }
+
+    }/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.Model;
+
+import java.io.Serializable;
+
+/**
+ *
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public enum TileType implements Serializable
+{
+    BOMB, NUMBER, EMPTY
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.View;
+
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import minesweeper.Model.Minesweeper;
+
+/**
+ * 
+ * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <vlunden@kth.se>
+ */
+public class ClockView implements Observer {
+
+    Minesweeper game;
+    private Stage stage;
+    private TimeLabel timeLabel;
+    private final Scene scene;
+    private int seconds;
+    private static ClockView theClock;
+    private HBox timeBox;
+    private double xSize, ySize;
+    private double screenPosition;
+    private int howManyTimes;
+    private Pane clock;
+
+    public ClockView(Minesweeper game) {
+        this.game = game;
+
+        clock = new Pane();
+        timeBox = new HBox();
+
+        timeBox.setPadding(new Insets(10));
+
+        setBoxSize(200.0);
+
+        timeBox.setMinSize(xSize, ySize);
+        timeBox.setAlignment(Pos.CENTER);
+
+        timeLabel = new TimeLabel();
+        seconds = game.getTime();
+        timeLabel.setText("Time: " + seconds + " seconds");
+
+        timeBox.getChildren().add(timeLabel);
+        clock.getChildren().add(timeBox);
+        scene = new Scene(clock);
+
+        screenPosition = 2.0;
+        howManyTimes = 1;
+
+        addSceneToStage(scene);
+        update();
+
+        //Platform thread must control timer (http://stackoverflow.com/a/18654916)
+        Timer timer = new java.util.Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        timeLabel.update(game.getTimer(), game.getTime());
+                    }
+                });
+            }
+        }, 1000, 1000);
+    }
+
+    private void update() {
+        update(game, game.getTime());
+    }
+
+    @Override
+    public void update(Observable o, Object arg) throws NullPointerException {
+        if (o instanceof Minesweeper) {
+            Minesweeper game = (Minesweeper) o;
+
+            seconds = (int) arg;
+            timeLabel.setText("Time: " + seconds + " seconds");
+            if(game.isGameOver()) stage.close();
+        }
+    }
+
+    public void showClock() {
+        if (theClock != null) {
+            if (theClock.stage.isShowing()) {
+                theClock.grow();
+            }
+        } else {
+            theClock = new ClockView(game);
+        }
+        theClock.stage.show();
+    }
+
+    private void grow() {
+        howManyTimes++;
+        if (getBoxSize()[0] >= scene.getRoot().minWidth(ySize)) {
+            setBoxSize(xSize * 1.1);
+        }
+        timeBox.setMinSize(xSize, ySize);
+        clock = new Pane();
+        clock.getChildren().add(timeBox);
+        stage.close();
+        addSceneToStage(new Scene(clock));
+    }
+
+    private void setBoxSize(double x) {
+        xSize = x;
+        ySize = xSize / 2;
+    }
+
+    //returns x and y values for Label HBox
+    public Double[] getBoxSize() {
+
+        return new Double[]{xSize, ySize};
+    }
+
+    private void positionStage() {
+        screenPosition += screenPosition * 2;
+        stage.setX(screenPosition);
+        stage.setY((screenPosition) / 1.5);
+
+    }
+
+    private void addSceneToStage(Scene scene) {
+        stage = new Stage();
+        stage.setTitle("Minesweeper Time");
+        stage.setScene(scene);
+        positionStage();
+    }
+
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template fileMenu, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.View;
+
+import java.util.Observable;
+import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogEvent;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import minesweeper.Controller.GameControllers;
+import minesweeper.Controller.GridController;
+import minesweeper.Controller.MainMenuController;
+import minesweeper.Controller.NewGame;
+import minesweeper.Controller.SettingsMenuEventHandler;
+import minesweeper.Model.Board;
+import minesweeper.Model.Difficulty;
+import minesweeper.Model.FileHelper;
+import minesweeper.Model.GameTimer;
+import minesweeper.Model.Minesweeper;
+import minesweeper.Model.Tile;
+
+/**
+ *
+ * @author Johan Lipecki <lipecki@kth.se>, Viggo Lundén <vlunden@kth.se>
+ */
+public class GameView extends GameViewSuper implements Observer {
+
+    public Stage gameStage;
+    public Button pauseButton, rulesButton, resumeButton;
+    public BorderPane gameFrame;
+    public GridPane grid;
+    public Label timeLabel;
+    public final Menu fileMenu, helpMenu;    // from javadoc example: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/MenuBar.html
+    private GameControllers controller;
+    private final MenuItem menuItemQuit, menuItemNewGame, exitMenuItem;
+    private final ClockView clock;
+    private Minesweeper game;
+    private final MenuItem menuItemSaveGame;
+    private final MenuItem menuItemLoadGame;
+
+    public GameView(Minesweeper game, ClockView clock) {
+        super(game);
+        this.game = game;
+        this.clock = clock;
+        gameFrame = new BorderPane();
+
+        buttonPaneWidth = 20.0;
+        buttonWidth = 20;
+
+        controller = new GameControllers(game, this);
+        grid = new GridController(game);
+
+        fileMenu = new Menu("File");
+        helpMenu = new Menu("Help");
+        exitMenuItem = new MenuItem("Exit");
+        menuItemQuit = new MenuItem("Quit");
+        menuItemNewGame = new MenuItem("New Game");
+        menuItemSaveGame = new MenuItem("Save Game");
+        menuItemLoadGame = new MenuItem("Load Game");
+
+        menuItemSaveGame.setOnAction((ActionEvent event) -> {
+            game.board.saveTiles();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Saved game.", ButtonType.OK);
+            alert.show();
+        });
+        
+        menuItemLoadGame.setOnAction((ActionEvent event) -> {
+            new NewGame(gameStage, game.getDifficultySetting(), "save.ser");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Loaded game.", ButtonType.OK);
+            alert.show();
+        });
+        
+        exitMenuItem.setOnAction((ActionEvent t) -> {
+            gameFrame.getChildren().clear();
+            gameFrame.setPrefSize(0.0, 0.0);
+        });
+        menuItemQuit.setOnAction((ActionEvent t) -> {
+            System.exit(0);
+        });
+        menuItemNewGame.setOnAction((ActionEvent t) -> {
+            new NewGame(gameStage, game.getDifficultySetting());
+        });
+
+        for (Difficulty d : Difficulty.values()) {
+            MenuItem item = new MenuItem(d.toString());
+            item.setOnAction(new SettingsMenuEventHandler(game, this));
+            settingsMenu.getItems().add(item);
+        }
+
+        fileMenu.getItems().addAll(menuItemSaveGame, menuItemLoadGame, menuItemNewGame, exitMenuItem, menuItemQuit);
+
+        menuBar.getMenus().add(settingsMenu);
+        menuBar.getMenus().add(fileMenu);
+
+        gameFrame.setLeft(controller);
+        gameFrame.setTop(menuBar);
+        gameFrame.setCenter(grid);
+
+        scene = new Scene(gameFrame);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof GameTimer) {
+            GameTimer time = (GameTimer) o;
+            if (time.getSeconds() > 0) {
+                if (time.isTicking()) {
+                    grid.setVisible(true);
+                } else if (!time.isTicking() && !game.isGameOver()) {
+                    grid.setVisible(false);
+                    gameFrame.setCenter(new TimeLabel("Time: " + time.getSeconds() + " seconds"));
+                } else if (game.isGameOver()) grid.setVisible(true);
+            } else if (time.getSeconds() == 0 && !time.isTicking()) {
+                Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION, "Click a tile to start playing!", ButtonType.OK);
+                DialogEvent event = new DialogEvent(theTimeIsNow, DialogEvent.DIALOG_CLOSE_REQUEST);
+
+                theTimeIsNow.onCloseRequestProperty().set(new TheTimerIsNotRunning_AlertEventHandler(event));
+                theTimeIsNow.show();
+            }
+        } else if (o instanceof Minesweeper) {
+            Minesweeper game = (Minesweeper) o;
+            System.out.println("game update");
+            synchronized (game.board) {
+                if (game.getTime() > 0 && !game.isGameOver()) {
+                    if (game.isPaused()) {
+                        grid.setVisible(true);
+                        gameFrame.setCenter(grid);
+                    } else if (!game.isPaused()) {
+                        grid.setVisible(false);
+                        gameFrame.setCenter(new TimeLabel("Time: " + game.getTime() + " seconds"));
+                    } 
+                }
+                else if (game.isGameOver()) {
+                        for (Tile t : game.getBoardTiles()) {
+                            game.board.uncover(t);
+                        }
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(GameView.class.getName()).log(Level.SEVERE, null, ex);
+                            Thread.currentThread().interrupt();
+                        }
+                        tellTheUserItsOver();
+                    }
+            }if (game.getTime() == 0 && !game.isPaused()) {
+                Alert theTimeIsNow = new Alert(Alert.AlertType.INFORMATION, "Click a tile to start playing!", ButtonType.OK);
+                DialogEvent event = new DialogEvent(theTimeIsNow, DialogEvent.DIALOG_CLOSE_REQUEST);
+
+                theTimeIsNow.onCloseRequestProperty().set(new TheTimerIsNotRunning_AlertEventHandler(event));
+                theTimeIsNow.show();
+            }
+
+        }
+
+    }
+
+    public void tellTheUserItsOver() {
+        Alert gameOver;
+        gameOver = new Alert(AlertType.INFORMATION);
+        gameOver.setTitle("Game Over");
+        gameOver.setContentText("It's all over mate!\n\n"
+                + "Please select New Game.");
+        gameOver.showAndWait();
+
+    }
+
+    public ClockView getClockView() {
+        return this.clock;
+    }
+
+    public final class TheTimerIsNotRunning_AlertEventHandler implements EventHandler<DialogEvent> {
+
+        public TheTimerIsNotRunning_AlertEventHandler(DialogEvent event) {
+            handle((DialogEvent) event);
+        }
+
+        @Override
+        public void handle(DialogEvent event) {
+            controller.ResumeButtonClicked(event);
+        }
+    }
+
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * Minesweeper license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo Lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.View;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import minesweeper.Model.Difficulty;
+import minesweeper.Model.Minesweeper;
+
+/**
+ *
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public abstract class GameViewSuper {
+    
+    public Minesweeper game;
+    public VBox buttonPane;
+    public Scene scene;
+    protected double buttonSpacing;
+    protected double buttonWidth;
+    protected double buttonPaneWidth;
+    protected final Menu settingsMenu;
+    protected final MenuBar menuBar;
+    protected Difficulty difficulty;
+
+    public GameViewSuper(Minesweeper game) {
+        this.game = game; 
+        difficulty = game.getDifficultySetting();
+        buttonPane = new VBox();
+        buttonSpacing = 10.0;
+        buttonWidth = Double.MAX_VALUE;
+        
+        buttonPane.setSpacing(buttonSpacing);
+        buttonPane.setAlignment(Pos.TOP_CENTER);
+        
+        settingsMenu = new Menu(" Settings");                  
+        
+        menuBar = new MenuBar();
+
+    }
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package minesweeper.View;
+
+import java.util.Arrays;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.MenuItem;
+import javafx.scene.text.Font;
+import minesweeper.Model.Difficulty;
+import minesweeper.Model.Minesweeper;
+
+
+/**
+ *
+ * @author Viggo
+ */
+public class MainMenuView extends GameViewSuper {
+    public VBox root;
+    public final Button resumeButton;
+    public final Button settingsButton;
+    public final Button rulesButton;
+    private Label title;
+    public MainMenuView()
+    {
+        super(new Minesweeper());
+        game = null;
+        resumeButton = new Button();
+        settingsButton = new Button();
+        rulesButton = new Button();
+        this.buttonPaneWidth = 90.0;
+        
+        for(Difficulty d: Difficulty.values()){
+            MenuItem item = new MenuItem(d.toString());
+            item.setOnAction(new settingsMenuActionEvent());
+            settingsMenu.getItems().add(item);                 
+        }
+        
+        menuBar.getMenus().add(settingsMenu);
+        
+        
+    }
+    
+    public void update(Stage primaryStage)
+    {
+        
+        title = new Label("Minesweeper");
+        title.setFont(new Font("Helvetica", 30));
+        title.setPadding(new Insets(5,5,20,5));
+        
+        resumeButton.setAlignment(Pos.CENTER);
+        settingsButton.setAlignment(Pos.CENTER);
+        rulesButton.setAlignment(Pos.CENTER);
+        
+        resumeButton.setText("Play");
+        settingsButton.setText("Settings");
+        rulesButton.setText("Rules");
+        
+        resumeButton.setMaxWidth(buttonWidth);
+        settingsButton.setMaxWidth(buttonWidth);
+        rulesButton.setMaxWidth(buttonWidth);
+
+        
+        buttonPane.setMaxWidth(buttonPaneWidth);
+        buttonPane.getChildren().addAll(resumeButton,rulesButton,menuBar); 
+        
+        root = new VBox();
+        root.setAlignment(Pos.TOP_CENTER);
+        root.getChildren().addAll(title, buttonPane);
+        
+        scene = new Scene(root, 200, 200);
+        primaryStage.setTitle("Minesweeper");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+    }
+    
+    private void setDifficulty(Difficulty valueOf) {
+        difficulty = valueOf;
+    }
+    
+    public Difficulty getDifficulty(){
+        return this.difficulty;
+    }
+    
+    private final class settingsMenuActionEvent implements EventHandler<ActionEvent> {
+        
+        private settingsMenuActionEvent(){
+            handle(new ActionEvent());
+        }
+        
+        @Override
+        public void handle(ActionEvent event) {
+            Object o = event.getSource();
+            if(o instanceof MenuItem){
+                MenuItem m = (MenuItem) o;
+                setDifficulty(Difficulty.valueOf(m.getText()));    
+            }
+        };
+    }
+
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * [Project] license
+ * 
+ * Copyright © 2016 Johan Lipecki & Viggo lundén
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+package minesweeper.View;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+/**
+ *
+ * @author Johan Lipecki <lipecki@kth.se>
+ */
+public class RulesView implements Runnable {
+
+    private static Label title; 
+    private static Text body;
+    private static VBox root;
+    private static Scene scene;
+
+    public static void showRules() {
+        Stage stage = new Stage();
+        
+        title = new Label("Minesweeper Rules");
+        title.setFont(new Font("Helvetica", 30));
+        title.setPadding(new Insets(10));
+        
+        body = new Text("The goal of the game is to uncover all the squares "
+                + "without clicking on a mine and being \"blown up\". \n"
+                + "\tThe locations of the mines are discovered by a process of logic: "
+                + "clicking on a square on the game board "
+                + "will reveal what is hidden underneath. "
+                + "Some squares are blank but some contain numbers (1 to 8), "
+                + "each number being the number of mines adjacent to the uncovered square. "
+                + "\n"
+                + "\tTo help avoid hitting a mine, "
+                + "the location of a suspected mine can be marked "
+                + "by flagging it with the right mouse button. "
+                + "The game is won once all blank squares have been uncovered "
+                + "without hitting a mine. "
+                + "Any remaining mines not identified by flags are automatically flagged by the computer.\n\n"
+                + "The game board comes in three set sizes: EASY, MEDIUM, and HARD");
+        
+        body.maxHeight(Double.MAX_VALUE);
+        body.setWrappingWidth(250);
+        
+        root = new VBox();
+        root.setAlignment(Pos.TOP_CENTER);
+        root.getChildren().addAll(title,body);
+        root.setPadding(new Insets(10));
+        
+        scene = new Scene(root);
+        
+        stage.setTitle("Minesweeper");
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.setX(300);
+        stage.setY(150);
+        stage.show();
+    }
+
+    @Override
+    public void run() {
+        showRules();
+    }
+
+}
+package minesweeper.View;
+
+import java.util.Observable;
+import java.util.Observer;
+
+import javafx.scene.control.Label;
+import javafx.scene.text.Font;
+import minesweeper.Model.GameTimer;
+import minesweeper.Model.Minesweeper;
+
+/**
+ * An observer, implementing the java.util.Observer interface and the method
+ * update. The method update is called whenever the subject (observable), in
+ * this case the Minesweeper model or GameTimer, calls Observable.setChanged followed by
+ * Observable.notifyObservers.
+ *
+ * @author anderslm@kth.se, modified for Minesweeper by 
+ * @author lipecki@kth.se
+ */
+public class TimeLabel extends Label implements Observer{
+
+    public TimeLabel() {
+        super("- - -");
+        this.setFont(Font.font("Helvetica", 20));
+    }
+
+    public TimeLabel(String string) {
+        this();
+        this.setText(string);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof Minesweeper){
+            Minesweeper model = (Minesweeper) o;
+            this.setText("Time:" + model.getTime() + " s");
+        }
+        else if (o instanceof GameTimer){
+            int i = ((Integer) arg).intValue();
+            this.setText("Time: " + i + " seconds");
+        }
+            
+    }
+}

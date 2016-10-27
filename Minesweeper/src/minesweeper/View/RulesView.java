@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
  */
 public class RulesView implements Runnable {
 

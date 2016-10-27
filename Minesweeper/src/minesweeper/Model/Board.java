@@ -29,7 +29,7 @@ import minesweeper.Controller.GridController;
 
 /**
  * Represents a minesweeper board
- * @author Johan Lipecki <lipecki@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
  */
 public class Board extends Observable {
 
@@ -39,7 +39,7 @@ public class Board extends Observable {
 
     /**
      * Creates a new board with desired difficulty
-     * @param diff 
+     * @param diff Difficulty
      */
     public Board(Difficulty diff) {
         win = false;
@@ -89,8 +89,8 @@ public class Board extends Observable {
 
     /**
      * Creates a new board with desired difficulty and predetermined tiles (for loading games)
-     * @param diff
-     * @param tiles 
+     * @param diff Difficulty
+     * @param tiles list of tiles
      */
     public Board(Difficulty diff, ArrayList<Tile> tiles)
     {
@@ -127,7 +127,7 @@ public class Board extends Observable {
     /**
      * Returns the number of bombs adjacent to a tile
      * @param tile The Tile to check
-     * @return 
+     * @return number of surrounding bombs
      */
     public int bombCount(Tile tile) {
         List<Tile> tiles = getSurroundingTiles(tile);
@@ -140,8 +140,8 @@ public class Board extends Observable {
     }
 
     /**
-     * 
-     * @param tile
+     * Retrieves a list of references to surrounding tiles
+     * @param tile center tile to examine
      * @return All surrounding tiles of a Tile. Null-values for tiles outside of board.
      */
     public List<Tile> getSurroundingTiles(Tile tile) {
@@ -162,7 +162,8 @@ public class Board extends Observable {
     }
 
     /**
-     * Recursive method to uncover all the tiles of a board from a Tile, causing the board to expand according to the rules
+     * Recursive method to uncover all the tiles of a board from a Tile, 
+     * causing the board to expand according to the rules
      * @param tile the Tile to start uncovering from
      */
     public void uncover(Tile tile) {
@@ -205,7 +206,7 @@ public class Board extends Observable {
 
     /**
      * Returns the X and Y boundary of the board
-     * @return 
+     * @return Array of x and y coordinates 
      */
     public int[] getXYboundary() {
         int[] array = {maxX, maxY};
@@ -215,8 +216,8 @@ public class Board extends Observable {
     /**
      * Get information on Tile Point(x and y coordinates) and TileType
      *
-     * @return ArrayList<Object[]> where Object[0] is Point and Object[1] is
-     * TileType
+     * @return ArrayList of Object arrays 
+     * where Object[0] is Tile Point and Object[1] is TileType
      */
     public ArrayList<Object[]> getTileInfo() {
         ArrayList<Object[]> infoList = new ArrayList();
@@ -240,7 +241,7 @@ public class Board extends Observable {
     
     /**
      * Set all tiles on the board 
-     * @param tiles 
+     * @param tiles in a list
      */
     public void setTiles(List<Tile> tiles) {
         this.tiles = tiles;

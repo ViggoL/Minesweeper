@@ -32,8 +32,8 @@ import minesweeper.Model.Minesweeper;
 
 /**
  * 
- * @author Johan Lipecki <lipecki@kth.se>
- * @author Johan Lipecki <vlunden@kth.se>
+ * @author Johan Lipecki <b>lipecki@kth.se</b>
+ * @author Viggo Lundén <b>vlunden@kth.se</b>
  */
 public class ClockView implements Observer {
 

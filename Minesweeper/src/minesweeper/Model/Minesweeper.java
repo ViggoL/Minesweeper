@@ -41,7 +41,7 @@ public class Minesweeper extends Observable{
     
     /**
      * Creates a new game with desired difficulty
-     * @param diff 
+     * @param diff Difficulty
      */
     public Minesweeper(Difficulty diff){
         this();
@@ -50,8 +50,8 @@ public class Minesweeper extends Observable{
     
     /**
      * Creates a new game with desired difficulty and save file to load
-     * @param diff
-     * @param filename 
+     * @param diff Difficulty
+     * @param filename source path
      */
     public Minesweeper(Difficulty diff, String filename)
     {
@@ -61,7 +61,7 @@ public class Minesweeper extends Observable{
     
     /**
      * Returns all the tiles on the board
-     * @return 
+     * @return List of Tiles
      */
     public List<Tile> getBoardTiles(){
         return board.getTiles();
@@ -89,7 +89,7 @@ public class Minesweeper extends Observable{
     
     /**
      * Get the seconds that has passed since the game started, excluding paused periods
-     * @return 
+     * @return time in seconds
      */
     public int getTime(){
         return timer.getSeconds();
@@ -112,14 +112,14 @@ public class Minesweeper extends Observable{
     }
     /**
      * Get whether the game timer is paused
-     * @return 
+     * @return boolean
      */
     public boolean isPaused(){
         return timer.isTicking();
     }
     /**
      * Starts a new game with desired difficulty
-     * @param difficulty 
+     * @param difficulty Difficulty
      */
     public void startNewGame(Difficulty difficulty) {
         board = new Board(difficulty);
@@ -131,14 +131,14 @@ public class Minesweeper extends Observable{
     
     /**
      * Gets the difficulty setting of the game
-     * @return 
+     * @return Difficulty
      */
     public Difficulty getDifficultySetting(){
         return settings.getDifficulty();
     }
     /**
      * Sets the difficulty of the game
-     * @param diff 
+     * @param diff Difficulty
      */
     public void setDifficulty(Difficulty diff){
         settings.setDifficulty(diff);
@@ -170,14 +170,14 @@ public class Minesweeper extends Observable{
     }
     /**
      * Returns whether the game is over or not
-     * @return 
+     * @return boolean
      */
     public boolean isGameOver() {
         return gameOver;
     }
     /**
      * Returns the timer of the game
-     * @return 
+     * @return timer reference
      */
     public GameTimer getTimer(){
         return timer;

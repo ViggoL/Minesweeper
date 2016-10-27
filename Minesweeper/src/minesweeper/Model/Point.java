@@ -31,7 +31,7 @@ public class Point extends Observable implements Serializable {
     
     /**
      * Compares the X and Y value of another point
-     * @param other
+     * @param other Object
      * @return True if the coordinates of the two points are equal
      * @throws ClassCastException 
      */
