@@ -13,6 +13,7 @@ import java.util.Observable;
  * @author Viggo
  */
 public class Tile extends Observable{
+
     private Point point;
     private TileType type;
     private int number;
@@ -41,30 +42,11 @@ public class Tile extends Observable{
     public void setType(TileType type)
     {
         this.type = type;
-        
-        this.setChanged();
         // The model has changed, notify observers!
-        if (type == TileType.FLAG){
-            
-            //four calls to observers lets the four different flag images be displayed
-            try{
-                this.notifyObservers(1);
-                Thread.sleep(10);
-                this.notifyObservers(2);
-                Thread.sleep(10);
-                this.notifyObservers(3);
-                Thread.sleep(10);
-                this.notifyObservers(4);
-                Thread.sleep(10);
+        this.setChanged();
         
-            } catch (InterruptedException interrupted){
-                Thread.currentThread().interrupt();
-                System.err.println(interrupted.toString());
-                for(StackTraceElement s: Thread.currentThread().getStackTrace()) System.err.println(s.toString());
-            }
-        }
         
-        else this.notifyObservers();
+        this.notifyObservers();
         
         
         
@@ -92,46 +74,19 @@ public class Tile extends Observable{
         return covered;
     }
 
-    public static int bombCount(List<Tile> tiles)
-    {
-        int i = 0;
-        for (Tile t : tiles)
-        {
-            if (t == null) continue;
-            if (t.getType() == TileType.BOMB) i++;
-        }
-        return i;
-    }
-
     void setCovered(boolean covered) {
         this.covered = covered;
         
-        this.setChanged();
         // The model has changed, notify observers!
-        if (type == TileType.BOMB){
-            try{
-                this.notifyObservers(1);
-                Thread.sleep(10);
-                this.setChanged();
-                notifyObservers(2);
-                Thread.sleep(10);
-                this.setChanged();
-                notifyObservers(3);
-                Thread.sleep(10);
-                this.setChanged();
-                notifyObservers(4);    
-            }
-            catch (InterruptedException interrupted){
-                Thread.currentThread().interrupt();
-                System.err.println(interrupted.toString());
-                for(StackTraceElement s: Thread.currentThread().getStackTrace()) System.err.println(s.toString());
-            }
-        }
-        else this.notifyObservers();
+        this.setChanged();
+        this.notifyObservers();
     }
 
     public void setFlagged(boolean flagged) {
         this.flagged = flagged;
+        // The model has changed, notify observers!
+        this.setChanged();
+        this.notifyObservers();
     }
     public boolean isFlagged()
     {
