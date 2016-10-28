@@ -34,7 +34,6 @@ import minesweeper.Controller.GridController;
 public class Board extends Observable {
 
     private List<Tile> tiles;
-    private boolean win;
     private int maxX, maxY;
 
     /**
@@ -42,7 +41,6 @@ public class Board extends Observable {
      * @param diff Difficulty
      */
     public Board(Difficulty diff) {
-        win = false;
         tiles = new ArrayList<>();
         int x = 0;
         int y = 0;
@@ -219,7 +217,7 @@ public class Board extends Observable {
      * @return ArrayList of Object arrays 
      * where Object[0] is Tile Point and Object[1] is TileType
      */
-    public ArrayList<Object[]> getTileInfo() {
+    private ArrayList<Object[]> getTileInfo() {
         ArrayList<Object[]> infoList = new ArrayList();
         for (Tile t : (ArrayList<Tile>) tiles) {
             Object[] o = {t.getPoint(), t.getType()};

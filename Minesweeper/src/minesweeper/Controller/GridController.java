@@ -40,9 +40,6 @@ public class GridController extends GridPane implements Observer {
     public static ImageView imageViewButton;
     private double buttonWidth;
     private double gridTileSize;
-    private static int explosionCount, flagCount;
-    private boolean stopExplosion;
-
     /**
      * Creates a new grid controller
      * @param game the game to handle
@@ -54,7 +51,6 @@ public class GridController extends GridPane implements Observer {
         timerStarted = false;
         buttonWidth = 20;
         gridTileSize = buttonWidth * 1.75;
-        explosionCount = flagCount = 0;
 
         int ID;
         inset = new Insets(20);
@@ -203,9 +199,6 @@ public class GridController extends GridPane implements Observer {
                     if (bombCount != 0) 
                         img.setImage(new Image(bombCount + ".png", buttonWidth, buttonWidth, false, true));
                 }
-        }
-        if (!stopExplosion && type == TileType.BOMB) {
-            //MouseEvent.fireEvent(img, new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true, true, true, true, true, true, true, null));
         }
 
         }

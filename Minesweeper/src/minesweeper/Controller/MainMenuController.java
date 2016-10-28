@@ -24,7 +24,7 @@ import minesweeper.View.RulesView;
  */
 public class MainMenuController {
     private final MainMenuView view;
-    private Stage stage, primaryStage;
+    private Stage stage;
     /**
      * Creates a new Main menu controller
      * @param view The view to handle
@@ -64,13 +64,13 @@ public class MainMenuController {
     /**
      * User clicked the play button
      */
-    public void playButtonSelected(){
+    private void playButtonSelected(){
         NewGame newGame = new NewGame(stage,view.getDifficulty()); 
     }
     /**
      * User clicked the rules button
      */
-    public void rulesButtonClicked()
+    private void rulesButtonClicked()
     {
         Platform.runLater(new RulesView());
     }
