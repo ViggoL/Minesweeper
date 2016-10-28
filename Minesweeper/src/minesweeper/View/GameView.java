@@ -114,7 +114,7 @@ public class GameView extends GameViewSuper implements Observer {
 
         for (Difficulty d : Difficulty.values()) {
             MenuItem item = new MenuItem(d.toString());
-            item.setOnAction(new SettingsMenuEventHandler(game, this));
+            item.setOnAction(new SettingsMenuEventHandler(game));
             settingsMenu.getItems().add(item);
         }
 

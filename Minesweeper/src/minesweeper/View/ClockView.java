@@ -37,7 +37,7 @@ import minesweeper.Model.Minesweeper;
  */
 public class ClockView implements Observer {
 
-    Minesweeper game;
+    private Minesweeper game;
     private Stage stage;
     private TimeLabel timeLabel;
     private final Scene scene;
@@ -46,7 +46,6 @@ public class ClockView implements Observer {
     private HBox timeBox;
     private double xSize, ySize;
     private double screenPosition;
-    private int howManyTimes;
     private Pane clock;
 
     public ClockView(Minesweeper game) {
@@ -71,7 +70,6 @@ public class ClockView implements Observer {
         scene = new Scene(clock);
 
         screenPosition = 2.0;
-        howManyTimes = 1;
 
         addSceneToStage(scene);
         update();
@@ -116,7 +114,6 @@ public class ClockView implements Observer {
     }
 
     private void grow() {
-        howManyTimes++;
         if (getBoxSize()[0] >= scene.getRoot().minWidth(ySize)) {
             setBoxSize(xSize * 1.1);
         }
